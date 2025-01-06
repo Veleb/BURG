@@ -9,5 +9,15 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
+  isMenuOpen = false;
+  isAnimating = false;
 
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+    this.isAnimating = true;
+
+    setTimeout(() => {
+      this.isAnimating = false;
+    }, 500);
+  }
 }
