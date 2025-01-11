@@ -7,13 +7,7 @@
       "config": { "distDir": "dist/client" }
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-   "rewrites": [
-     { "source": "/(.*)", "destination": "/" }
-   ]
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
