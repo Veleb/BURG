@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "BURG": {
+    "CLIENT": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/burg",
+            "outputPath": "dist/client",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -66,10 +66,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "BURG:build:production"
+              "buildTarget": "CLIENT:build:production"
             },
             "development": {
-              "buildTarget": "BURG:build:development"
+              "buildTarget": "CLIENT:build:development"
             }
           },
           "defaultConfiguration": "development"
