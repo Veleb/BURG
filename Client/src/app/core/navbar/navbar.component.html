@@ -20,11 +20,20 @@
           <a (click)="toggleMenu()" class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a>
         </li>
       </ul>
-    </div>
 
-    <div (click)="toggleMenu()" [className]="isAnimating ? 'hamburger-menu rotate' : 'hamburger-menu' ">
-      <i class="fa-solid fa-bars"></i>
-    </div>
-
+        <button routerLink="login" class="login-button">Login</button>
+        
+        
+      </div>
+    
+        <div class="icon-wrapper">
+          <div (click)="toggleMenu()" [className]="isAnimating ? 'hamburger-menu rotate' : 'hamburger-menu' ">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+          
+          <i class="fa-solid fa-user user-icon"></i>
+  
+        </div>
+      
   </div>
 </nav>

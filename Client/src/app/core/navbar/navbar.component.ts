@@ -9,10 +9,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  isMenuOpen = false;
-  isAnimating = false;
+  isMenuOpen: boolean = false;
+  isAnimating: boolean = false;
 
-  toggleMenu() {
+  toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
     this.isAnimating = true;
 
@@ -20,4 +20,5 @@ export class NavbarComponent {
       this.isAnimating = false;
     }, 500);
   }
+  
 }
