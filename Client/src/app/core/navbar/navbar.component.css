@@ -1,0 +1,130 @@
+/* MAIN PARTS OF THE NAVIGATION BAR */
+
+/* #252422 */
+/* #890203 */
+
+.nav-wrapper {
+  height: 85px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color:#08080a;
+}
+
+.logo {
+  height: 90px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.nav-list {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+/* NAV LINK */
+
+.nav-link {
+  text-decoration: none;
+  color: #d90429;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  text-transform: uppercase;
+  position: relative;
+  padding: 5px 0;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #d90429;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-link:hover:not(.active):not(.logo-link):after {
+  width: 100%;
+  left: 0;
+  background: #fffcf2;
+}
+
+.nav-link:hover:not(.active):not(.logo-link) {
+  color: #fffcf2;
+}
+
+.active {
+  border-bottom: 3px solid #fffcf2;
+  padding-bottom: 3px;
+  border-end-start-radius: 2px;
+  border-end-end-radius: 2px;
+}
+
+/* HAMBURGER MENU */
+
+.hamburger-menu {
+  display: none;
+  font-size: 1.6rem;
+  color: white;
+}
+
+.hamburger-menu:hover {
+  cursor: pointer;
+}
+
+/* MEDIA QUERIES */
+
+@media (max-width: 768px) {
+  .nav-list {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+    position: absolute;
+    z-index: 3;
+    top: 85px; 
+    left: 0;
+    right: 0;
+    background-color: #08080a;
+    padding: 10px 10px 15px 10px;
+    border-top: 3px solid #fffcf2;
+  }
+
+  .nav-list.visible {
+    display: flex;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  
+.logo {
+  height: 90px;
+  width: 100%;
+  margin-top: 4px;
+}
+}
+
+/* ANIMATIONS */
+
+.rotate {
+  animation: rotate 0.3s ease-in-out;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
