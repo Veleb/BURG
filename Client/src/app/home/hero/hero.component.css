@@ -22,6 +22,14 @@
   object-fit: cover;
 }
 
+.hero-logo {
+  width: 90%;
+  height: 90%;
+  max-height: 350px;
+  object-fit: contain;
+  position: relative;
+}
+
 .hero-wrapper::before {
   content: '';
   position: absolute;
@@ -81,6 +89,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   margin-top: 20px;
+  width: 80%;
 }
 
 .cta-button::before {
@@ -124,6 +133,13 @@
   .hero-image {
     grid-column: 2 / 3;
   }
+
+  .hero-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
 }
 
 @media (max-width: 768px) {
@@ -144,6 +160,12 @@
     padding: 10px 20px;
     font-size: 1rem;
   }
+
+  .hero-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 
 @media (max-width: 480px) {
@@ -159,5 +181,11 @@
     width: 90%;
     padding: 8px 16px;
     font-size: 0.9rem;
+  }
+
+  .hero-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 }
