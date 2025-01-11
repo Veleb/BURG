@@ -44,6 +44,6 @@ UserSchema.pre('save', async function(next) {
   next();
 });
 
-const UserModel = model<UserInterface>('User', UserSchema);
+const UserModel = model<UserInterface>('User', UserSchema, 'users');
 
 export default UserModel;
