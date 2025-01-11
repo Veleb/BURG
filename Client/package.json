@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:CLIENT": "node dist/client/server/server.mjs"
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.11",
-    "@angular/cli": "^18.2.11",
+    "@angular/cli": "^18.2.12",
     "@angular/compiler-cli": "^18.2.0",
     "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",
