@@ -1,1 +1,83 @@
-<p>register works!</p>
+<div class="register-wrapper">
+  <img class="background-image" src="/images/dark-red-gradient.jpg" alt="An image of a dark red gradient"/>
+
+  <div class="form-wrapper">
+    <h1 class="header">Register</h1>
+    <form class="register-form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
+      <div class="form-group">
+        <input
+          class="form-input"
+          type="text"
+          id="firstName"
+          name="firstName"
+          ngModel
+          required
+          placeholder=" "
+        />
+        <label class="form-label" for="firstName">First Name</label>
+      </div>
+
+      <div class="form-group">
+        <input
+          class="form-input"
+          type="text"
+          id="lastName"
+          name="lastName"
+          ngModel
+          required
+          placeholder=" "
+        />
+        <label class="form-label" for="lastName">Last Name</label>
+      </div>
+
+      <div class="form-group">
+        <input
+          class="form-input"
+          type="text"
+          id="username"
+          name="username"
+          ngModel
+          required
+          placeholder=" "
+        />
+        <label class="form-label" for="username">Username</label>
+      </div>
+
+      <div class="form-group">
+        <input
+          class="form-input"
+          type="password"
+          id="password"
+          name="password"
+          ngModel
+          required
+          placeholder=" "
+        />
+        <label class="form-label" for="password">Password</label>
+      </div>
+
+      <div class="form-group">
+        <input
+          class="form-input"
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          ngModel
+          required
+          placeholder=" "
+        />
+        <label class="form-label" for="confirmPassword">Confirm Password</label>
+      </div>
+
+      <button class="submit-button" type="submit" [disabled]="!userForm.valid">
+        Register
+      </button>
+    </form>
+  </div>
+
+  <div class="login-wrapper">
+    <h1 class="header">Welcome to register</h1>
+    <p routerLink="/login" class="msg">Already have an account?</p>
+    <button routerLink="/login" class="login-button">Login</button>
+  </div>
+</div>

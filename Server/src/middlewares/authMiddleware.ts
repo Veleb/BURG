@@ -10,8 +10,11 @@ export default async function authMiddleware (
   next: NextFunction
 ): Promise<void> {
 
+  
+
   const accessToken = req.cookies?.['auth'] as string;
   const refreshToken = req.cookies?.['refresh_token'] as string; 
+  
 
   // Case when no access token and no refresh token are provided
   if (!accessToken && !refreshToken) {

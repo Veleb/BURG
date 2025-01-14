@@ -6,11 +6,19 @@ import setAuthTokens from '../utils/setAuthTokens'
 
 const userController = Router();
 
-userController.get(`/:id`, async (req: Request, res: Response, next: NextFunction) => { // route to get user by id
-    try {
-        const id = req.params.id;
 
-        const user = await userService.getUserById(id); // fetch user by id
+userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
+    console.log(`request`);
+    
+    try {
+        const userId: string | undefined = (req as authenticatedRequest).user?._id;
+
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+
+        const user = await userService.getUserById(userId); // fetch user by id
 
         if (!user) {
             res.status(404).json({ message: "User not found" });
@@ -24,16 +32,11 @@ userController.get(`/:id`, async (req: Request, res: Response, next: NextFunctio
     }
 });
 
-userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
+userController.get(`/:id`, async (req: Request, res: Response, next: NextFunction) => { // route to get user by id
     try {
-        const userId: string | undefined = (req as authenticatedRequest).user?._id;
+        const id = req.params.id;
 
-        if (!userId) {
-            res.status(401).json({ message: "Unauthorized" });
-            return;
-        }
-
-        const user = await userService.getUserById(userId); // fetch user by id
+        const user = await userService.getUserById(id); // fetch user by id
 
         if (!user) {
             res.status(404).json({ message: "User not found" });

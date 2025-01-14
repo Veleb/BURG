@@ -139,7 +139,66 @@
   transform: translateY(-2px);
 }
 
+.sign-up-wrapper {
+  height: 100%;
+  width: 500px;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 8%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+
+}
+
+.msg {
+  font-family: Poppins;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.msg:hover {
+  cursor: pointer
+}
+
+.register-button {
+  position: relative;
+  z-index: 2;
+  background-color: transparent;
+  border: 2px solid #d90429;
+  border-radius: 25px;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+  width: 50%;
+
+  transition: all 0.3s ease;
+}
+
+.register-button:hover {
+  transform: scale(1.01) translateY(-2px);
+}
+
+.register-button:active {
+  transform: scale(0.98) translateY(-2px);
+
+}
+
 @media (max-width: 1024px) {
+
+  .sign-up-wrapper {
+    display: none;
+  }
 
   .background-image {
       position: absolute;
@@ -180,7 +239,6 @@
   
 }
 
-
 @media (max-width: 768px) {
 
   .login-wrapper {
@@ -209,7 +267,6 @@
   }
 
 }
-
 
 @media (max-width: 576px) {
 

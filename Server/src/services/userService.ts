@@ -12,7 +12,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 async function getUserById(id: string | undefined): Promise<UserFromDB> { 
   if (!id) throw new Error("Id is required");
 
-  const user = await UserModel.findById(id).select('-password');
+  const user = await UserModel.findById(id).select('-password').lean();
   if (!user) throw new Error("User not found");
 
   return user;
