@@ -8,8 +8,6 @@ const userController = Router();
 
 
 userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
-    console.log(`request`);
-    
     try {
         const userId: string | undefined = (req as authenticatedRequest).user?._id;
 
