@@ -5,8 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "start:prod": "ng serve --configuration=production"
+    "dev": "nodemon --exec ts-node src/index.ts"
   },
   "author": "",
   "license": "ISC",
