@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://staging.api.yourdomain.com', // change this
+  apiUrl: 'https://burg-uu6y.onrender.com', // change this
 };
