@@ -165,6 +165,14 @@
   cursor: pointer
 }
 
+.login-msg {
+  display: none;
+  font-size: 1rem;
+  text-align: left;
+  width: 100%;
+  margin-left: 2px;
+}
+
 .login-button {
   position: relative;
   z-index: 2;
@@ -198,6 +206,10 @@
 
   .login-wrapper {
     display: none;
+  }
+
+  .login-msg {
+    display: block;
   }
 
   .background-image {

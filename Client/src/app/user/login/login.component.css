@@ -161,6 +161,14 @@
   color: white;
 }
 
+.register-msg {
+  display: none;
+  font-size: 1rem;
+  text-align: left;
+  width: 100%;
+  margin-left: 2px;
+}
+
 .msg:hover {
   cursor: pointer
 }
@@ -195,6 +203,10 @@
 }
 
 @media (max-width: 1024px) {
+
+  .register-msg {
+    display: block;
+  }
 
   .sign-up-wrapper {
     display: none;
@@ -275,6 +287,10 @@
     padding: 10px;
   }
 
+  .register-msg {
+    text-align: center;
+  }
+
   .form-input {
     font-size: 1rem; 
     width: 65%; 
@@ -319,7 +335,7 @@
   }
 }
 
-@media (max-width: 375) {
+@media (max-width: 375px) {
 
   .form-wrapper {
     width: 100%;
@@ -329,6 +345,10 @@
   .form-input {
     font-size: 1rem; 
     width: 50%; 
+  }
+
+  .register-msg {
+    text-align: center;
   }
 
   .form-group {

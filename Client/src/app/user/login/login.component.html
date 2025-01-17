@@ -5,7 +5,7 @@
     <form class="login-form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
       
         <div class="form-group">
-          <input class="form-input" type="text" id="username" name="username" ngModel required placeholder=" ">
+          <input class="form-input" type="text" id="username" name="username" #username="ngModel" ngModel required placeholder=" ">
           <label class="form-label" for="username">Username</label>
         </div>
   
@@ -14,7 +14,9 @@
           <label class="form-label" for="password">Password</label>
         </div>
 
-      <button class="submit-button" type="submit" [disabled]="!userForm.valid">Log In</button>
+        <p class="msg register-msg" routerLink="/register" >Don't have an account yet?</p>
+
+      <button  class="submit-button" type="submit" [disabled]="!userForm.valid">Log In</button>
     </form>
   </div>
 

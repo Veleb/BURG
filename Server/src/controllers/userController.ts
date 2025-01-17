@@ -51,7 +51,7 @@ userController.get(`/:id`, async (req: Request, res: Response, next: NextFunctio
 userController.post(`/register`, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.body as UserForAuth; // get user data from request body
-
+        
         const { accessToken, refreshToken } = await userService.registerUser(user); // create new user
 
         setAuthTokens(res, accessToken, refreshToken); // set auth cookies
@@ -83,6 +83,7 @@ userController.post('/logout', async (req: Request, res: Response, next: NextFun
         userService.logoutUser(req as authenticatedRequest, res); // logout user
 
         res.status(200).json({ message: "Logged out successfully" });
+
     } catch (error) {
         next(error);
     }

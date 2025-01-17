@@ -5,14 +5,14 @@ export default async function checkIfUserExists(user: UserForAuth): Promise<void
   const existingUser = await UserModel.findOne({
     $or: [
       { username: user.username },
-      { email: user.email },
-      { phone_number: user.phone_number }
+      { email: user.email || "" },
+      { phoneNumber: user.phoneNumber || ""}
     ]
   });
 
   if (existingUser) {
     if (existingUser.username === user.username) throw new Error("Username is already in use!");
-    if (existingUser.email === user.email) throw new Error("Email is already registered!");
-    if (existingUser.phone_number === user.phone_number) throw new Error("Phone number is already registered!");
+    if (existingUser.email === user.email || user.email === "" ) throw new Error("Email is already registered!");
+    if (existingUser.phoneNumber === user.phoneNumber || user.phoneNumber === "" ) throw new Error("Phone number is already registered!");
   }
 }

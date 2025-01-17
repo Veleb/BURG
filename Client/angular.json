@@ -28,8 +28,8 @@
               ],
               "styles": [
                 "src/styles.css",
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-                
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css",
+                "node_modules/ngx-toastr/toastr.css"
               ],
               "scripts": [],
               "server": "src/main.server.ts",
@@ -100,7 +100,8 @@
               ],
               "styles": [
                 "src/styles.css",
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css",
+                "node_modules/ngx-toastr/toastr.css"
               ],
               "scripts": []
             }

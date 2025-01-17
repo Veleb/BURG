@@ -114,10 +114,21 @@
   color: white;
 }
 
+.desktop-user-icon {
+  color: #fffcf2;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.desktop-user-icon:hover {
+  transform: translateY(-2px);
+}
+
 /* MEDIA QUERIES */
 
-@media (max-width: 768px) {
 
+@media (max-width: 768px) {
   .nav-list {
     display: none;
     flex-direction: column;
@@ -125,22 +136,22 @@
     text-align: center;
     position: absolute;
     z-index: 3;
-    top: 85px; 
+    top: 85px;
     left: 0;
     right: 0;
     background-color: #08080a;
     padding: 10px 10px 15px 10px;
     border-top: 3px solid #fffcf2;
   }
-
-  .login-button {
+  
+  .login-button, .desktop-user-icon {
     display: none;
   }
-
+  
   .nav-list.visible, .icon-wrapper {
     display: flex;
   }
-
+  
   .hamburger-menu, .user-icon {
     display: block;
   }

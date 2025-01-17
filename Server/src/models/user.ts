@@ -3,11 +3,7 @@ import { UserInterface } from "../types/model-types/user-types";
 import bcrypt from 'bcrypt';
 
 const UserSchema = new Schema<UserInterface>({
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
+  fullName: {
     type: String,
     required: true,
   },
@@ -18,23 +14,32 @@ const UserSchema = new Schema<UserInterface>({
   },
   email: {
     type: String,
-    required: true,
     unique: true,
-    match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'is invalid'], // regex pattern for email
+    sparse: true, 
+    default: "",  
+    validate: {
+      validator: function(v: string) {
+        return v === "" || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid email address!`
+    }
   },
   password: {
     type: String,
     required: true,
   },
-  phone_number: {
+  phoneNumber: {
     type: String,
+    unique: true,
+    sparse: true,
+    default: "",
     validate: {
-      validator: function(v: string) {
-        return /\d{10}/.test(v);
+      validator: function (v: string) {
+        return v === "" || /\d{10}/.test(v);
       },
-      message: props => `${props.value} is not a valid phone number!`
+      message: (props) => `${props.value} is not a valid phone number!`,
     },
-  },
+  }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 UserSchema.pre('save', async function(next) {

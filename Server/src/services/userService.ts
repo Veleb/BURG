@@ -19,9 +19,11 @@ async function getUserById(id: string | undefined): Promise<UserFromDB> {
 }
 
 async function createUser(user: UserForAuth): Promise<UserFromDB> { // create new user
+
   if (!user) {
       throw new Error("User data is not valid!");
   }
+
   await checkIfUserExists(user) // check if there is an existing user with the same username, email or phone number
 
   const newUser = await UserModel.create(user);
@@ -49,9 +51,9 @@ async function loginUser({ username, password }: userForLogin): Promise<payloadT
 
 async function registerUser(user: UserForAuth): Promise<payloadTokens> {
   await checkIfUserExists(user);  // Check for existing user
-
+  
   const newUser = await createUser(user); // Create new user
-
+  
   return generateTokens(newUser); // Generate and return both tokens
 }
 

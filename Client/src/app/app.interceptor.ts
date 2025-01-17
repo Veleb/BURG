@@ -1,13 +1,15 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { UserService } from './user/user.service';
 import { environment } from '../environments/environment.development';
+import { ToastrService } from 'ngx-toastr';
 
 const API = '/api';
 
 export const appInterceptor: HttpInterceptorFn = (req, next) => {
   const userService = inject(UserService);
+  const toastr = inject(ToastrService);
 
   if (req.url.startsWith(API)) {
     req = req.clone({
@@ -22,19 +24,20 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (err.status === 404) {
         errorMessage = err.statusText;  
-      }
-      else if (err.status === 401) {
+      } else if (err.status === 401) {
         if (!userService.isLogged) {
-          console.warn('Guest user unauthorized access, suppressing toast.');
+          // console.warn('Guest user unauthorized access, suppressing toast.');
+          // toastr.error(`Please login!`, `Unauthorized!`);
           return throwError(() => err);
         }
         errorMessage = err.statusText;
-      }
-      else {
+      } else {
         errorMessage = err.error?.message || 'An unexpected error occurred';
       }
-      
+
+      toastr.error(errorMessage, 'Error');
       return throwError(() => err);
     })
   );
+  
 };

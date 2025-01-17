@@ -1,9 +1,8 @@
 export interface UserInterface {
-  firstName: string;
-  lastName: string;
+  fullName: string
   username: string;
-  email: string;
-  phone_number?: string;
+  email?: string;
+  phoneNumber?: string;
   password: string;
   
   _id: string;
@@ -17,21 +16,19 @@ export interface userForLogin {
 }
 
 export interface UserForAuth {
-  firstName: string;
-  lastName: string;
+  fullName: string
   username: string;
-  email: string;
-  phone_number?: string;
+  email?: string;
+  phoneNumber?: string;
   password: string;
 }
 
 export interface UserFromDB {
   _id: string;
-  firstName: string;
-  lastName: string;
+  fullName: string
   username: string;
-  email: string;
-  phone_number?: string;
+  email?: string;
+  phoneNumber?: string;
   created_at: Date;
   updated_at: Date;
 }
