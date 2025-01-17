@@ -1,5 +1,4 @@
 import express from 'express';
-import userController from './controllers/userController';
 import { expressConfig } from './configs/expressConfig';
 import mongooseInit from './configs/mongooseConfig';
 import dotenv from 'dotenv';
