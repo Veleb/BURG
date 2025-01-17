@@ -5,14 +5,14 @@ import authMiddleware from '../middlewares/authMiddleware';
 import routes from '../routes';
 import errorMiddleware from '../middlewares/errorMiddleware';
 
-const frontEnd = process.env.FRONT_END_LOCAL
+const FRONT_END = process.env.FRONT_END_PROD
 
 export function expressConfig(app: Application): void {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cors({ 
     credentials: true,
-    origin: frontEnd,
+    origin: FRONT_END,
     methods: 'GET,POST,PUT,DELETE',
   }));
   app.use(cookieParser());
