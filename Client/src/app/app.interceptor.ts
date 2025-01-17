@@ -1,8 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { UserService } from './user/user.service';
-import { environment } from '../environments/environment.development';
+import { environment } from '../environments/environment';
 import { ToastrService } from 'ngx-toastr';
 
 const API = '/api';
