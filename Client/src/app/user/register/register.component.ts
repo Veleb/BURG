@@ -19,7 +19,6 @@ export class RegisterComponent {
   onSubmit(formElement: NgForm): void {
     const formData = { ...formElement.value };
     delete formData.confirmPassword;
-    console.log(formData);
   
     this.userService.register(formData).subscribe({
       next: (response) => {

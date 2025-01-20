@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 
 export default function errorMiddleware(err: Error, req: Request, res: Response, next: NextFunction) {
   if (err instanceof mongoose.Error) {
-      res.status(400).send({ message: "Mongoose error: " + err.message });
+      res.status(400).json({ message: "Mongoose error: " + err.message });
   } else if (err.message === "Unauthorized") {
-      res.status(401).send({ message: err.message });
+      res.status(401).json({ message: err.message });
   } else {
-      res.status(500).send({ message: err.message || "Internal Server Error" });
+      res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 }
