@@ -23,6 +23,7 @@ userController.get('/profile', async (req: Request, res: Response, next: NextFun
         }
 
         res.status(200).json(user);
+        return;
     } catch (error) {
         next(error);
     }
@@ -39,6 +40,7 @@ userController.get('/:id', async (req: Request, res: Response, next: NextFunctio
         }
 
         res.status(200).json(user);
+        return;
     } catch (error) {
         next(error);
     }
@@ -65,6 +67,7 @@ userController.post('/login', async (req: Request, res: Response, next: NextFunc
         setAuthTokens(res, accessToken, refreshToken); // set auth cookies 
         
         res.status(200).json({ message: 'Logged in successfully' });
+        return;
     } catch (error) {
         next(error);
     }
@@ -74,6 +77,7 @@ userController.post('/logout', async (req: Request, res: Response, next: NextFun
     try {
         userService.logoutUser(req as authenticatedRequest, res); // logout user
         res.status(200).json({ message: 'Logged out successfully' });
+        return;
     } catch (error) {
         next(error);
     }
