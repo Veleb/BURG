@@ -1,9 +1,9 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import { expressConfig } from './configs/expressConfig';
 import mongooseInit from './configs/mongooseConfig';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app = express();
 

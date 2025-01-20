@@ -5,7 +5,7 @@ import authMiddleware from '../middlewares/authMiddleware';
 import routes from '../routes';
 import errorMiddleware from '../middlewares/errorMiddleware';
 
-const FRONT_END = process.env.FRONT_END_PROD
+const FRONT_END = (process.env.PROD === 'true') ? process.env.FRONT_END_PROD : process.env.FRONT_END_LOCAL 
 
 export function expressConfig(app: Application): void {
   app.use(express.json());

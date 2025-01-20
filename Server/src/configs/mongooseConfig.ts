@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const DB_URL = process.env.DB_URL_PROD as string;
+const DB_URL = (process.env.PROD === "true") ? process.env.DB_URL_PROD as string : process.env.DB_URL_LOCAL as string;
 
 export default function mongooseInit() {
   mongoose
