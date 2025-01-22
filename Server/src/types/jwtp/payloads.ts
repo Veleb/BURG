@@ -1,6 +1,6 @@
 export interface payloadInterface {
   _id: string;
-  username: string;
+  email: string;
 }
 
 export interface payloadTokens {

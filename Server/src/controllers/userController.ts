@@ -61,9 +61,9 @@ userController.post('/register', async (req: Request, res: Response, next: NextF
 
 userController.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { username, password } = req.body; // get username and password from request body
+        const { email, password } = req.body; // get email and password from request body
 
-        const { accessToken, refreshToken } = await userService.loginUser({ username, password }); 
+        const { accessToken, refreshToken } = await userService.loginUser({ email, password }); 
         setAuthTokens(res, accessToken, refreshToken); // set auth cookies 
         
         res.status(200).json({ message: 'Logged in successfully' });

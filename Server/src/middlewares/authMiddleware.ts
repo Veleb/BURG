@@ -32,7 +32,7 @@ export default async function authMiddleware (
 
       req.user = {
         _id: decodedToken._id,
-        username: decodedToken.username,
+        email: decodedToken.email,
         accessToken,
       };
       
@@ -48,7 +48,7 @@ export default async function authMiddleware (
 
           
           const newAccessToken = await jwtp.sign( // Issue a new access token using the refresh token
-            { _id: decodedRefreshToken._id, username: decodedRefreshToken.username },
+            { _id: decodedRefreshToken._id, email: decodedRefreshToken.email },
             JWT_SECRET,
             { expiresIn: '2h' }
           );
@@ -57,7 +57,7 @@ export default async function authMiddleware (
           
           req.user = { // Attach the user info to the request object
             _id: decodedRefreshToken._id,
-            username: decodedRefreshToken.username,
+            email: decodedRefreshToken.email,
             accessToken: newAccessToken,
           };
 
@@ -99,7 +99,7 @@ export default async function authMiddleware (
       
 
       const newAccessToken = await jwtp.sign( // Issue a new access token using the refresh token
-        { _id: decodedRefreshToken._id, username: decodedRefreshToken.username },
+        { _id: decodedRefreshToken._id, email: decodedRefreshToken.email },
         JWT_SECRET,
         { expiresIn: '2h' }
       );
@@ -107,11 +107,9 @@ export default async function authMiddleware (
       
       res.cookie('auth', newAccessToken, { httpOnly: true, secure: true, sameSite: 'none' }); // Set the new access token in the response cookies
 
-      
-      
       req.user = { // Attach the user info to the request object
         _id: decodedRefreshToken._id,
-        username: decodedRefreshToken.username,
+        email: decodedRefreshToken.email,
         accessToken: newAccessToken,
       };
 

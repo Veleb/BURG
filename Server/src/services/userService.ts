@@ -24,26 +24,26 @@ async function createUser(user: UserForAuth): Promise<UserFromDB> { // create ne
       throw new Error("User data is not valid!");
   }
 
-  await checkIfUserExists(user) // check if there is an existing user with the same username, email or phone number
+  await checkIfUserExists(user) // check if there is an existing user with the same email or phone number
 
   const newUser = await UserModel.create(user);
 
   return newUser as UserFromDB;
 }
 
-async function loginUser({ username, password }: userForLogin): Promise<payloadTokens> {
-  if (!username || !password) {
-      throw new Error("Username and password are required!");
+async function loginUser({ email, password }: userForLogin): Promise<payloadTokens> {
+  if (!email || !password) {
+      throw new Error("Email and password are required!");
   }
 
-  const existingUser = await UserModel.findOne({ username });
+  const existingUser = await UserModel.findOne({ email });
   if (!existingUser) {
-      throw new Error("Invalid username or password");
+      throw new Error("Invalid email or password");
   }
 
   const isPasswordValid = await bcrypt.compare(password, existingUser.password);
   if (!isPasswordValid) {
-      throw new Error("Invalid username or password");
+      throw new Error("Invalid email or password");
   }
 
   return generateTokens(existingUser);
@@ -67,7 +67,7 @@ const logoutUser = (req: authenticatedRequest, res: Response) => {
 async function generateTokens(user: UserFromDB): Promise<payloadTokens> {
   const payload: payloadInterface = {
       _id: user._id,
-      username: user.username,
+      email: user.email,
   };
 
   try {

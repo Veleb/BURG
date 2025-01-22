@@ -1,7 +1,6 @@
 export interface UserFromDB {
   _id: string;
   fullName: string,
-  username: string;
   email: string;
   phoneNumber?: string;
   created_at: Date;
@@ -9,13 +8,12 @@ export interface UserFromDB {
 }
 
 export interface UserForLogin {
-  username: string,
+  email: string;
   password: string,
 }
 
 export interface UserForRegister {
   fullName: string,
-  username: string;
   email: string;
   phoneNumber?: string;  
 }
