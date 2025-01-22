@@ -6,7 +6,7 @@ import { AuthenticateComponent } from "./authenticate/authenticate.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, AuthenticateComponent],
+  imports: [ RouterOutlet, NavbarComponent, AuthenticateComponent ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

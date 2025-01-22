@@ -1,1 +1,22 @@
-<p>catalog works!</p>
+<div class="category-wrapper">
+
+  @for (category of categories; track $index) {
+
+        <div class="category-card" (click)="activateCategory(category)">
+          <h3 class="category-name">{{ category | uppercase }}</h3>
+          <div class="line-break"></div>
+        </div>
+
+  }
+
+  @if (vehicles.length === 0) {
+    <h3 class="category-warning">No vehicles found!</h3>
+  }
+  
+</div>
+
+<div class="product-wrapper">
+  @for (vehicle of vehicles; track $index) {
+    <app-product-card [vehicle]="vehicle"/>
+  }
+</div>

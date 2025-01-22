@@ -1,0 +1,9 @@
+<div class="product-card-wrapper">
+  <h1>Name: {{ vehicle?.name }}</h1>  
+  <h2>Price: {{ vehicle?.pricePerDay }}</h2>  
+  <p>{{ vehicle?.available ? '✔️' : '❌' }}</p>
+  <p>{{ vehicle?.size }}</p>
+  <p>{{ vehicle?.category }}</p>
+
+  <button routerLink="/catalog/{{vehicle?._id}}">Rent Now</button>
+</div>
