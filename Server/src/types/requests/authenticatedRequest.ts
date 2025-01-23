@@ -4,7 +4,6 @@ export interface authenticatedRequest extends Request {
   isAuthenticated?: boolean;
   user?: {
     _id: string;
-    email: string;
     accessToken: string;
   };
 }

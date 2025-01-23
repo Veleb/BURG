@@ -10,8 +10,6 @@ export default async function authMiddleware (
   next: NextFunction
 ): Promise<void> {
 
-  
-
   const accessToken = req.cookies?.['auth'] as string;
   const refreshToken = req.cookies?.['refresh_token'] as string; 
   
@@ -32,7 +30,6 @@ export default async function authMiddleware (
 
       req.user = {
         _id: decodedToken._id,
-        email: decodedToken.email,
         accessToken,
       };
       
@@ -57,7 +54,6 @@ export default async function authMiddleware (
           
           req.user = { // Attach the user info to the request object
             _id: decodedRefreshToken._id,
-            email: decodedRefreshToken.email,
             accessToken: newAccessToken,
           };
 
@@ -109,7 +105,6 @@ export default async function authMiddleware (
 
       req.user = { // Attach the user info to the request object
         _id: decodedRefreshToken._id,
-        email: decodedRefreshToken.email,
         accessToken: newAccessToken,
       };
 

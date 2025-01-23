@@ -4,7 +4,6 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
 import { ToastrService } from 'ngx-toastr';
 
-
 @Component({
   selector: 'app-login',
   standalone: true,
