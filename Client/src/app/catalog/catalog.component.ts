@@ -4,11 +4,12 @@ import { VehicleService } from './vehicle.service';
 import { VehicleInterface } from '../../types/vehicle-types';
 import { environment } from '../../environments/environment';
 import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
+import { ReserverComponent } from "../reserver/reserver.component";
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [ ProductCardComponent, UppercasePipe ],
+  imports: [ProductCardComponent, UppercasePipe, ReserverComponent],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.css'
 })
@@ -25,6 +26,10 @@ export class CatalogComponent implements OnInit {
     this.vehicleService.vehicles$.subscribe((vehicles) => {
       this.vehicles = vehicles;
       this.allVehicles = vehicles;
+    });
+
+    this.vehicleService.availableVehicles$.subscribe((availableVehicles) => {
+      this.vehicles = availableVehicles; 
     });
   }
 

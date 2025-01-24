@@ -5,10 +5,11 @@ export interface VehicleInterface {
   name: string;
   model: string;
   capacity: number;
-  company: CompanyInterface; // TODO: CHANGE THIS TO COMPANY INTERFACE
+  company: CompanyInterface;
   size: Size,
   category: Category,
   images: string[],
+  reserved: string[],
   pricePerDay: number,
   available: boolean
 

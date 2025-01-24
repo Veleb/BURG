@@ -40,4 +40,30 @@ vehicleController.get('/:vehicleId', async (req: Request, res: Response, next: N
   }
 })
 
+vehicleController.post('/available', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+    const { start, end, vehicleId } = req.body;
+
+    if (!start || !end || !vehicleId) {
+      res.status(400).json({ message: 'Start date, end date, and vehicle ID are required' });
+      return; 
+    }
+
+    const startDate = new Date(start);  
+    const endDate = new Date(end);
+
+    const isAvailable = await vehicleService.checkAvailability(vehicleId, startDate, endDate);
+
+    if (isAvailable) {
+      res.status(200).json({ message: 'Vehicle is available' });
+    } else {
+      res.status(400).json({ message: 'Vehicle is not available during the selected period' });
+    }
+    
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default vehicleController;

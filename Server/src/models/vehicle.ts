@@ -1,18 +1,24 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { Size, Category } from "../types/model-types/enums"; 
 import { VehicleInterface } from "../types/model-types/vehicle-types";
+import { RentInterface } from "../types/model-types/rent-types";  // Import RentInterface
 
 const VehicleSchema = new Schema<VehicleInterface>({
-
   name: { type: String, required: true },
   model: { type: String, required: true },
   capacity: { type: Number, required: true },
 
   company: { 
-    type: Schema.Types.ObjectId, 
+    type: Types.ObjectId, 
     ref: 'Company', 
     required: true 
   },
+
+  reserved: [{
+    type: Types.ObjectId, 
+    ref: 'Rent', 
+    required: true 
+  }],
 
   size: { 
     type: String, 

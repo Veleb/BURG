@@ -1,0 +1,25 @@
+@import "flatpickr/dist/flatpickr.min.css";
+
+.datepicker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.date-input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 2px solid black;
+  min-width: min-content;
+  height: 35px;
+}
+
+.search-button {
+  padding: 6px;
+  border-radius: 10px;
+  border: none;
+  width: 150px;
+  height: 45px;
+  font-size: 24px;
+  font-weight: 700;
+}
