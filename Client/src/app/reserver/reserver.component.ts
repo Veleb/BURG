@@ -1,9 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject  } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
 import { VehicleService } from '../catalog/vehicle.service';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-reserver',
@@ -21,10 +20,12 @@ export class ReserverComponent implements AfterViewInit {
   pickUpInstance: Instance | null = null;
   dropOffInstance: Instance | null = null;
 
-  constructor(private vehicleService: VehicleService, private router: Router, private toastr: ToastrService) {}
+  constructor(private vehicleService: VehicleService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngAfterViewInit(): void {
-    this.initializeFlatpickr();
+    if (isPlatformBrowser(this.platformId)) {
+      this.initializeFlatpickr();
+    }
   }
 
   initializeFlatpickr(): void {
