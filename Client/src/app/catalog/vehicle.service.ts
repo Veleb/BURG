@@ -65,6 +65,7 @@ export class VehicleService {
   }
 
   updateAvailableVehicles(startDate: Date, endDate: Date): void {
+    
     this.checkAllVehiclesAvailability(startDate, endDate).subscribe({
       next: (availableVehicles) => {
         this.availableVehicles$$.next(availableVehicles);

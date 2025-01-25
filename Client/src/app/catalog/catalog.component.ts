@@ -4,15 +4,16 @@ import { VehicleService } from './vehicle.service';
 import { VehicleInterface } from '../../types/vehicle-types';
 import { environment } from '../../environments/environment';
 import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
-import { ReserverComponent } from "../reserver/reserver.component";
+import { DatepickerComponent } from "../datepicker/datepicker.component";
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [ProductCardComponent, UppercasePipe, ReserverComponent],
+  imports: [ProductCardComponent, UppercasePipe, DatepickerComponent],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.css'
 })
+
 export class CatalogComponent implements OnInit {
 
   vehicles: VehicleInterface[] = [];

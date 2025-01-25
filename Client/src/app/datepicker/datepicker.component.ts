@@ -1,17 +1,20 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject  } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject, Input  } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
 import { VehicleService } from '../catalog/vehicle.service';
+import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
 
 @Component({
-  selector: 'app-reserver',
+  selector: 'app-datepicker',
   standalone: true,
-  imports: [],
-  templateUrl: './reserver.component.html',
-  styleUrl: './reserver.component.css',
+  imports: [ UppercasePipe ],
+  templateUrl: './datepicker.component.html',
+  styleUrl: './datepicker.component.css',
 })
-export class ReserverComponent implements AfterViewInit {
+export class DatepickerComponent implements AfterViewInit {
+  @Input() functionality!: string
+
   @ViewChild('datepicker') datepicker!: ElementRef;
   @ViewChild('pickUpTime') pickUp!: ElementRef;
   @ViewChild('dropOffTime') dropOff!: ElementRef;
@@ -50,6 +53,14 @@ export class ReserverComponent implements AfterViewInit {
     });
   }
 
+  invokeFunctionality(): void {
+    if (this.functionality && typeof (this as any)[this.functionality] === 'function') {
+      ((this as any)[this.functionality] as Function).call(this);
+    } else {
+      console.error(`Function "${this.functionality}" not found or not callable.`);
+    }
+  }
+
   search(): void {
     const dateRange = this.datepickerInstance?.selectedDates;
     const pickUpTime = this.pickUpInstance?.selectedDates[0];
@@ -64,6 +75,12 @@ export class ReserverComponent implements AfterViewInit {
 
     }
   }
+
+  rent(): void {
+    // TODO: MAKE LOGIC FOR RENT WITH VALIDATION!
+  }
+
+
 
   formatDateTime(date: Date, time: Date): Date {
     return new Date(

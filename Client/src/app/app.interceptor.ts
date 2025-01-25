@@ -35,7 +35,7 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
         errorMessage = err.error?.message || 'An unexpected error occurred';
       }
 
-      toastr.error(errorMessage, 'Error');
+      toastr.error(errorMessage, 'Error Occurred');
       return throwError(() => err);
     })
   );

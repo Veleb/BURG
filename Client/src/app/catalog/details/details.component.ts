@@ -3,11 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { VehicleService } from '../vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
 import { DetailsCardComponent } from './details-card/details-card.component';
+import { DatepickerComponent } from "../../datepicker/datepicker.component";
 
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [DetailsCardComponent],
+  imports: [DetailsCardComponent, DatepickerComponent],
   templateUrl: './details.component.html',
   styleUrl: './details.component.css'
 })
