@@ -2,5 +2,6 @@
   "cSpell.words": [
     "jwtp",
     "toastr"
-  ]
+  ],
+  "git.ignoreLimitWarning": true
 }

@@ -12,11 +12,11 @@ const setAuthTokens = (res: Response, accessToken: string, refreshToken: string)
   });
 
   res.cookie('refresh_token', refreshToken, {
-      httpOnly: true, 
-      secure: isProd, 
-      sameSite: sameSitePolicy, 
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+    httpOnly: true, 
+    secure: isProd, 
+    sameSite: sameSitePolicy, 
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
     
 };
 

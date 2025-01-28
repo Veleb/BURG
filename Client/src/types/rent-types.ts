@@ -7,9 +7,3 @@ export interface RentInterface {
   vehicle: VehicleInterface[],
   user: UserFromDB,
 }
-
-export interface RentInterfaceWithoutUser {
-  start: Date,
-  end: Date,
-  vehicle: VehicleInterface[],
-}

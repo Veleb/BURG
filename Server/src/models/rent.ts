@@ -19,6 +19,13 @@ const RentSchema = new Schema<RentInterface>({
     required: true,
   }],
 
+
+  user: {
+    type: Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 const RentModel = model('Rent', RentSchema, 'rents');

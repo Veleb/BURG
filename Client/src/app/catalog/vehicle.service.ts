@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
 import { VehicleInterface } from '../../types/vehicle-types';
+import { RentInterface } from '../../types/rent-types';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class VehicleService {
     return this.http.post<boolean>(`/api/vehicles/available`, {
       start: startDate.toISOString(),
       end: endDate.toISOString(),
-      vehicleId: vehicleId,
+      vehicle: vehicleId,
     }).pipe(
       catchError(() => of(false))
     );
@@ -74,5 +75,13 @@ export class VehicleService {
         console.error('Error updating available vehicles', err);
       }
     });
+  }
+
+  rentVehicle(vehicleId: string, startDate: Date, endDate: Date): Observable<RentInterface> {
+    return this.http.post<RentInterface>(`/api/rents`, {
+      start: startDate.toISOString(),
+      end: endDate.toISOString(),
+      vehicle: vehicleId,
+    })
   }
 }

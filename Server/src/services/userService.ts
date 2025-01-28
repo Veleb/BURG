@@ -28,7 +28,7 @@ async function createUser(user: UserForAuth): Promise<UserFromDB> { // create ne
 
   const newUser = await UserModel.create(user);
 
-  return newUser as UserFromDB;
+  return newUser.toObject() as UserFromDB;
 }
 
 async function loginUser({ email, password }: userForLogin): Promise<payloadTokens> {
@@ -36,7 +36,7 @@ async function loginUser({ email, password }: userForLogin): Promise<payloadToke
       throw new Error("Email and password are required!");
   }
 
-  const existingUser = await UserModel.findOne({ email });
+  const existingUser = await UserModel.findOne({ email }).lean();
   if (!existingUser) {
       throw new Error("Invalid email or password");
   }
@@ -57,7 +57,7 @@ async function registerUser(user: UserForAuth): Promise<payloadTokens> {
   return generateTokens(newUser); // Generate and return both tokens
 }
 
-const logoutUser = (req: authenticatedRequest, res: Response) => {
+const logoutUser = (res: Response) => {
   res.clearCookie('auth'); // Clear access token
   res.clearCookie('refresh_token'); // Clear refresh token
   res.status(200).json({ message: "Logged out successfully" });

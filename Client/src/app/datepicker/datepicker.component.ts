@@ -4,6 +4,7 @@ import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
 import { VehicleService } from '../catalog/vehicle.service';
 import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-datepicker',
@@ -13,7 +14,7 @@ import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
   styleUrl: './datepicker.component.css',
 })
 export class DatepickerComponent implements AfterViewInit {
-  @Input() functionality!: string
+  @Input() functionality!: [string, string | null | undefined];
 
   @ViewChild('datepicker') datepicker!: ElementRef;
   @ViewChild('pickUpTime') pickUp!: ElementRef;
@@ -23,7 +24,7 @@ export class DatepickerComponent implements AfterViewInit {
   pickUpInstance: Instance | null = null;
   dropOffInstance: Instance | null = null;
 
-  constructor(private vehicleService: VehicleService, @Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(private vehicleService: VehicleService, @Inject(PLATFORM_ID) private platformId: Object, private toastr: ToastrService) {}
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -53,13 +54,16 @@ export class DatepickerComponent implements AfterViewInit {
     });
   }
 
-  invokeFunctionality(): void {
-    if (this.functionality && typeof (this as any)[this.functionality] === 'function') {
-      ((this as any)[this.functionality] as Function).call(this);
+  invokeFunctionality(...args: any[]): void {
+    if (this.functionality && typeof (this as any)[this.functionality[0]] === 'function') {
+      const methodName = this.functionality[0];
+      const methodArgs = [this.functionality[1], ...args];
+      ((this as any)[methodName] as Function).apply(this, methodArgs);
     } else {
-      console.error(`Function "${this.functionality}" not found or not callable.`);
+      console.error(`Function "${this.functionality[0]}" not found or not callable.`);
     }
   }
+  
 
   search(): void {
     const dateRange = this.datepickerInstance?.selectedDates;
@@ -76,11 +80,27 @@ export class DatepickerComponent implements AfterViewInit {
     }
   }
 
-  rent(): void {
-    // TODO: MAKE LOGIC FOR RENT WITH VALIDATION!
+  rent(vehicleId: string): void {
+    const dateRange = this.datepickerInstance?.selectedDates;
+    const pickUpTime = this.pickUpInstance?.selectedDates[0];
+    const dropOffTime = this.dropOffInstance?.selectedDates[0];
+  
+    if (dateRange && pickUpTime && dropOffTime) {
+      const [startDate, endDate] = dateRange;
+      const startDateTime = this.formatDateTime(startDate, pickUpTime);
+      const endDateTime = this.formatDateTime(endDate, dropOffTime);
+  
+      this.vehicleService.rentVehicle(vehicleId, startDateTime, endDateTime).subscribe({
+        next: () => {
+          // TODO: NAVIGATE TO THE STRIPE CHECKOUT PAGE WITH THE RENT DETAILS
+          this.toastr.success('Successful rent', `Success`);
+        },
+        error: (err) => {
+          this.toastr.error('Error renting vehicle', `Error Occurred!`);
+        }
+      });
+    }
   }
-
-
 
   formatDateTime(date: Date, time: Date): Date {
     return new Date(

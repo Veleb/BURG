@@ -9,7 +9,7 @@ const userController = Router();
 userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId: string | undefined = (req as authenticatedRequest).user?._id;
-
+        
         if (!userId) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
@@ -75,7 +75,7 @@ userController.post('/login', async (req: Request, res: Response, next: NextFunc
 
 userController.post('/logout', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        userService.logoutUser(req as authenticatedRequest, res); // logout user
+        userService.logoutUser(res); // logout user
         res.status(200).json({ message: 'Logged out successfully' });
         return;
     } catch (error) {

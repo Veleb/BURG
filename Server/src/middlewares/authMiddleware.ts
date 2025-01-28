@@ -12,7 +12,6 @@ export default async function authMiddleware (
 
   const accessToken = req.cookies?.['auth'] as string;
   const refreshToken = req.cookies?.['refresh_token'] as string; 
-  
 
   // Case when no access token and no refresh token are provided
   if (!accessToken && !refreshToken) {
@@ -43,9 +42,8 @@ export default async function authMiddleware (
           
           const decodedRefreshToken = await jwtp.verify(refreshToken, JWT_SECRET) as any;
 
-          
           const newAccessToken = await jwtp.sign( // Issue a new access token using the refresh token
-            { _id: decodedRefreshToken._id, email: decodedRefreshToken.email },
+            { _id: decodedRefreshToken._id },
             JWT_SECRET,
             { expiresIn: '2h' }
           );
@@ -95,7 +93,7 @@ export default async function authMiddleware (
       
 
       const newAccessToken = await jwtp.sign( // Issue a new access token using the refresh token
-        { _id: decodedRefreshToken._id, email: decodedRefreshToken.email },
+        { _id: decodedRefreshToken._id },
         JWT_SECRET,
         { expiresIn: '2h' }
       );
