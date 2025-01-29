@@ -1,0 +1,23 @@
+<div class="details-wrapper">
+
+  <app-details-card [vehicle]="vehicle"/>
+
+  <div class="slider-wrapper">
+    <app-slider (pricePerDayChanged)="onPricePerDayChanged($event)" />
+  
+    @if (!isPricePerDay) {
+      <input 
+        type="number" 
+        placeholder="KILOMETERS" 
+        (input)="onKilometersInput($event)" 
+      >
+    }
+  </div>
+  
+  <app-datepicker 
+    [isPricePerDay]="isPricePerDay" 
+    [functionality]="['rent', vehicle?._id]"
+    [kilometers]="kilometers"
+  ></app-datepicker>
+
+</div>

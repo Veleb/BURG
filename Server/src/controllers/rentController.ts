@@ -10,9 +10,6 @@ const rentController = Router();
 rentController.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId: string | undefined = (req as authenticatedRequest).user?._id;
-    
-    console.log(userId);
-    
 
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized' });
@@ -46,6 +43,26 @@ rentController.post('/', async (req: Request, res: Response, next: NextFunction)
   } catch (error) {
     next(error);
   }
+});
+
+rentController.get('/:rentId', async (req: Request, res: Response, next: NextFunction) => {
+  
+  try {
+
+    const rentId: string = req.params.rentId;
+
+    if (!rentId) {
+      res.status(400).json({ message: 'No rent ID provided.' });
+    }
+
+    const rent = await rentService.getRentById(rentId);
+
+    res.status(200).json(rent);
+
+  } catch (error) {
+    next(error);
+  }
+
 });
 
 export default rentController;

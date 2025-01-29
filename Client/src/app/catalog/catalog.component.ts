@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductCardComponent } from './product-card/product-card.component';
-import { VehicleService } from './vehicle.service';
+import { ProductCardComponent } from '../vehicle/product-card/product-card.component';
+import { VehicleService } from '../vehicle/vehicle.service';
 import { VehicleInterface } from '../../types/vehicle-types';
 import { environment } from '../../environments/environment';
 import { UppercasePipe } from '../shared/pipes/uppercase.pipe';

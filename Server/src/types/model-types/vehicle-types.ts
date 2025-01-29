@@ -6,12 +6,13 @@ export interface VehicleInterface {
   model: string;
   capacity: number;
   company: CompanyInterface;
-  size: Size,
-  category: Category,
-  images: string[],
-  reserved: string[],
-  pricePerDay: number,
-  available: boolean
+  size: Size;
+  category: Category;
+  images: string[];
+  reserved: string[];
+  pricePerDay: number;
+  pricePerKm: number;
+  available: boolean;
 
   _id: string;
   created_at: Date;

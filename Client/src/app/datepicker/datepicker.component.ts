@@ -2,9 +2,12 @@ import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject, I
 import { isPlatformBrowser } from '@angular/common';
 import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
-import { VehicleService } from '../catalog/vehicle.service';
+import { VehicleService } from '../vehicle/vehicle.service';
 import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
 import { ToastrService } from 'ngx-toastr';
+import { loadStripe } from '@stripe/stripe-js';
+import { environment } from '../../environments/environment';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-datepicker',
@@ -15,7 +18,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DatepickerComponent implements AfterViewInit {
   @Input() functionality!: [string, string | null | undefined];
+  @Input() isPricePerDay: boolean = true;
+  @Input() kilometers?: number; 
 
+  
   @ViewChild('datepicker') datepicker!: ElementRef;
   @ViewChild('pickUpTime') pickUp!: ElementRef;
   @ViewChild('dropOffTime') dropOff!: ElementRef;
@@ -54,6 +60,15 @@ export class DatepickerComponent implements AfterViewInit {
     });
   }
 
+  async redirectToStripe(sessionId: string): Promise<void> {
+    const stripe = await loadStripe(environment.publishable_key);
+
+    if (stripe) {
+      await stripe.redirectToCheckout({ sessionId });
+    }
+
+  }
+
   invokeFunctionality(...args: any[]): void {
     if (this.functionality && typeof (this as any)[this.functionality[0]] === 'function') {
       const methodName = this.functionality[0];
@@ -89,16 +104,28 @@ export class DatepickerComponent implements AfterViewInit {
       const [startDate, endDate] = dateRange;
       const startDateTime = this.formatDateTime(startDate, pickUpTime);
       const endDateTime = this.formatDateTime(endDate, dropOffTime);
+
+      const rentalType = this.isPricePerDay ? 'perDay' : 'perKm';
+      const kmDriven = this.isPricePerDay ? undefined : this.kilometers;
   
-      this.vehicleService.rentVehicle(vehicleId, startDateTime, endDateTime).subscribe({
-        next: () => {
-          // TODO: NAVIGATE TO THE STRIPE CHECKOUT PAGE WITH THE RENT DETAILS
-          this.toastr.success('Successful rent', `Success`);
-        },
-        error: (err) => {
-          this.toastr.error('Error renting vehicle', `Error Occurred!`);
-        }
-      });
+      this.vehicleService.rentVehicle(vehicleId, startDateTime, endDateTime)
+        .pipe(
+          switchMap(rentData => 
+            this.vehicleService.createCheckoutSession(
+              rentData._id, 
+              rentalType, 
+              kmDriven
+            )
+          )
+        )
+        .subscribe({
+          next: (session) => {
+            this.redirectToStripe(session.sessionId);
+          },
+          error: () => {
+            this.toastr.error('Error initiating payment', 'Payment Error');
+          }
+        });
     }
   }
 

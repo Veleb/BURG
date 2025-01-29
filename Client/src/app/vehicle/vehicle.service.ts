@@ -84,4 +84,17 @@ export class VehicleService {
       vehicle: vehicleId,
     })
   }
+
+  createCheckoutSession(rentId: string, rentalType: string, kmDriven?: number): Observable<{ sessionId: string }> {
+    return this.http.post<{ sessionId: string }>('/api/stripe/create-checkout-session', {
+      rentId,
+      rentalType,
+      kmDriven
+    });
+  }
+  
+  verifyPayment(sessionId: string): Observable<any> {
+    return this.http.post('/api/stripe/verify-payment', { sessionId });
+  }
+  
 }

@@ -1,0 +1,10 @@
+<div class="toggle-container">
+  <label class="switch">
+    <input type="checkbox" (change)="onToggleChange()" [checked]="isPricePerDay()">
+    <span class="slider">
+      <span class="icon sun" [class.active]="isPricePerDay()" ><i class="fas fa-sun"></i></span>
+      <span class="icon km" [class.active]="!isPricePerDay()" >KM</span>
+    </span>
+  </label>
+  <span>{{isPricePerDay() ? 'Price per Day' : 'Price per KM'}}</span>
+</div>

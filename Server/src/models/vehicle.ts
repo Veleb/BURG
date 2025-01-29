@@ -1,7 +1,6 @@
 import { Schema, model, Types } from "mongoose";
 import { Size, Category } from "../types/model-types/enums"; 
 import { VehicleInterface } from "../types/model-types/vehicle-types";
-import { RentInterface } from "../types/model-types/rent-types";  // Import RentInterface
 
 const VehicleSchema = new Schema<VehicleInterface>({
   name: { type: String, required: true },
@@ -34,6 +33,7 @@ const VehicleSchema = new Schema<VehicleInterface>({
 
   images: { type: [String], required: true },
   pricePerDay: { type: Number, required: true },
+  pricePerKm: { type: Number, required: true },
   available: { type: Boolean, required: true },
 
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
