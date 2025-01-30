@@ -21,7 +21,7 @@
         </li>
       </ul>
 
-      @if (isLogged) {
+      @if (isLoggedIn$ | async) {
         <i routerLink="/profile" class="fa-solid fa-user desktop-user-icon"></i>
       } @else {
         <button routerLink="/login" class="login-button">Login</button>
@@ -33,7 +33,7 @@
       <div click="toggleMenu()" [class]="isAnimating ? 'hamburger-menu rotate' : 'hamburger-menu'">
         <i class="fa-solid fa-bars"></i>
       </div>
-      <i routerLink="{{isLogged ? '/profile' : '/login'}}" class="fa-solid fa-user user-icon"></i>
+      <i routerLink="{{ (isLoggedIn$ | async) ? '/profile' : '/login'}}" class="fa-solid fa-user user-icon"></i>
     </div>
   </div>
 </nav>

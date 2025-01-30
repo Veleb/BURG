@@ -9,6 +9,8 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { DetailsComponent } from './vehicle/details/details.component';
 import { PaymentSuccessComponent } from './payments/payment-success/payment-success.component';
 import { PaymentCancelComponent } from './payments/payment-cancel/payment-cancel.component';
+import { authGuard } from './guards/auth.guard';
+import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -16,9 +18,9 @@ export const routes: Routes = [
   { path: "home", component: HomeComponent }, 
   { path: "contact", component: ContactComponent },
   
-  { path: "login", component: LoginComponent },
-  { path: "register", component: RegisterComponent },
-  { path: "profile", component: ProfileComponent },
+  { path: "login", component: LoginComponent, canActivate: [ guestGuard ] },
+  { path: "register", component: RegisterComponent, canActivate: [ guestGuard ] },
+  { path: "profile", component: ProfileComponent, canActivate: [ authGuard ] },
 
   { path: "catalog", children: [
     { path: "", component: CatalogComponent },

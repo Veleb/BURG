@@ -10,7 +10,7 @@ const app = express();
 expressConfig(app);
 mongooseInit();
 
-const port = process.env.PORT || 3030;
+const port = (process.env.PROD === "true" ? process.env.PORT : 3030);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
