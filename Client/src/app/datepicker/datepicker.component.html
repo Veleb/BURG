@@ -1,7 +1,6 @@
 <div class="datepicker-wrapper">
-  <input type="text" class="date-input" #datepicker>
-  <input type="text" class="date-input" #pickUpTime>
-  <input type="text" class="date-input" #dropOffTime>
+  <input type="text" class="date-input" placeholder="start date" #startDate>
+  <input type="text" class="date-input" placeholder="end date" #endDate>
 
   <button class="search-button" (click)="invokeFunctionality()">{{ functionality[0] | uppercase }}</button>
 </div>

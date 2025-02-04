@@ -97,4 +97,8 @@ export class VehicleService {
     return this.http.post('/api/stripe/verify-payment', { sessionId });
   }
   
+  getUnavailableDates(vehicleId: string): Observable<RentInterface[]> {
+    return this.http.get<RentInterface[]>(`/api/rents/${vehicleId}/unavailable-dates`);
+  }
+
 }

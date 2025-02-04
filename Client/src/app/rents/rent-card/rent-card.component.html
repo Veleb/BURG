@@ -1,0 +1,6 @@
+<div class="rent-card-wrapper">
+  <p class="start-date"> Start: {{ rent?.start | date }} </p>
+  <p class="end-date">End {{ rent?.end | date }} </p>
+  <p class="status">Status: {{ rent?.status }} </p>
+  <h3 class="vehicle-name" routerLink="/catalog/{{ vehicle?._id }}">Vehicle: {{ vehicle?.name }} </h3>
+</div>

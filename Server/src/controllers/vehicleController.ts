@@ -56,9 +56,9 @@ vehicleController.post('/available', async (req: Request, res: Response, next: N
     const isAvailable = await vehicleService.checkAvailability(vehicle, startDate, endDate);
 
     if (isAvailable) {
-      res.status(200).json({ message: 'Vehicle is available' });
+      res.status(200).json(true);
     } else {
-      res.status(400).json({ message: 'Vehicle is not available during the selected period' });
+      res.status(200).json(false);
     }
     
   } catch (err) {

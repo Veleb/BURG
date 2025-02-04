@@ -1,3 +1,16 @@
 <h1>{{ user?.fullName }}</h1>
 
+<div class="rents-wrapper">
+  <h2>Rent history</h2>
+  @if (user && user.rents && user.rents.length > 0) {
+
+    @for (rent of user.rents; track $index) {
+      <app-rent-card [rentId]="rent"/>
+    }
+
+  } @else {
+    <h3>No rent history!</h3>
+  }
+</div>
+
 <button (click)="logout()">Logout</button>

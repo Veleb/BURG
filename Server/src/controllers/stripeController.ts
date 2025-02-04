@@ -8,66 +8,90 @@ const FRONT_END = process.env.PROD === 'true' ? process.env.FRONT_END_PROD : pro
 
 stripeController.post('/create-checkout-session', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    
     const rentId: string = req.body.rentId;
     const rentalType: string = req.body.rentalType;
     const kmDriven: number | null = req.body?.kmDriven;
 
     if (!rentId || !rentalType) {
       res.status(400).json({ message: 'Missing rentId or rentalType in request body' });
-      return;
+      return; 
     }
 
     if (rentalType !== 'perDay' && rentalType !== 'perKm') {
       res.status(400).json({ message: 'Invalid rental type. Must be "perDay" or "perKm"' });
-      return;
+      return; 
     }
+
     if (rentalType === 'perKm' && (kmDriven === null || typeof kmDriven !== 'number' || kmDriven <= 0)) {
       res.status(400).json({ message: 'Invalid or missing kmDriven value for perKm rental type' });
-      return;
+      return; 
     }
 
     const rent = await rentService.getRentById(rentId);
 
-    if (!rent || !rent.vehicle || rent.vehicle.length === 0) {
-      res.status(400).json({ message: 'Invalid rent data or no vehicles found' });
-      return;
+    if (!rent || !rent.vehicle) {
+      res.status(400).json({ message: 'Invalid rent data or no vehicle found' });
+      return; 
     }
 
     const userEmail: string = rent.user.email;
     const startDate: Date = new Date(rent.start);
     const endDate: Date = new Date(rent.end);
-    const durationInDays: number = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
 
-    const lineItems = rent.vehicle.map(vehicle => {
-      let totalAmount;
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      res.status(400).json({ message: 'Invalid start or end date' });
+      return; 
+    }
 
-      if (rentalType === 'perDay') {
-        totalAmount = vehicle.pricePerDay * durationInDays * 100;
-      } else if (rentalType === 'perKm' && kmDriven) {
-        totalAmount = vehicle.pricePerKm * kmDriven * 100;
-      } else {
-        throw new Error('Invalid rental type or missing km value');
-      }
+    if (startDate >= endDate) {
+      res.status(400).json({ message: 'Start date must be before end date' });
+      return; 
+    }
 
-      return {
+    let totalAmount: string;
+
+    if (rentalType === 'perDay') {
+      const durationInHours: number = (endDate.getTime() - startDate.getTime()) / (1000 * 3600);
+      const pricePerHour = rent.vehicle.pricePerDay / 24;
+
+      const total = pricePerHour * durationInHours;
+      const totalWithTax = total * 1.18; 
+      const totalCeiled = Math.ceil(totalWithTax); 
+      totalAmount = (totalCeiled * 100).toFixed(2); 
+
+
+    } else if (rentalType === 'perKm' && kmDriven) {
+      const total = rent.vehicle.pricePerKm * kmDriven;
+      const totalCeiled = Math.ceil(total * 1.18);
+      totalAmount = (totalCeiled * 100).toFixed(2);
+
+    } else {
+      res.status(400).json({ message: 'Invalid rental type or missing km value' });
+      return;
+    }
+
+    const lineItems = [
+      {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `${vehicle.name} ${vehicle.model}`,
-            description: vehicle.category,
+            name: `${rent.vehicle.name} ${rent.vehicle.model}`,
+            description: rent.vehicle.category,
           },
-          unit_amount: totalAmount,
+          unit_amount: Number(totalAmount),
         },
         quantity: 1,
-      };
-    });
+      },
+    ];
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${FRONT_END}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${FRONT_END}/cancel`,
+      success_url: `${FRONT_END}/success?session_id={{CHECKOUT_SESSION_ID}}`,
+      cancel_url: `${FRONT_END}/cancel?rentId=${rentId}`,
+      client_reference_id: rentId,
       customer_email: userEmail,
     });
 
@@ -81,12 +105,33 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
 stripeController.post('/verify-payment', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
-
     res.status(200).json({ status: session.payment_status });
-
   } catch (error) {
     next(error);
   }
+});
+
+stripeController.post('/webhook', async (req: Request, res: Response, next: NextFunction) => {
+  const sig = req.headers['stripe-signature'] as string;
+  const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
+
+  let event: Stripe.Event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET);
+  } catch (err) {
+    next(err);
+    return;
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const rentId = session.client_reference_id;
+
+    await rentService.changeRentStatus(rentId as string, 'confirmed');
+  }
+
+  res.json({ received: true });
 });
 
 export default stripeController;

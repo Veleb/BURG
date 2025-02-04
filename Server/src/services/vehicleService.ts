@@ -19,21 +19,23 @@ async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
 }
 
 async function checkAvailability(vehicleId: string, startDate: Date, endDate: Date): Promise<boolean> {
+
   if (startDate >= endDate) {
     return false;
   }
+  
   const existingReservation = await RentModel.findOne({
-    vehicle: vehicleId,
-    $or: [
-      { start: { $lt: endDate }, end: { $gt: startDate } },
-      { start: { $gte: startDate, $lt: endDate } },
-      { end: { $gt: startDate, $lte: endDate } }
-    ],
+  vehicle: vehicleId,
+  status: { $in: ['confirmed', 'pending'] },
+  $or: [
+    { start: { $lt: endDate }, end: { $gt: startDate } },
+    { start: { $lte: startDate }, end: { $gte: endDate } }
+  ],
   }).lean();
+
   
   return !existingReservation;
 }
-
 
 const vehicleService = {
   getAllVehicles,

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject, Input  } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
@@ -7,30 +7,35 @@ import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { loadStripe } from '@stripe/stripe-js';
 import { environment } from '../../environments/environment';
-import { switchMap } from 'rxjs';
+import { switchMap } from 'rxjs/operators'; 
 
 @Component({
   selector: 'app-datepicker',
   standalone: true,
-  imports: [ UppercasePipe ],
+  imports: [UppercasePipe],
   templateUrl: './datepicker.component.html',
   styleUrl: './datepicker.component.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class DatepickerComponent implements AfterViewInit {
   @Input() functionality!: [string, string | null | undefined];
-  @Input() isPricePerDay: boolean = true;
-  @Input() kilometers?: number; 
+  @Input() isPricePerDay = true;
+  @Input() kilometers?: number;
+  @Input() vehicleId?: string;
 
-  
-  @ViewChild('datepicker') datepicker!: ElementRef;
-  @ViewChild('pickUpTime') pickUp!: ElementRef;
-  @ViewChild('dropOffTime') dropOff!: ElementRef;
+  @ViewChild('startDate') startDate!: ElementRef;
+  @ViewChild('endDate') endDate!: ElementRef;
 
-  datepickerInstance: Instance | null = null;
-  pickUpInstance: Instance | null = null;
-  dropOffInstance: Instance | null = null;
+  startDateInstance: Instance | null = null;
+  endDateInstance: Instance | null = null;
 
-  constructor(private vehicleService: VehicleService, @Inject(PLATFORM_ID) private platformId: Object, private toastr: ToastrService) {}
+  @Output() dateSelected = new EventEmitter<{ startDate: Date | null; endDate: Date | null }>();
+
+  constructor(
+    private vehicleService: VehicleService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private toastr: ToastrService
+  ) {}
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -38,104 +43,167 @@ export class DatepickerComponent implements AfterViewInit {
     }
   }
 
-  initializeFlatpickr(): void {
-    this.datepickerInstance = flatpickr(this.datepicker.nativeElement, {
-      mode: "range",
-      minDate: "today",
-      dateFormat: "Y-m-d",
-    });
+  private emitDates(): void {
+    const startDate = this.startDateInstance?.selectedDates[0] || null;
+    const endDate = this.endDateInstance?.selectedDates[0] || null;
+    this.dateSelected.emit({ startDate, endDate });
+  }
 
-    this.pickUpInstance = flatpickr(this.pickUp.nativeElement, {
+  private initializeFlatpickr(): void {
+    const commonConfig = {
+      dateFormat: 'd-m-Y H:i',
       enableTime: true,
-      noCalendar: true,
-      dateFormat: "H:i",
-      time_24hr: true
+      time_24hr: true,
+      minDate: new Date(),
+      onOpen: (selectedDates: Date[], dateStr: string, instance: Instance) => {
+        if (this.vehicleId) {
+          this.vehicleService.getUnavailableDates(this.vehicleId).subscribe({
+            next: (unavailableDates) => {
+              
+              const disableFunction = (date: Date) => {
+                const now = new Date();
+  
+                for (const rental of unavailableDates) {
+                  const start = new Date(rental.start);
+                  const end = new Date(rental.end);
+  
+                  if (date >= start && date <= end) {
+                    return true;
+                  }
+  
+                  if (date.toDateString() === start.toDateString()) {
+                    
+                    const disableFrom = new Date(start.getTime() - 30  * 60 * 1000); // change buffer time
+  
+                    if (date >= disableFrom && date <= end) {
+                      return true;
+                    }
+  
+                    if (now.toDateString() === start.toDateString() && now >= disableFrom) {
+                      return true;
+                    }
+                  }
+                }
+                return false;
+              };
+  
+              instance.set('disable', [disableFunction]);
+            },
+            error: (err) =>
+              console.error('Error fetching unavailable dates:', err),
+          });
+        }
+      },
+    };
+  
+    this.startDateInstance = flatpickr(this.startDate.nativeElement, {
+      ...commonConfig,
+      onChange: (selectedDates) => {
+        if (selectedDates[0]) {
+          this.endDateInstance?.set('minDate', selectedDates[0]);
+        }
+        this.emitDates();
+      },
     });
-
-    this.dropOffInstance = flatpickr(this.dropOff.nativeElement, {
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: "H:i",
-      time_24hr: true
+  
+    this.endDateInstance = flatpickr(this.endDate.nativeElement, {
+      ...commonConfig,
+      onChange: (selectedDates) => {
+        if (selectedDates[0]) {
+          this.startDateInstance?.set('maxDate', selectedDates[0]);
+        }
+        this.emitDates();
+      },
     });
   }
+  
 
   async redirectToStripe(sessionId: string): Promise<void> {
     const stripe = await loadStripe(environment.publishable_key);
-
-    if (stripe) {
-      await stripe.redirectToCheckout({ sessionId });
+    if (!stripe) {
+      this.toastr.error('Failed to initialize payment processor');
+      return;
     }
-
+    const { error } = await stripe.redirectToCheckout({ sessionId });
+    if (error) this.toastr.error(error.message || 'Payment processing failed');
   }
 
   invokeFunctionality(...args: any[]): void {
-    if (this.functionality && typeof (this as any)[this.functionality[0]] === 'function') {
-      const methodName = this.functionality[0];
-      const methodArgs = [this.functionality[1], ...args];
-      ((this as any)[methodName] as Function).apply(this, methodArgs);
-    } else {
-      console.error(`Function "${this.functionality[0]}" not found or not callable.`);
+    if (!this.functionality?.[0]) {
+      console.error('No functionality specified');
+      return;
     }
+    
+    const methodName = this.functionality[0];
+    const method = (this as any)[methodName];
+    
+    if (typeof method !== 'function') {
+      console.error(`Function "${methodName}" not found or not callable.`);
+      return;
+    }
+
+    const methodArgs = this.functionality[1] !== undefined ? [this.functionality[1], ...args] : args;
+    method.apply(this, methodArgs);
   }
-  
 
   search(): void {
-    const dateRange = this.datepickerInstance?.selectedDates;
-    const pickUpTime = this.pickUpInstance?.selectedDates[0];
-    const dropOffTime = this.dropOffInstance?.selectedDates[0];
- 
-    if (dateRange && pickUpTime && dropOffTime) {
-      const [startDate, endDate] = dateRange;
-      const startDateTime = this.formatDateTime(startDate, pickUpTime);
-      const endDateTime = this.formatDateTime(endDate, dropOffTime);
-    
-      this.vehicleService.updateAvailableVehicles(startDateTime, endDateTime);
+    const startDateTime = this.startDateInstance?.selectedDates[0];
+    const endDateTime = this.endDateInstance?.selectedDates[0];
 
+    if (!startDateTime || !endDateTime) {
+      this.toastr.error('Please select both start and end dates.');
+      return;
     }
+
+    const currentDate = new Date();
+    if (startDateTime < currentDate) {
+      this.toastr.error('Start date cannot be in the past.');
+      return;
+    }
+    if (endDateTime < currentDate) {
+      this.toastr.error('End date cannot be in the past.');
+      return;
+    }
+    if (startDateTime >= endDateTime) {
+      this.toastr.error('Start date must be before end date.');
+      return;
+    }
+
+    this.vehicleService.updateAvailableVehicles(startDateTime, endDateTime);
   }
 
   rent(vehicleId: string): void {
-    const dateRange = this.datepickerInstance?.selectedDates;
-    const pickUpTime = this.pickUpInstance?.selectedDates[0];
-    const dropOffTime = this.dropOffInstance?.selectedDates[0];
-  
-    if (dateRange && pickUpTime && dropOffTime) {
-      const [startDate, endDate] = dateRange;
-      const startDateTime = this.formatDateTime(startDate, pickUpTime);
-      const endDateTime = this.formatDateTime(endDate, dropOffTime);
+    const startDateTime = this.startDateInstance?.selectedDates[0];
+    const endDateTime = this.endDateInstance?.selectedDates[0];
 
-      const rentalType = this.isPricePerDay ? 'perDay' : 'perKm';
-      const kmDriven = this.isPricePerDay ? undefined : this.kilometers;
-  
-      this.vehicleService.rentVehicle(vehicleId, startDateTime, endDateTime)
-        .pipe(
-          switchMap(rentData => 
-            this.vehicleService.createCheckoutSession(
-              rentData._id, 
-              rentalType, 
-              kmDriven
-            )
-          )
-        )
-        .subscribe({
-          next: (session) => {
-            this.redirectToStripe(session.sessionId);
-          },
-          error: () => {
-            this.toastr.error('Error initiating payment', 'Payment Error');
-          }
-        });
+    if (!startDateTime || !endDateTime) {
+      this.toastr.error('Please select both start and end dates.');
+      return;
     }
-  }
 
-  formatDateTime(date: Date, time: Date): Date {
-    return new Date(
-      date.getFullYear(), 
-      date.getMonth(), 
-      date.getDate(), 
-      time.getHours(), 
-      time.getMinutes()
-    );
+    const currentDate = new Date();
+    if (startDateTime < currentDate || endDateTime < currentDate) {
+      this.toastr.error('Dates cannot be in the past.');
+      return;
+    }
+    if (startDateTime >= endDateTime) {
+      this.toastr.error('Start date must be before end date.');
+      return;
+    }
+
+    const rentalType = this.isPricePerDay ? 'perDay' : 'perKm';
+    const kmDriven = this.isPricePerDay ? undefined : this.kilometers;
+
+    this.vehicleService.rentVehicle(vehicleId, startDateTime, endDateTime)
+    .pipe(
+      switchMap(rentData => 
+        this.vehicleService.createCheckoutSession(rentData._id, rentalType, kmDriven)
+      )
+    )
+    .subscribe({
+      next: (session) => this.redirectToStripe(session.sessionId),
+      error: () => this.toastr.error('Error initiating payment')
+    });
+    
   }
 }

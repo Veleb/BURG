@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import { expressConfig } from './configs/expressConfig';
 import mongooseInit from './configs/mongooseConfig';
+import './tasks/rentsCleanupTask'; 
 
 const app = express();
 

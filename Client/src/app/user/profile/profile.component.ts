@@ -3,11 +3,12 @@ import { UserService } from '../user.service';
 import { UserFromDB } from '../../../types/user-types';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { RentCardComponent } from '../../rents/rent-card/rent-card.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [],
+  imports: [ RentCardComponent ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })

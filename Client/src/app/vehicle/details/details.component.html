@@ -9,15 +9,25 @@
       <input 
         type="number" 
         placeholder="KILOMETERS" 
-        (input)="onKilometersInput($event)" 
+        (input)="onKilometersInput($event)"
+        step="10" 
       >
     }
   </div>
   
+  @if (totalPrice !== null && totalPrice >= 0) {
+    <div class="price-summary">
+      <strong>Total Price (before tax):</strong> <h2>${{ totalPriceBeforeTax }}</h2>
+      <strong>Total Price (after tax):</strong> <h1>${{ totalPrice }}</h1>
+    </div>
+  }
+
   <app-datepicker 
     [isPricePerDay]="isPricePerDay" 
+    [vehicleId]="vehicle?._id"
     [functionality]="['rent', vehicle?._id]"
     [kilometers]="kilometers"
+    (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
   ></app-datepicker>
 
 </div>

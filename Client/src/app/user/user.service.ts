@@ -15,9 +15,8 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getProfile(): Observable<UserFromDB | null> {
-
     if (this.initialProfileLoaded) {
-      return this.user$.pipe(take(1)); 
+      return this.user$.pipe(take(1));
     }
 
     return this.http.get<UserFromDB>('/api/users/profile').pipe(
@@ -30,7 +29,7 @@ export class UserService {
         this.initialProfileLoaded = true;
         return of(null);
       }),
-      shareReplay(1)
+      shareReplay(1) 
     );
   }
 
@@ -63,7 +62,7 @@ export class UserService {
 
   get isLogged$(): Observable<boolean> {
     return this.user$.pipe(
-      map(user => !!user),
+      map(user => !!user), 
       distinctUntilChanged()
     );
   }
@@ -74,8 +73,8 @@ export class UserService {
 
   ensureAuthChecked(): Observable<boolean> {
     return this.getProfile().pipe(
-      map(() => true),
-      catchError(() => of(false))
+     map(() => true),
+     catchError(() => of(false))
     );
   }
 }

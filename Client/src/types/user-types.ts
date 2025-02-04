@@ -3,6 +3,7 @@ export interface UserFromDB {
   fullName: string,
   email: string;
   phoneNumber?: string;
+  rents: string[];
   created_at: Date;
   updated_at: Date;
 }

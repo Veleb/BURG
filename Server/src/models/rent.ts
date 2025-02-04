@@ -13,18 +13,22 @@ const RentSchema = new Schema<RentInterface>({
     required: true,
   },
 
-  vehicle: [{
+  vehicle: {
     type: Types.ObjectId,
     ref: "Vehicle",
     required: true,
-  }],
-
+  },
 
   user: {
     type: Types.ObjectId,
     ref: "User",
     required: true,
   },
+
+  status: {
+    type: String,
+    required: true
+  }
 
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

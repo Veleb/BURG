@@ -1,5 +1,6 @@
 import { CompanyInterface } from "./company-types";
 import { Category, Size } from "./enums";
+import { RentInterface } from "./rent-types";
 
 export interface VehicleInterface {
   name: string;
@@ -9,7 +10,7 @@ export interface VehicleInterface {
   size: Size;
   category: Category;
   images: string[];
-  reserved: string[];
+  reserved: string[] | RentInterface[];
   pricePerDay: number;
   pricePerKm: number;
   available: boolean;
