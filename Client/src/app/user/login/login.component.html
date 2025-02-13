@@ -14,7 +14,7 @@
           <label class="form-label" for="password">Password</label>
         </div>
 
-        <p class="msg register-msg" routerLink="/register" >Don't have an account yet?</p>
+        <p class="msg register-msg" routerLink="/auth/register" >Don't have an account yet?</p>
 
       <button  class="submit-button" type="submit" [disabled]="!userForm.valid">Log In</button>
     </form>
@@ -22,8 +22,8 @@
 
   <div class="sign-up-wrapper">
     <h1 class="header">Welcome to login</h1>
-    <p routerLink="/register" class="msg">Don't have an account?</p>
-    <button routerLink="/register" class="register-button">Register</button>
+    <p routerLink="/auth/register" class="msg">Don't have an account?</p>
+    <button routerLink="/auth/register" class="register-button">Register</button>
   </div>
 
   <img class="background-image" src="/images/dark-red-gradient.jpg" alt="An image of a dark red gradient">

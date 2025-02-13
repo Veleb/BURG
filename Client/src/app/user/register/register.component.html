@@ -73,7 +73,7 @@
         <label class="form-label" for="confirmPassword">Confirm Password</label>
       </div>
 
-      <p routerLink="/login" class="msg login-msg">Already have an account?</p>
+      <p routerLink="/auth/login" class="msg login-msg">Already have an account?</p>
 
       <button class="submit-button" type="submit" [disabled]="!userForm.valid">Register</button>
     </form>
@@ -81,7 +81,7 @@
 
   <div class="login-wrapper">
     <h1 class="header">Welcome to register</h1>
-    <p routerLink="/login" class="msg">Already have an account?</p>
-    <button routerLink="/login" class="login-button">Login</button>
+    <p routerLink="/auth/login" class="msg">Already have an account?</p>
+    <button routerLink="/auth/login" class="login-button">Login</button>
   </div>
 </div>

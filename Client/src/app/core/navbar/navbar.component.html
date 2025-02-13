@@ -14,7 +14,7 @@
         
       } @else {
         
-        <div routerLink="/login" class="login-link">
+        <div routerLink="/auth/login" class="login-link">
           <h4>Sign In</h4>
           <i class="fa-solid fa-angle-right"></i>
         </div>
@@ -30,26 +30,3 @@
 
   </div>
 </nav>
-
-<!-- 
-<ul [class]="isMenuOpen ? 'nav-list visible' : 'nav-list'">
-  <app-currency></app-currency>
-  
-  @if (isLoggedIn$ | async) {
-    <i routerLink="/profile" class="fa-solid fa-user desktop-user-icon"></i>
-  } @else {
-    <div class="login-wrapper">
-      <h4 routerLink="/login" class="login-link">Sign In</h4>
-      <i class="fa-solid fa-angle-right"></i>
-    </div>
-  }
-
-  <i class="fa-solid fa-bars"></i>
-</ul> -->
-
-<!-- <div class="icon-wrapper">
-  <div click="toggleMenu()" [class]="isAnimating ? 'hamburger-menu rotate' : 'hamburger-menu'">
-    <i class="fa-solid fa-bars"></i>
-  </div>
-  <i routerLink="{{ (isLoggedIn$ | async) ? '/profile' : '/login'}}" class="fa-solid fa-user user-icon"></i>
-</div> -->

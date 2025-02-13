@@ -9,7 +9,7 @@ export const routes: Routes = [
   { path: "contact", component: ContactComponent },
   
   { 
-    path: "",
+    path: "auth",
     loadChildren: () => import('./user/user.routes').then(m => m.USER_ROUTES)
   },
   
@@ -19,7 +19,7 @@ export const routes: Routes = [
   },
   
   {
-    path: "",
+    path: "payments",
     loadChildren: () => import('./payments/payment.routes').then(m => m.PAYMENT_ROUTES)
   },
   

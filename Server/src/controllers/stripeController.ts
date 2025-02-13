@@ -89,8 +89,8 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${FRONT_END}/success?session_id={{CHECKOUT_SESSION_ID}}`,
-      cancel_url: `${FRONT_END}/cancel?rentId=${rentId}`,
+      success_url: `${FRONT_END}/payments/success?session_id={{CHECKOUT_SESSION_ID}}`,
+      cancel_url: `${FRONT_END}/payments/cancel?rentId=${rentId}`,
       client_reference_id: rentId,
       customer_email: userEmail,
     });
