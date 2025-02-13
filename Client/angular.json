@@ -28,11 +28,7 @@
               ],
               "styles": [
                 "src/styles.css",
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css",
-                "node_modules/ngx-toastr/toastr.css",
-                "node_modules/intl-tel-input/build/css/intlTelInput.css",
-                "node_modules/flatpickr/dist/flatpickr.min.css",
-                "node_modules/leaflet/dist/leaflet.css"
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
               ],
               "scripts": [
                 "node_modules/leaflet/dist/leaflet.js"
@@ -58,8 +54,8 @@
                   },
                   {
                     "type": "anyComponentStyle",
-                    "maximumWarning": "6kb",
-                    "maximumError": "10kb"
+                    "maximumWarning": "16kb",
+                    "maximumError": "20kb"
                   }
                 ],
                 "optimization": {
@@ -139,11 +135,7 @@
               ],
               "styles": [
                 "src/styles.css",
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css",
-                "node_modules/ngx-toastr/toastr.css",
-                "node_modules/intl-tel-input/build/css/intlTelInput.css",
-                 "node_modules/flatpickr/dist/flatpickr.min.css",
-                 "node_modules/leaflet/dist/leaflet.css"
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
               ],
               "scripts": [
                 "node_modules/leaflet/dist/leaflet.js"

@@ -167,7 +167,6 @@ export class LocationPickerComponent implements OnDestroy {
   }
 
   private getCoordinatesFromQuery(query: string): void {
-    // Use limit=1 to get just the top result
     this.http.get<NominatimResponse[]>(
       `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=1`
     ).pipe(
@@ -179,7 +178,6 @@ export class LocationPickerComponent implements OnDestroy {
         const lon = parseFloat(result.lon);
         this.selectedLocation = { lat, lng: lon };
   
-        // If the map is available, update its view and add a marker
         if (this.map) {
           this.map.setView([lat, lon], 13);
           this.addMarker(lat, lon, result.display_name);
