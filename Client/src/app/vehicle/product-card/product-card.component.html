@@ -1,9 +1,70 @@
-<div class="product-card-wrapper">
-  <h1>Name: {{ vehicle?.name }}</h1>  
-  <h2>Price: ${{ vehicle?.pricePerDay }}</h2>  
-  <p>{{ vehicle?.available ? '✔️' : '❌' }}</p>
-  <p>{{ vehicle?.size }}</p>
-  <p>{{ vehicle?.category }}</p>
+<article class="product-card-wrapper">
+  <div class="image-wrapper">
+    <div class="icons-wrapper">
+      @if (vehicle?.available) {
+        <i class="fa-solid fa-circle-check available-icon-check"></i>
+      } @else {
+        <i class="fa-solid fa-circle-xmark available-icon-x"></i>
+      }
+      <i class="fa-regular fa-heart heart-icon"></i>
+    </div>
 
-  <button routerLink="/catalog/{{vehicle?._id}}">Rent Now</button>
-</div>
+    <img
+      [routerLink]="['/catalog/', vehicle?._id]"
+      [src]="vehicle!.images[currentIndex]"
+      class="vehicle-image"
+      alt="{{ vehicle?.name }}"
+    />
+
+    <div class="arrows-wrapper">
+      <button (click)="nextSlide()" aria-label="Next image" class="arrow-button left">
+        <i class="fa-solid fa-angle-left arrow"></i>
+      </button>
+      <button (click)="prevSlide()" aria-label="Previous image" class="arrow-button right">
+        <i class="fa-solid fa-angle-right arrow"></i>
+      </button>
+    </div>
+
+    <div class="dots-container">
+      @for (image of vehicle?.images; track $index) {
+        <span
+          class="dot"
+          [class.active]="currentIndex === $index"
+          (click)="goToSlide($index)"
+        ></span>
+      }
+    </div>
+  </div>
+
+  <div class="details-wrapper">
+    <div class="vehicle-details-upper">
+      <h4 class="vehicle-name">{{ vehicle?.name }}</h4>
+      <h4 class="vehicle-price">
+        {{ vehicle!.pricePerDay | currencyConverter | currency: selectedCurrency }} day
+      </h4>
+    </div>
+
+    <div class="rating">
+      <i class="fa-solid fa-star star"></i>
+      <h5>4.6</h5>
+      <!-- <h5>{{ vehicle?.rating }}</h5> -->
+    </div>
+  </div>
+
+  <hr class="dotted-hr" />
+
+  <div class="vehicle-details-bottom">
+
+  <div class="vehicle-characteristics">
+      <h6 class="vehicle-characteristic">Manual</h6>
+      <h6 class="vehicle-characteristic">Petrol</h6>
+      <h6 class="vehicle-characteristic">{{ vehicle?.capacity }}</h6>
+  </div>
+
+    <div class="distance">
+      <h6 class="distance-km">15km away</h6>
+      <!-- <h6 class="distance-country">{{ vehicle?.location?.city }}, {{ vehicle?.location?.country }}</h6> -->
+    </div>
+
+  </div>
+</article>

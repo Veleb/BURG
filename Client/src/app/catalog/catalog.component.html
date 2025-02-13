@@ -1,24 +1,14 @@
-<div class="category-wrapper">
+<div class="catalog-wrapper">
 
-  @for (category of categories; track $index) {
-
-        <div class="category-card" (click)="activateCategory(category)">
-          <h3 class="category-name">{{ category | uppercase }}</h3>
-          <div class="line-break"></div>
-        </div>
-
-  }
-
-  @if (vehicles.length === 0) {
-    <h3 class="category-warning">No vehicles found!</h3>
-  }
+  <app-filter-sidebar />
   
-</div>
+  <div class="product-wrapper">
+    @for (vehicle of vehicles; track $index) {
+      <app-product-card [vehicle]="vehicle" />
+    }
+  </div>
+  
+  <app-datepicker [functionality]="['search', null]" />
+  <app-location-picker></app-location-picker>
 
-<div class="product-wrapper">
-  @for (vehicle of vehicles; track $index) {
-    <app-product-card [vehicle]="vehicle"/>
-  }
 </div>
-
-<app-datepicker [functionality]="['search', null]"/>

@@ -3,19 +3,17 @@ import { isPlatformBrowser } from '@angular/common';
 import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
 import { VehicleService } from '../vehicle/vehicle.service';
-import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { loadStripe } from '@stripe/stripe-js';
 import { environment } from '../../environments/environment';
 import { switchMap } from 'rxjs/operators'; 
 
 @Component({
-  selector: 'app-datepicker',
-  standalone: true,
-  imports: [UppercasePipe],
-  templateUrl: './datepicker.component.html',
-  styleUrl: './datepicker.component.css',
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-datepicker',
+    imports: [  ],
+    templateUrl: './datepicker.component.html',
+    styleUrl: './datepicker.component.css',
+    encapsulation: ViewEncapsulation.None
 })
 export class DatepickerComponent implements AfterViewInit {
   @Input() functionality!: [string, string | null | undefined];
@@ -41,6 +39,10 @@ export class DatepickerComponent implements AfterViewInit {
     if (isPlatformBrowser(this.platformId)) {
       this.initializeFlatpickr();
     }
+  }
+
+  openCalendar(inputElement: HTMLInputElement) {
+    inputElement.focus(); 
   }
 
   private emitDates(): void {
@@ -73,8 +75,8 @@ export class DatepickerComponent implements AfterViewInit {
   
                   if (date.toDateString() === start.toDateString()) {
                     
-                    const disableFrom = new Date(start.getTime() - 30  * 60 * 1000); // change buffer time
-  
+                    const disableFrom = new Date(start.getTime() - 3 * 60 * 60 * 1000); // change buffer time
+
                     if (date >= disableFrom && date <= end) {
                       return true;
                     }

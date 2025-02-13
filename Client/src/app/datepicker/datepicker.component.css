@@ -3,15 +3,45 @@
 .datepicker-wrapper {
   display: flex;
   align-items: center;
-  gap: 20px;
+}
+
+.date-input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min-content;
+  position: relative;
 }
 
 .date-input {
+  border: 2px solid #1E1E1E;
+  min-width: 200px;
+  height: 40px;
   padding: 8px;
-  border-radius: 8px;
-  border: 2px solid black;
-  min-width: min-content;
-  height: 35px;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.date-input:focus {
+  outline: none;
+}
+
+#startDate {
+  border-radius: 6px 0 0 0;
+}
+
+#endDate {
+  border-radius: 0 6px 0 0;
+}
+
+.date-label {
+  text-transform: uppercase;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 10px;
+  position: absolute;
+  top: 2px;
+  left: 12px
 }
 
 .search-button {
@@ -22,4 +52,18 @@
   height: 45px;
   font-size: 24px;
   font-weight: 700;
+}
+
+.calendar-icon-left {
+  position: absolute;
+  right: 15px;
+}
+
+.calendar-icon-right {
+  position: absolute;
+  right: 15px;
+}
+
+.calendar-icon-left:hover, .calendar-icon-right:hover {
+  cursor: pointer;
 }

@@ -4,11 +4,10 @@ import { ToastrService } from 'ngx-toastr';
 import { RentService } from '../../rents/rent.service';
 
 @Component({
-  selector: 'app-payment-cancel',
-  standalone: true,
-  imports: [],
-  templateUrl: './payment-cancel.component.html',
-  styleUrl: './payment-cancel.component.css'
+    selector: 'app-payment-cancel',
+    imports: [],
+    templateUrl: './payment-cancel.component.html',
+    styleUrl: './payment-cancel.component.css'
 })
 export class PaymentCancelComponent implements OnInit {
 

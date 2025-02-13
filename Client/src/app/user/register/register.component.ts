@@ -7,11 +7,10 @@ import intlTelInput from 'intl-tel-input';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [FormsModule, RouterLink],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+    selector: 'app-register',
+    imports: [FormsModule, RouterLink],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
 export class RegisterComponent implements AfterViewInit {
 

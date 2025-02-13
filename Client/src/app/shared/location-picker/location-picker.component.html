@@ -1,0 +1,47 @@
+<div class="location-picker-wrapper">
+
+  <div class="input-wrapper">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="onSearch(searchQuery)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      placeholder="Search for a location"
+      class="location-input"
+      #locationInput
+    />
+
+    <i class="fa-solid fa-location-dot location-icon"></i>
+
+    @if (suggestions.length > 0) {
+      <ul class="suggestions-list">
+        @for (suggestion of suggestions; track $index) {
+          <li
+            (mousedown)="selectLocation(+suggestion.lat, +suggestion.lon, suggestion.display_name)"
+            class="suggestion-item"
+          >
+            {{ suggestion.display_name }}
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  @if (isInputFocused) {
+    <div id="map-wrapper">
+
+      <button class="close-map-button" (click)="closeMap()">
+        <i class="fa-solid fa-xmark close-map-icon"></i>
+      </button>
+
+      <div 
+        id="map"
+        (mousedown)="cancelBlurTimeout()"
+        (touchstart)="cancelBlurTimeout()"
+        (wheel)="cancelBlurTimeout()">
+      </div>
+
+    </div>
+  }
+</div>

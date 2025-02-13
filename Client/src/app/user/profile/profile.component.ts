@@ -6,11 +6,10 @@ import { ToastrService } from 'ngx-toastr';
 import { RentCardComponent } from '../../rents/rent-card/rent-card.component';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [ RentCardComponent ],
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+    selector: 'app-profile',
+    imports: [RentCardComponent],
+    templateUrl: './profile.component.html',
+    styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
 

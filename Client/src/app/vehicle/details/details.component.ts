@@ -2,17 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
-import { DetailsCardComponent } from './details-card/details-card.component';
 import { DatepickerComponent } from "../../datepicker/datepicker.component";
 import { SliderComponent } from '../../shared/slider/slider.component';
 import { ToastrService } from 'ngx-toastr';
+import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
+import { CurrencyPipe } from '@angular/common';
+import { CurrencyService } from '../../currency/currency.service';
+import { LocationPickerComponent } from "../../shared/location-picker/location-picker.component";
 
 @Component({
-  selector: 'app-details',
-  standalone: true,
-  imports: [DetailsCardComponent, DatepickerComponent, SliderComponent],
-  templateUrl: './details.component.html',
-  styleUrl: './details.component.css'
+    selector: 'app-details',
+    imports: [DatepickerComponent, SliderComponent, CurrencyConverterPipe, CurrencyPipe, LocationPickerComponent, LocationPickerComponent],
+    templateUrl: './details.component.html',
+    styleUrl: './details.component.css'
 })
 export class DetailsComponent implements OnInit {
 
@@ -26,7 +28,11 @@ export class DetailsComponent implements OnInit {
   totalPrice: number | null = null;
   totalPriceBeforeTax: number | null = null;
 
-  constructor(private route: ActivatedRoute, private vehicleService: VehicleService, private toastr: ToastrService) {}
+  selectedCurrency: string = "USD";
+
+  currentImage: string | undefined;
+
+  constructor(private route: ActivatedRoute, private vehicleService: VehicleService, private toastr: ToastrService, private currencyService: CurrencyService) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -39,8 +45,18 @@ export class DetailsComponent implements OnInit {
         });
       }
     });
+
+    this.currencyService.getCurrency().subscribe({
+      next: (currency) => {
+        this.selectedCurrency = currency;
+      }
+    })
   }
  
+  updateMainImage(image: string | undefined): void {
+    this.currentImage = image;
+  }
+
   onPricePerDayChanged(newValue: boolean): void {
     this.isPricePerDay = newValue;
     this.calculatePrice();

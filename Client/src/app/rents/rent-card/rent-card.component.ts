@@ -8,11 +8,10 @@ import { DatePipe } from '../../shared/pipes/date.pipe';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-rent-card',
-  standalone: true,
-  imports: [ DatePipe, RouterLink ],
-  templateUrl: './rent-card.component.html',
-  styleUrl: './rent-card.component.css'
+    selector: 'app-rent-card',
+    imports: [DatePipe, RouterLink],
+    templateUrl: './rent-card.component.html',
+    styleUrl: './rent-card.component.css'
 })
 export class RentCardComponent implements OnInit {
   @Input() rentId!: string;

@@ -1,6 +1,25 @@
 <div class="datepicker-wrapper">
-  <input type="text" class="date-input" placeholder="start date" #startDate>
-  <input type="text" class="date-input" placeholder="end date" #endDate>
+ 
+  <div class="date-input-wrapper">
+    
+    <div class="input-label-wrapper">
+       <label class="date-label" for="startDate">Pick Up</label>
+       <input id="startDate" type="text" class="date-input" placeholder="start date" #startDate>
+    </div>
+  
+       <i class="fa-solid fa-calendar-days calendar-icon-left" (click)="openCalendar(startDate)"></i>
+  </div>
 
-  <button class="search-button" (click)="invokeFunctionality()">{{ functionality[0] | uppercase }}</button>
+  <div class="date-input-wrapper">
+      
+    <div class="input-label-wrapper">
+       <label class="date-label" for="endDate">Drop Off</label>
+       <input id="endDate" type="text" class="date-input" placeholder="end date" #endDate>
+    </div>
+  
+       <i class="fa-solid fa-calendar-days calendar-icon-right" (click)="openCalendar(endDate)"></i>
+   </div>
+
+
+  <!-- <button class="search-button" (click)="invokeFunctionality()">{{ functionality[0] | uppercase }}</button> -->
 </div>

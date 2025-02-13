@@ -1,1 +1,7 @@
-<p>currency works!</p>
+<div class="currency-wrapper">
+  <select [(ngModel)]="selectedCurrency" (change)="onCurrencyChange($event)" class="currency-select">
+    @for (currency of currencies; track $index) {
+      <option class="currency-option" [value]="currency">{{ currency }}</option>
+    }
+  </select>
+</div>

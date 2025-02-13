@@ -1,5 +1,150 @@
 <div class="details-wrapper">
 
+    <div class="images-wrapper">
+      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
+    </div>
+
+  <img class="vehicle-image" [src]="currentImage || vehicle?.images?.[0]" alt="Vehicle Image">
+  
+  <div class="vehicle-details-wrapper">
+
+    <div class="basic-details-wrapper">
+
+      <div class="basic-details">
+  
+        <h2 class="vehicle-name"> {{ vehicle?.name }} </h2>
+        
+        <div class="vehicle-characteristics">
+          <h6 class="vehicle-characteristic">Manual</h6>
+          <h6 class="vehicle-characteristic">Petrol</h6>
+          <h6 class="vehicle-characteristic">{{ vehicle?.capacity }}</h6>
+        </div>
+  
+      </div>
+  
+      <div class="rating-wrapper">
+  
+        <div class="rating">
+          <i class="fa-solid fa-star star"></i>
+          <h5>4.6</h5>
+          <!-- <h5>{{ vehicle?.rating }}</h5> -->
+        </div>
+  
+        <!-- <h6 class="reviews">{{ vehicle?.reviews?.length }} reviews</h6> -->
+        <h6 class="reviews">7 reviews</h6>
+  
+      </div>
+
+    </div>
+
+    <div class="company-details-wrapper">
+
+      <div class="company-basic-details">
+
+        <div class="company-details">
+  
+          <!-- <img src="" alt="Company Profile Picture"> -->
+          <div class="company-profile-picture"></div>
+          <!-- <h4 class="company-name"> {{ vehicle?.company?.name }} </h4> -->
+          <h4 class="company-name">Company Name</h4>
+  
+        </div>
+  
+        <div class="company-rating">
+  
+          <div class="rating-box">
+            <h3>8.4</h3>
+            <!-- <h3> {{ vehicle?.company?.rating }} </h3> -->
+          </div>
+  
+          <!-- TODO: mostly positive: rating > 8 etc. -->
+  
+        </div>
+
+      </div>
+
+      <div class="contact-wrapper">
+        <h3>Contact</h3>
+        <i class="fa-solid fa-sort-down"></i>
+      </div>
+      <!-- TODO: add a contact component instead of the div -->
+       
+    </div>
+
+    <div class="perks-wrapper">
+    <!-- TODO: add a for loop going through the perks or whatever, this section can be skipped -->
+
+    </div>
+
+    <div class="checkout-wrapper">
+
+      <div class="first-row">
+        <h2> {{ (vehicle?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
+        <app-slider />
+      </div>
+
+      <div class="datepicker-wrapper">
+        <app-datepicker 
+        [isPricePerDay]="isPricePerDay" 
+        [vehicleId]="vehicle?._id"
+        [functionality]="['rent', vehicle?._id]"
+        [kilometers]="kilometers"
+        (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
+      ></app-datepicker>
+        <!-- TODO: CHANGE THIS LOCATION INPUT FOR THE COMPONENT -->
+      <!-- <div class="location-input-wrapper">
+        <input class="location-input" type="text" placeholder="Enter location">
+      </div> -->
+
+     <div class="location-picker-wrapper"> 
+      <app-location-picker />
+      
+      <div class="location-checkbox-wrapper">
+        <input id="location-checkbox" class="location-checkbox" type="checkbox">
+        <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
+      </div>
+          
+    </div>  
+
+      </div>
+
+      <button class="cta-button">Rent Now</button>
+
+      @if (rentalHours) {
+        <div class="price-breakdown-wrapper">
+          <h4>Price breakdown:</h4>
+  
+          <div class="price-breakdown">
+            <p class="price-factor">Rent fee x {{ rentalHours }} hours</p>
+            <p>{{ totalPriceBeforeTax !== null ? (totalPriceBeforeTax | currencyConverter | currency: selectedCurrency) : '' }}</p>
+          </div>
+  
+          <div class="price-breakdown">
+            <p class="price-factor">Random Fee ( 18% )</p>
+            <p>{{ ( (totalPrice ?? 0) - (totalPriceBeforeTax ?? 0) ) | currencyConverter | currency: selectedCurrency }}</p>
+          </div>
+  
+          <hr class="dotted-hr">
+  
+          <div class="price-breakdown">
+            <h3 class="total-price">Total</h3>
+            <p>{{ totalPrice !== null ? (totalPrice | currencyConverter | currency: selectedCurrency) : '0' }}</p>
+          </div>
+  
+        </div>
+      }
+
+    </div>
+    
+  </div>
+
+</div>
+
+<!-- <div class="details-wrapper">
+
   <app-details-card [vehicle]="vehicle"/>
 
   <div class="slider-wrapper">
@@ -30,4 +175,4 @@
     (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
   ></app-datepicker>
 
-</div>
+</div> -->

@@ -1,11 +1,10 @@
 import { Component, signal, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-slider',
-  standalone: true,
-  imports: [],
-  templateUrl: './slider.component.html',
-  styleUrls: ['./slider.component.css']
+    selector: 'app-slider',
+    imports: [],
+    templateUrl: './slider.component.html',
+    styleUrl: './slider.component.css'
 })
 export class SliderComponent {
   isPricePerDay = signal<boolean>(true);

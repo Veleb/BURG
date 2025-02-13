@@ -8,8 +8,8 @@
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 40px;
+  height: 24px;
 }
 
 .switch input {
@@ -25,7 +25,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #3B82F6;
+  background-color: #0b0505;
   transition: .4s;
   border-radius: 34px;
 }
@@ -33,13 +33,13 @@
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: .3s;
 }
 
 .icon {
@@ -56,19 +56,20 @@
 }
 
 .sun {
-  left: 8px;
+  left: 5px;
+  font-size: 12px ;
 }
 
 .km {
   right: 6px;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 6px;
 }
 
 input:checked + .slider {
-  background-color: #22C55E;
+  background-color: #0b0505;
 }
 
 input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(15px);
 }
