@@ -27,7 +27,7 @@
                 }
               ],
               "styles": [
-                "src/styles.css",
+                "src/styles.scss",
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
               ],
               "scripts": [
@@ -37,7 +37,12 @@
               "prerender": true,
               "ssr": {
                 "entry": "server.ts"
-              }
+              },
+              "allowedCommonJsDependencies": [
+                "intl-tel-input",
+                "leaflet",
+                "moment"
+              ]
             },
             "configurations": {
               "production": {
@@ -134,7 +139,7 @@
                 }
               ],
               "styles": [
-                "src/styles.css",
+                "src/styles.scss",
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
               ],
               "scripts": [

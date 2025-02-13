@@ -51,10 +51,5 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "libphonenumber-js": "^1.11.18",
     "typescript": "~5.5.2"
-  },
-  "allowedCommonJsDependencies": [
-    "intl-tel-input",
-    "leaflet",
-    "moment"
-  ]
+  }
 }
