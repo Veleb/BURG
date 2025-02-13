@@ -46,18 +46,38 @@
             "configurations": {
               "production": {
                 "budgets": [
-                    {
-                      "type": "initial",
-                      "maximumWarning": "650kB",
-                      "maximumError": "700kB"
-                    },
-                    {
-                      "type": "bundle",
-                      "maximumWarning": "1MB",
-                      "maximumError": "2MB"
-                    }
-                  ]
-                  , 
+                  {
+                    "type": "initial",
+                    "maximumWarning": "650kB",
+                    "maximumError": "700kB"
+                  },
+                  {
+                    "type": "bundle",
+                    "maximumWarning": "1MB",
+                    "maximumError": "2MB"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "6kb",
+                    "maximumError": "10kb"
+                  }
+                ],
+                "optimization": {
+                  "scripts": true,
+                  "styles": {
+                    "minify": true,
+                    "inlineCritical": true
+                  },
+                  "fonts": true
+                },
+                "aot": true,
+                "extractLicenses": true,
+                "sourceMap": {
+                  "scripts": true,
+                  "styles": true,
+                  "hidden": true,
+                  "vendor": true
+                },
                 "outputHashing": "all",
                 "fileReplacements": [
                   {
@@ -67,7 +87,15 @@
                 ]
               },
               "development": {
-                "optimization": false,
+                "optimization": {
+                  "scripts": true,
+                  "styles": {
+                    "minify": true,
+                    "inlineCritical": true
+                  },
+                  "fonts": true
+                },
+                "aot": true,
                 "extractLicenses": false,
                 "sourceMap": true,
                 "fileReplacements": [
