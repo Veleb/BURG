@@ -32,7 +32,7 @@ export class RentCardComponent implements OnInit {
         
         this.rent = rent;
       
-        return this.vehicleService.getVehicleById(rent.vehicle._id);
+        return this.vehicleService.getVehicleById(rent.vehicle);
       })
     ).subscribe({
       next: (vehicle) => {

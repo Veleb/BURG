@@ -1,4 +1,5 @@
 import RentModel from "../models/rent";
+import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle"
 import { VehicleInterface } from "../types/model-types/vehicle-types"
 
@@ -13,7 +14,6 @@ async function getAllVehicles(): Promise<VehicleInterface[]> {
 
   return vehicles;
 }
-
 
 async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
   const vehicle: VehicleInterface | null = await VehicleModel.findById(vehicleId).lean();
@@ -75,12 +75,48 @@ async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {
   return isAvailable;
 }
 
+async function likeVehicle(vehicleId: string, userId: string) {
+
+  const updatedVehicle = await VehicleModel.findByIdAndUpdate(
+    vehicleId,
+    { $addToSet: { likes: userId } },
+    { new: true, select: "likes" } 
+  );
+
+  await UserModel.findByIdAndUpdate(
+    userId,
+    { $addToSet: { likes: vehicleId } },
+    { new: true }
+  );
+
+  return updatedVehicle;
+}
+
+async function removeLikeVehicle(vehicleId: string, userId: string) {
+  const updatedVehicle = await VehicleModel.findByIdAndUpdate(
+    vehicleId,
+    { $pull: { likes: userId } },
+    { new: true, select: "likes" }
+  );
+
+  await UserModel.findByIdAndUpdate(
+    userId,
+    { $pull: { likes: vehicleId } },
+    { new: true }
+  );
+
+
+  return updatedVehicle;
+}
+
 
 
 const vehicleService = {
   getAllVehicles,
   getVehicleById,
   checkAvailability,
+  likeVehicle,
+  removeLikeVehicle,
 
 }
 

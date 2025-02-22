@@ -1,9 +1,9 @@
-import { Component, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DivIcon, Map, Marker } from 'leaflet';
-import { NominatimResponse } from '../../../types/api-responses';
+import { NominatimResponse } from '../../../../types/api-responses';
 import { catchError, Subscription, of } from 'rxjs';
 
 @Component({
@@ -11,10 +11,11 @@ import { catchError, Subscription, of } from 'rxjs';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './location-picker.component.html',
-  styleUrls: ['./location-picker.component.css'],
+  styleUrl: './location-picker.component.css',
 })
 export class LocationPickerComponent implements OnDestroy {
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
+  @Output() locationSelected = new EventEmitter<string>();
 
   selectedLocation: { lat: number; lng: number } | null = null;
   searchQuery: string = '';
@@ -24,7 +25,6 @@ export class LocationPickerComponent implements OnDestroy {
   private marker: Marker | null = null;
   isInputFocused: boolean = false;
 
-  // Store the blur timeout reference
   private blurTimeout: any;
 
   private searchSub?: Subscription;
@@ -108,7 +108,6 @@ export class LocationPickerComponent implements OnDestroy {
     }).catch(console.error);
   }
   
-
   onSearch(query: string): void {
     this.searchQuery = query;
     if (query.length > 2) {
@@ -130,6 +129,7 @@ export class LocationPickerComponent implements OnDestroy {
     this.suggestions = [];
     this.searchQuery = displayName;
 
+    this.locationSelected.emit(displayName);
     this.map?.setView([lat, lon], 13);
     this.addMarker(lat, lon, displayName);
   }

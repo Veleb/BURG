@@ -13,4 +13,10 @@
   }
 </div>
 
+<div class="liked-vehicles-wrapper">
+  @for (likedVehicle of likedVehicles; track $index) {
+    <app-product-card [vehicle]="likedVehicle"/>
+  }
+  
+</div>
 <button (click)="logout()">Logout</button>

@@ -1,4 +1,5 @@
 import { RentInterface } from "./rent-types";
+import { VehicleInterface } from "./vehicle-types";
 
 export interface UserInterface {
   fullName: string
@@ -6,6 +7,7 @@ export interface UserInterface {
   phoneNumber?: string;
   password: string;
   rents: RentInterface[];
+  likes: string[] | VehicleInterface[];
 
   _id: string;
   created_at: Date;

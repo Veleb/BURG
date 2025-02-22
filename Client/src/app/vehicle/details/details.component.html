@@ -1,13 +1,13 @@
 <div class="details-wrapper">
 
     <div class="images-wrapper">
-      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
-      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
-      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
-      <img class="small-image" [src]="vehicle?.images?.[0] || '' " alt="Vehicle Image" (click)="updateMainImage(vehicle?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
+      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
     </div>
 
-  <img class="vehicle-image" [src]="currentImage || vehicle?.images?.[0]" alt="Vehicle Image">
+  <img class="vehicle-image" [src]="currentImage || vehicle?.details?.images?.[0]" alt="Vehicle Image">
   
   <div class="vehicle-details-wrapper">
 
@@ -15,12 +15,12 @@
 
       <div class="basic-details">
   
-        <h2 class="vehicle-name"> {{ vehicle?.name }} </h2>
+        <h2 class="vehicle-name"> {{ vehicle?.details?.name }} </h2>
         
         <div class="vehicle-characteristics">
           <h6 class="vehicle-characteristic">Manual</h6>
           <h6 class="vehicle-characteristic">Petrol</h6>
-          <h6 class="vehicle-characteristic">{{ vehicle?.capacity }}</h6>
+          <h6 class="vehicle-characteristic">{{ vehicle?.details?.capacity }}</h6>
         </div>
   
       </div>
@@ -82,7 +82,7 @@
     <div class="checkout-wrapper">
 
       <div class="first-row">
-        <h2> {{ (vehicle?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
+        <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
         <app-slider />
       </div>
 
@@ -94,16 +94,19 @@
         [kilometers]="kilometers"
         (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
       ></app-datepicker>
-        <!-- TODO: CHANGE THIS LOCATION INPUT FOR THE COMPONENT -->
-      <!-- <div class="location-input-wrapper">
-        <input class="location-input" type="text" placeholder="Enter location">
-      </div> -->
 
      <div class="location-picker-wrapper"> 
-      <app-location-picker />
+      @if (locationCheckbox.checked) {
+        <app-location-picker class="location-input" (locationSelected)="onLocationSelected($event)"/>
+      } @else {
+        <div class="location-picker-wrapper-different">
+          <app-location-picker class="half-width-input" (locationSelected)="onLocationSelected($event)"/>
+          <app-location-picker class="half-width-input" (locationSelected)="onLocationSelected($event)"/>
+        </div>        
+      }
       
       <div class="location-checkbox-wrapper">
-        <input id="location-checkbox" class="location-checkbox" type="checkbox">
+        <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox>
         <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
       </div>
           
@@ -111,14 +114,14 @@
 
       </div>
 
-      <button class="cta-button">Rent Now</button>
+      <button class="cta-button" (click)="rentVehicle()">Rent Now</button>
 
       @if (rentalHours) {
         <div class="price-breakdown-wrapper">
           <h4>Price breakdown:</h4>
   
           <div class="price-breakdown">
-            <p class="price-factor">Rent fee x {{ rentalHours }} hours</p>
+            <p class="price-factor">Rent fee x {{ rentalHours.toFixed(2) }} hours</p>
             <p>{{ totalPriceBeforeTax !== null ? (totalPriceBeforeTax | currencyConverter | currency: selectedCurrency) : '' }}</p>
           </div>
   
@@ -142,37 +145,3 @@
   </div>
 
 </div>
-
-<!-- <div class="details-wrapper">
-
-  <app-details-card [vehicle]="vehicle"/>
-
-  <div class="slider-wrapper">
-    <app-slider (pricePerDayChanged)="onPricePerDayChanged($event)" />
-  
-    @if (!isPricePerDay) {
-      <input 
-        type="number" 
-        placeholder="KILOMETERS" 
-        (input)="onKilometersInput($event)"
-        step="10" 
-      >
-    }
-  </div>
-  
-  @if (totalPrice !== null && totalPrice >= 0) {
-    <div class="price-summary">
-      <strong>Total Price (before tax):</strong> <h2>${{ totalPriceBeforeTax }}</h2>
-      <strong>Total Price (after tax):</strong> <h1>${{ totalPrice }}</h1>
-    </div>
-  }
-
-  <app-datepicker 
-    [isPricePerDay]="isPricePerDay" 
-    [vehicleId]="vehicle?._id"
-    [functionality]="['rent', vehicle?._id]"
-    [kilometers]="kilometers"
-    (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
-  ></app-datepicker>
-
-</div> -->

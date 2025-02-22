@@ -29,6 +29,26 @@ userController.get('/profile', async (req: Request, res: Response, next: NextFun
     }
 });
 
+userController.get('/likes', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
+    const userId: string | undefined = req.user?._id;
+    console.log(userId);
+    
+    try {
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized!" })
+            return;
+        }
+
+        const likedVehicles = await userService.getUserLikedVehicles(userId);
+
+        res.status(200).json(likedVehicles);
+        return;
+
+    } catch (err) {
+        next(err)
+    }
+})
+
 userController.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
@@ -82,5 +102,6 @@ userController.post('/logout', async (req: Request, res: Response, next: NextFun
         next(error);
     }
 });
+
 
 export default userController;

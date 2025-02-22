@@ -20,7 +20,6 @@ currencyController.get(``, async (req: Request, res: Response, next: NextFunctio
         cleanedRates[newKey] = rates[key];
       }
     }
-    console.log(cleanedRates);
     
     res.status(200).json(cleanedRates);
   } catch (error) {

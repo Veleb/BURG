@@ -1,0 +1,4 @@
+.liked-vehicles-wrapper {
+  display: flex;
+  gap: 50px;
+}

@@ -45,10 +45,15 @@ const UserSchema = new Schema<UserInterface>({
     type: Types.ObjectId,
   }],
 
+  likes: [{
+    ref: "Vehicle",
+    type: Types.ObjectId,
+  }]
+
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 UserSchema.pre('save', async function(next) {
-  if (this.isModified('password')) {
+  if (this.isModified('passUserFromDBord')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();

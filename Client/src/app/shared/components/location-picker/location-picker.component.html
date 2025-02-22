@@ -28,20 +28,22 @@
     }
   </div>
 
-  @if (isInputFocused) {
-    <div id="map-wrapper">
+  <!-- @if (isInputFocused) {
+    <div id="map-wrapper" #mapWrapper>
 
       <button class="close-map-button" (click)="closeMap()">
         <i class="fa-solid fa-xmark close-map-icon"></i>
       </button>
 
       <div 
-        id="map"
-        (mousedown)="cancelBlurTimeout()"
-        (touchstart)="cancelBlurTimeout()"
-        (wheel)="cancelBlurTimeout()">
-      </div>
+      id="map"
+      #mapElement
+      (mousedown)="cancelBlurTimeout()"
+      (touchstart)="cancelBlurTimeout()"
+      (wheel)="cancelBlurTimeout()">
+    </div>
 
     </div>
-  }
+  } -->
+    
 </div>

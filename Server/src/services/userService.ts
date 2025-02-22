@@ -4,8 +4,8 @@ import { payloadInterface, payloadTokens } from "../types/jwtp/payloads";
 import { UserForAuth, userForLogin, UserFromDB } from "../types/model-types/user-types";
 import checkIfUserExists from "../utils/checkIfUserExists";
 import jwtp from "../libs/jwtp";
-import { authenticatedRequest } from "../types/requests/authenticatedRequest";
 import { Response } from "express";
+import { VehicleInterface } from "../types/model-types/vehicle-types";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -63,7 +63,6 @@ const logoutUser = (res: Response) => {
   res.status(200).json({ message: "Logged out successfully" });
 };
 
-
 async function generateTokens(user: UserFromDB): Promise<payloadTokens> {
   const payload: payloadInterface = {
       _id: user._id,
@@ -84,11 +83,19 @@ async function generateTokens(user: UserFromDB): Promise<payloadTokens> {
   }
 }
 
+async function getUserLikedVehicles(userId: string): Promise<VehicleInterface[]> {
+  const user = await UserModel.findById(userId).populate<{ likes: VehicleInterface[] }>('likes').lean();
+   
+  return user?.likes || [];
+}
+
 const UserService = {
   loginUser,
   registerUser,
   logoutUser,
   getUserById,
+  getUserLikedVehicles,
+
 }
 
 export default UserService;

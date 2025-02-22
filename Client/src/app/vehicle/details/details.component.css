@@ -197,6 +197,23 @@
   margin: 4px 10px;
 }
 
+.location-picker-wrapper-different {
+  display: flex;
+  min-width: 400px;
+}
+
+.location-picker-wrapper {
+  min-width: 100%;
+}
+
+.location-input {
+  min-width: 100%;
+}
+
+.half-width-input {
+  min-width: 50%;
+}
+
 .location-checkbox-wrapper {
   position: absolute;
   bottom: 6px;

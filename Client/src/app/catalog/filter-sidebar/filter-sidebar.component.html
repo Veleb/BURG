@@ -1,8 +1,42 @@
 <div class="sidebar-wrapper">
   <h2>Filters</h2>
+  
+    <hr>
+    
+    <app-datepicker 
+    (startDateChange)="onStartDateChange($event)" 
+    (endDateChange)="onEndDateChange($event)"
+    [functionality]="['search', null]" 
+    layoutType="column" />
 
-  <div class="datepicker-wrapper">
-    <app-datepicker [functionality]="['search', null]" />
-  </div>
+    <hr>
+
+    <div class="category-filter-wrapper">
+
+        <h5>Category of {{ mainCategory }}</h5>
+
+        @if (mainCategory === "vehicles") {
+
+          @for (category of categories; track $index) {
+
+            <div class="category-checkbox-wrapper">
+              <input 
+                type="checkbox" 
+                [id]="category" 
+                [checked]="activeCategories.includes(category)"
+                (change)="toggleCategory(category)"
+              >
+              <label class="checkbox-label" [for]="category">{{ category | uppercase }}</label>
+            </div>
+
+          }
+          
+        } @else {
+          <!-- TODO: CHANGE THE FOR LOOP TO LOOP THROUGH THE CATEGORIES FOR THE MACHINERY INSTEAD OF THE VEHICLE CATEGORIES -->
+        }
+    </div>
+
+    <hr>
+
 
 </div>

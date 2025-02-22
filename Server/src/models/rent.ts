@@ -19,6 +19,11 @@ const RentSchema = new Schema<RentInterface>({
     required: true,
   },
 
+  location: {
+    type: String,
+    required: true,
+  },
+
   user: {
     type: Types.ObjectId,
     ref: "User",

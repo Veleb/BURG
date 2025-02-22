@@ -1,26 +1,112 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
-import { VehicleInterface } from '../../types/vehicle-types';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
+import { FilterState, VehicleInterface } from '../../types/vehicle-types';
 import { RentInterface } from '../../types/rent-types';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VehicleService {
- 
-  private vehicles$$: BehaviorSubject<VehicleInterface[]> = new BehaviorSubject<VehicleInterface[]>([]); 
+  
+  private vehicles$$: BehaviorSubject<VehicleInterface[]> = new BehaviorSubject<VehicleInterface[]>([]);
   vehicles$ = this.vehicles$$.asObservable();
 
-  private availableVehicles$$: BehaviorSubject<VehicleInterface[]> = new BehaviorSubject<VehicleInterface[]>([]); 
-  availableVehicles$ = this.availableVehicles$$.asObservable(); 
+  private availableVehicles$$: BehaviorSubject<VehicleInterface[]> = new BehaviorSubject<VehicleInterface[]>([]);
+  availableVehicles$ = this.availableVehicles$$.asObservable();
+
+  private filters$$ = new BehaviorSubject<FilterState>({
+    categories: [],
+    year: undefined,
+    sort: { key: 'none', direction: 'asc' },
+  });
 
   constructor(private http: HttpClient) {}
+
+  filteredVehicles$: Observable<VehicleInterface[]> = combineLatest([
+    this.availableVehicles$$,
+    this.filters$$
+  ]).pipe(
+    map(([availableVehicles, filters]) => {
+
+      let filtered = availableVehicles.filter(vehicle => { // we filter the cars
+
+        const matchesCategory = filters.categories.length === 0 || 
+        filters.categories.includes(vehicle.details?.category);
+      
+        const matchesYear = !filters.year || 
+        vehicle.details.year === filters.year;
+
+        return matchesCategory && matchesYear;
+
+      })
+
+      return this.sortVehicles(filtered, filters.sort);
+
+    })
+  );
+
+  private sortVehicles(vehicles: VehicleInterface[], sort: FilterState['sort']) {
+    if (sort.key === 'none') return vehicles; // if there is no sorting key we don't sort and just return the filtered vehicles
+  
+    return [...vehicles].sort((a, b) => { // otherwise we sort them
+
+      let valueA: number = 0;
+      let valueB: number = 0;
+
+      switch (sort.key) {
+
+        case "price": 
+
+          valueA = a.details.pricePerDay;
+          valueB = b.details.pricePerDay;
+
+        break;
+        case "year": 
+
+          valueA = a.details.year;
+          valueB = b.details.year;
+
+        break;
+        case "likes": 
+
+          valueA = a.likes.length;
+          valueB = b.likes.length;
+          
+        break;
+
+      }
+      
+      return sort.direction === 'asc' ? valueA - valueB : valueB - valueA; // we either sort descending or ascending
+    });
+  }
+
+  // helper functions
+
+  updateFilters(update: Partial<FilterState>): void {
+    const current = this.filters$$.value;
+    this.filters$$.next({ ...current, ...update });
+  }
+
+  setCategories(categories: string[]): void {
+    this.updateFilters({ categories });
+  }
+  
+  setYear(year?: number): void {
+    this.updateFilters({ year });
+  }
+
+  setSort(key: FilterState['sort']['key'], direction: FilterState['sort']['direction']): void {
+    this.updateFilters({ sort: { key, direction } });
+  }
+
+  // main functions
 
   getAll(): void {
     this.http.get<VehicleInterface[]>(`/api/vehicles/`).subscribe(
       vehicles => {
-        this.vehicles$$.next(vehicles); 
+        this.vehicles$$.next(vehicles);
+        this.availableVehicles$$.next(vehicles);
       }
     );
   }
@@ -46,8 +132,7 @@ export class VehicleService {
         const availabilityChecks = vehicles.map(vehicle =>
           this.checkAvailability(vehicle._id, startDate, endDate).pipe(
             map(isAvailable => ({ vehicle, isAvailable }))
-          )
-        );
+        ))
         return forkJoin(availabilityChecks);
       }),
       map(availability => {
@@ -65,7 +150,11 @@ export class VehicleService {
     );
   }
 
-  updateAvailableVehicles(startDate: Date, endDate: Date): void {
+  updateAvailableVehicles(startDate: Date | null, endDate: Date | null): void {
+    if (!startDate || !endDate) {
+      this.availableVehicles$$.next(this.vehicles$$.value);
+      return;
+    }
     
     this.checkAllVehiclesAvailability(startDate, endDate).subscribe({
       next: (availableVehicles) => {
@@ -77,28 +166,20 @@ export class VehicleService {
     });
   }
 
-  rentVehicle(vehicleId: string, startDate: Date, endDate: Date): Observable<RentInterface> {
-    return this.http.post<RentInterface>(`/api/rents`, {
-      start: startDate.toISOString(),
-      end: endDate.toISOString(),
-      vehicle: vehicleId,
-    })
+  rentVehicle(rentData: RentInterface): Observable<RentInterface> {
+    return this.http.post<RentInterface>(`/api/rents`, rentData);
   }
 
-  createCheckoutSession(rentId: string, rentalType: string, kmDriven?: number): Observable<{ sessionId: string }> {
-    return this.http.post<{ sessionId: string }>('/api/stripe/create-checkout-session', {
-      rentId,
-      rentalType,
-      kmDriven
-    });
-  }
-  
-  verifyPayment(sessionId: string): Observable<any> {
-    return this.http.post('/api/stripe/verify-payment', { sessionId });
-  }
-  
   getUnavailableDates(vehicleId: string): Observable<RentInterface[]> {
     return this.http.get<RentInterface[]>(`/api/rents/${vehicleId}/unavailable-dates`);
+  }
+
+  likeVehicle(vehicleId: string | undefined): Observable<{ message: string, likes?: VehicleInterface['likes'] }> {
+    return this.http.post<{ message: string, likes?: VehicleInterface['likes'] }>(`/api/vehicles/like/${vehicleId}`, {});
+  }
+
+  unlikeVehicle(vehicleId: string | undefined): Observable<{ message: string, likes?: VehicleInterface['likes'] }> {
+    return this.http.put<{ message: string, likes?: VehicleInterface['likes'] }>(`/api/vehicles/unlike/${vehicleId}`, {});
   }
 
 }

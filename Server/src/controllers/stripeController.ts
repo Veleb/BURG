@@ -53,7 +53,7 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
 
     if (rentalType === 'perDay') {
       const durationInHours: number = (endDate.getTime() - startDate.getTime()) / (1000 * 3600);
-      const pricePerHour = rent.vehicle.pricePerDay / 24;
+      const pricePerHour = rent.vehicle.details.pricePerDay / 24;
 
       const total = pricePerHour * durationInHours;
       const totalWithTax = total * 1.18; 
@@ -62,7 +62,7 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
 
 
     } else if (rentalType === 'perKm' && kmDriven) {
-      const total = rent.vehicle.pricePerKm * kmDriven;
+      const total = rent.vehicle.details.pricePerKm * kmDriven;
       const totalCeiled = Math.ceil(total * 1.18);
       totalAmount = (totalCeiled * 100).toFixed(2);
 
@@ -76,8 +76,8 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `${rent.vehicle.name} ${rent.vehicle.model}`,
-            description: rent.vehicle.category,
+            name: `${rent.vehicle.details.name} ${rent.vehicle.details.model}`,
+            description: rent.vehicle.details.category,
           },
           unit_amount: Number(totalAmount),
         },

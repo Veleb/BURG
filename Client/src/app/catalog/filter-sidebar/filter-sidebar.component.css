@@ -1,0 +1,11 @@
+hr {
+  margin: 8px 0 8px 0 ;
+}
+
+.category-checkbox-wrapper {
+  display: flex;
+  gap: 4px;
+}
+
+.checkbox-label {
+}

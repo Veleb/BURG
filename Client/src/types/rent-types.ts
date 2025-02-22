@@ -1,11 +1,9 @@
-import { UserFromDB } from "./user-types";
-import { VehicleInterface } from "./vehicle-types";
-
 export interface RentInterface {
+  _id?: string;
   start: Date;
   end: Date;
-  vehicle: VehicleInterface;
-  user: UserFromDB;
-  status: "confirmed" | "canceled" | "pending";
-  _id: string;
+  vehicle: string;
+  user: string | null;    
+  location: string;
+  status: 'pending' | 'confirmed' | 'canceled';
 }

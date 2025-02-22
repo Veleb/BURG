@@ -2,49 +2,55 @@ import { Component, OnInit } from '@angular/core';
 import { ProductCardComponent } from '../vehicle/product-card/product-card.component';
 import { VehicleService } from '../vehicle/vehicle.service';
 import { VehicleInterface } from '../../types/vehicle-types';
-import { environment } from '../../environments/environment';
-// import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
-import { DatepickerComponent } from "../datepicker/datepicker.component";
 import { FilterSidebarComponent } from './filter-sidebar/filter-sidebar.component';
-import { LocationPickerComponent } from '../shared/location-picker/location-picker.component';
+import { SortDropdownComponent } from "../shared/components/sort-dropdown/sort-dropdown.component";
 
 @Component({
     selector: 'app-catalog',
-    imports: [ProductCardComponent, DatepickerComponent, FilterSidebarComponent, LocationPickerComponent],
+    imports: [ProductCardComponent, FilterSidebarComponent, SortDropdownComponent],
     templateUrl: './catalog.component.html',
     styleUrl: './catalog.component.css'
 })
-
 export class CatalogComponent implements OnInit {
 
   vehicles: VehicleInterface[] = [];
-  allVehicles: VehicleInterface[] = [];
-  categories: string[] = environment.categories;
+  mainCategory: string = "vehicles";
+  sort: string = 'Most popular';
 
   constructor(private vehicleService: VehicleService) {}
 
   ngOnInit(): void {
     this.vehicleService.getAll();
-    this.vehicleService.vehicles$.subscribe((vehicles) => {
-      this.vehicles = vehicles;
-      this.allVehicles = vehicles;
-    });
-
-    this.vehicleService.availableVehicles$.subscribe((availableVehicles) => {
-      this.vehicles = availableVehicles; 
+    
+    this.vehicleService.filteredVehicles$.subscribe(filtered => {
+      this.vehicles = filtered;
     });
   }
 
-  activateCategory(category: string): void {
-    if (category === 'all') {
-      this.vehicles = this.allVehicles;
+  onSortChange(sort: string): void {
+    switch(sort) {
+      case 'Most popular':
+        this.vehicleService.setSort('likes', 'desc');
+        break;
+      case 'Most expensive':
+        this.vehicleService.setSort('price', 'desc');
+        break;
+      case 'Least expensive':
+        this.vehicleService.setSort('price', 'asc');
+        break;
+      case 'Year new-old':
+        this.vehicleService.setSort('year', 'desc');
+        break;
+      case 'Year old-new':
+        this.vehicleService.setSort('year', 'asc');
+        break;
+      default:
+        this.vehicleService.setSort('none', 'asc');
     }
-    else if (category) {
-      this.vehicles = this.allVehicles.filter(
-        (vehicle) => vehicle.category === category
-      );
-    } else {
-      this.vehicles = this.allVehicles; 
-    }
+  }
+
+  onChangeMainCategory(mainCategory: string): void {
+    this.mainCategory = mainCategory;
+    this.vehicleService.getAll();
   }
 }

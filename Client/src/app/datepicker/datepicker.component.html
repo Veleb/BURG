@@ -1,25 +1,51 @@
-<div class="datepicker-wrapper">
+@if (layoutType === 'default') {
+   <div class="datepicker-wrapper">
  
-  <div class="date-input-wrapper">
-    
-    <div class="input-label-wrapper">
-       <label class="date-label" for="startDate">Pick Up</label>
-       <input id="startDate" type="text" class="date-input" placeholder="start date" #startDate>
-    </div>
-  
-       <i class="fa-solid fa-calendar-days calendar-icon-left" (click)="openCalendar(startDate)"></i>
-  </div>
-
-  <div class="date-input-wrapper">
+      <div class="date-input-wrapper">
+        
+        <div class="input-label-wrapper">
+           <label class="date-label" for="startDate">Pick Up</label>
+           <input id="startDate" type="text" class="date-input" placeholder="start date" #startDate>
+        </div>
       
-    <div class="input-label-wrapper">
-       <label class="date-label" for="endDate">Drop Off</label>
-       <input id="endDate" type="text" class="date-input" placeholder="end date" #endDate>
+           <i class="fa-solid fa-calendar-days calendar-icon-left" (click)="openCalendar(startDate)"></i>
+      </div>
+    
+      <div class="date-input-wrapper">
+          
+        <div class="input-label-wrapper">
+           <label class="date-label" for="endDate">Drop Off</label>
+           <input id="endDate" type="text" class="date-input" placeholder="end date" #endDate>
+        </div>
+      
+           <i class="fa-solid fa-calendar-days calendar-icon-right" (click)="openCalendar(endDate)"></i>
+       </div>
+    
     </div>
-  
-       <i class="fa-solid fa-calendar-days calendar-icon-right" (click)="openCalendar(endDate)"></i>
-   </div>
+} @else if (layoutType === "column") {
+   <div class="datepicker-wrapper-column">
+ 
+      <div class="date-input-wrapper-column">
+        
+        <div class="input-label-wrapper-column">
+           <label class="date-label-column" for="startDate">Pick Up</label>
+           <input id="startDate" type="text" class="date-input-column" placeholder="start date" (change)="onStartDateSelect()" #startDate>
+        </div>
+      
+           <i class="fa-solid fa-calendar-days calendar-icon-left-column" (click)="openCalendar(startDate)"></i>
+      </div>
+    
+      <div class="dotted-hr"></div>
 
-
-  <!-- <button class="search-button" (click)="invokeFunctionality()">{{ functionality[0] | uppercase }}</button> -->
-</div>
+      <div class="date-input-wrapper-column">
+          
+        <div class="input-label-wrapper-column">
+           <label class="date-label-column" for="endDate">Drop Off</label>
+           <input id="endDate" type="text" class="date-input-column" placeholder="end date" (change)="onEndDateSelect()" #endDate>
+        </div>
+      
+           <i class="fa-solid fa-calendar-days calendar-icon-right-column" (click)="openCalendar(endDate)"></i>
+       </div>
+    
+    </div>
+}

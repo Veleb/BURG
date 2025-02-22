@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { VehicleService } from '../../vehicle/vehicle.service';
+import { StripeService } from '../../services/stripe.service';
 
 @Component({
     selector: 'app-payment-success',
@@ -10,14 +10,14 @@ import { VehicleService } from '../../vehicle/vehicle.service';
 })
 export class PaymentSuccessComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private vehicleService: VehicleService) {}
+  constructor(private route: ActivatedRoute, private stripeService: StripeService) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const sessionId = params['session_id'];
       
       if (sessionId) {
-        this.vehicleService.verifyPayment(sessionId).subscribe();
+        this.stripeService.verifyPayment(sessionId).subscribe();
       }
     });
   }
