@@ -1,14 +1,60 @@
 <div class="details-wrapper">
 
-    <div class="images-wrapper">
-      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
-      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
-      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
-      <img class="small-image" [src]="vehicle?.details?.images?.[0] " alt="Vehicle Image" (click)="updateMainImage(vehicle?.details?.images?.[0])">
-    </div>
+  <div class="images-wrapper">
 
+    @for (image of vehicle?.details?.images?.slice(0, 3); track $index) {
+      <img 
+      class="small-image" 
+      [src]="image"
+      alt="Vehicle Image" 
+      (click)="updateMainImage(image)"
+      >
+    }
+
+    @if ((vehicle?.details?.images?.length ?? 0) > 4) {
+
+      <div 
+      class="small-image last-image-overlay"
+      (click)="openGallery()">
+  
+      <img
+          [src]="vehicle?.details?.images?.[3]"
+          alt="Vehicle Image"
+          class="overlayed-image"
+      />
+        <div class="image-overlay">
+          +{{ (vehicle?.details?.images?.length ?? 0) - 4 }}
+        </div>
+  
+    </div>
+  
+    }
+
+  </div>
+
+ 
+   
   <img class="vehicle-image" [src]="currentImage || vehicle?.details?.images?.[0]" alt="Vehicle Image">
   
+  @if (galleryOpen) {
+
+    <div class="gallery-modal">
+      <div class="gallery-content">
+        <i class="fa-solid fa-x close-btn" (click)="closeGallery()"></i>
+        
+        @for (image of vehicle?.details?.images; track $index) {
+
+          <img
+          [src]="image"
+          class="gallery-image"
+          (click)="updateMainImageAndCloseGallery(image)">
+
+        }
+
+    </div>
+  </div>
+  }
+
   <div class="vehicle-details-wrapper">
 
     <div class="basic-details-wrapper">
@@ -49,7 +95,7 @@
           <!-- <img src="" alt="Company Profile Picture"> -->
           <div class="company-profile-picture"></div>
           <!-- <h4 class="company-name"> {{ vehicle?.company?.name }} </h4> -->
-          <h4 class="company-name">Company Name</h4>
+          <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
   
         </div>
   

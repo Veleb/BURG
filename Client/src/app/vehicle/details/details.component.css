@@ -26,6 +26,77 @@
   gap: 30px;
 }
 
+.last-image-overlay {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlayed-image {
+  width: 170px;
+  height: 145px;
+  border-radius: 2px;
+  object-fit: cover;
+  filter: brightness(50%);
+}
+
+.image-overlay {
+  position: absolute;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+}
+
+.gallery-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.gallery-content {
+  position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.gallery-image {
+  width: 200px;
+  height: 150px;
+  margin: 10px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: black;
+  cursor: pointer;
+}
+
 .vehicle-details-wrapper {
   display: flex;
   flex-direction: column;
@@ -51,7 +122,6 @@
   color: #11080875;
   align-items: center;
   font-weight: 200;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
 
 .vehicle-characteristic {
@@ -106,7 +176,6 @@
 }
 
 .company-name {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 400;
 }
 
@@ -165,7 +234,6 @@
 }
 
 .first-row h2 {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 500;
 }
 
@@ -238,7 +306,6 @@
 .location-checkbox:checked::after {
   content: '✓'; 
   font-size: 13px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 600;
   position: absolute;
   left: 50%;
@@ -254,9 +321,12 @@
   border: none;
   color: white;
   font-size: 18px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 500;
   align-self: center;
+}
+
+.cta-button:hover {
+  cursor: pointer;
 }
 
 .price-breakdown-wrapper {
@@ -265,7 +335,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .price-factor {

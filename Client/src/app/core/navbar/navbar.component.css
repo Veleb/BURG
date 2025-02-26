@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 85px;
+  height: 75px;
   background-color: #FFFDFD;
   border-bottom: 2px solid #A5A5A5;
   padding: 0 25px 0 25px;
@@ -34,7 +34,6 @@
 
 .login-link h4 {
   font-weight: 400;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-link i {

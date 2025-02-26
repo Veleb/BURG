@@ -1,4 +1,3 @@
-// details.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs';
@@ -28,18 +27,26 @@ import { RentInterface } from '../../../types/rent-types';
   styleUrls: ['./details.component.css']
 })
 export class DetailsComponent implements OnInit {
+
   vehicleId: string | null = null;
   vehicle: VehicleInterface | undefined = undefined;
+
   isPricePerDay: boolean = true;
   kilometers?: number;
   rentalHours: number | null = null;
+
   totalPrice: number | null = null;
   totalPriceBeforeTax: number | null = null;
+
   selectedCurrency: string = "USD";
+
   currentImage: string | undefined;
+  galleryOpen: boolean = false;
+
   selectedLocation: string = '';
   startDate: Date | null = null;
   endDate: Date | null = null;
+  
   userId: string | null = null;
 
   constructor(
@@ -75,6 +82,19 @@ export class DetailsComponent implements OnInit {
 
   updateMainImage(image: string | undefined): void {
     this.currentImage = image;
+  }
+
+  openGallery(): void {
+    this.galleryOpen = true;
+  }
+
+  closeGallery(): void {
+    this.galleryOpen = false;
+  }
+
+  updateMainImageAndCloseGallery(image: string | undefined): void {
+    this.updateMainImage(image);
+    this.closeGallery();
   }
 
   onPricePerDayChanged(newValue: boolean): void {

@@ -1,42 +1,51 @@
 <div class="sidebar-wrapper">
-  <h2>Filters</h2>
-  
-    <hr>
-    
-    <app-datepicker 
-    (startDateChange)="onStartDateChange($event)" 
-    (endDateChange)="onEndDateChange($event)"
-    [functionality]="['search', null]" 
-    layoutType="column" />
 
-    <hr>
+  <h2 class="filter-heading">Filters</h2>
+  
+    <hr class="section-break">
+    
+    <div class="datepicker-wrapper">
+
+      <h5 class="category-heading">Time period:</h5>
+
+      <app-datepicker 
+      (startDateChange)="onStartDateChange($event)" 
+      (endDateChange)="onEndDateChange($event)"
+      [functionality]="['search', null]" 
+      layoutType="column" />
+    </div>
+
+    <hr class="section-break">
 
     <div class="category-filter-wrapper">
 
-        <h5>Category of {{ mainCategory }}</h5>
+        <h5 class="category-heading">Category of {{ mainCategory }}</h5>
 
-        @if (mainCategory === "vehicles") {
+        <div class="checkbox-wrapper">
+          @if (mainCategory === "vehicles") {
 
-          @for (category of categories; track $index) {
-
-            <div class="category-checkbox-wrapper">
-              <input 
-                type="checkbox" 
-                [id]="category" 
-                [checked]="activeCategories.includes(category)"
-                (change)="toggleCategory(category)"
-              >
-              <label class="checkbox-label" [for]="category">{{ category | uppercase }}</label>
-            </div>
-
+            @for (category of categories; track $index) {
+  
+              <div class="category-checkbox-wrapper">
+                <input 
+                  type="checkbox" 
+                  [id]="category" 
+                  [checked]="activeCategories.includes(category)"
+                  (change)="toggleCategory(category)"
+                  class="category-checkbox"
+                >
+                <label class="checkbox-label" [for]="category">{{ category | uppercase }}</label>
+              </div>
+  
+            }
+            
+          } @else {
+            <!-- TODO: CHANGE THE FOR LOOP TO LOOP THROUGH THE CATEGORIES FOR THE MACHINERY INSTEAD OF THE VEHICLE CATEGORIES -->
           }
-          
-        } @else {
-          <!-- TODO: CHANGE THE FOR LOOP TO LOOP THROUGH THE CATEGORIES FOR THE MACHINERY INSTEAD OF THE VEHICLE CATEGORIES -->
-        }
+        </div>
     </div>
 
-    <hr>
+    <hr class="section-break">
 
 
 </div>
