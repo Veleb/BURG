@@ -47,17 +47,22 @@ vehicleController.post('/available', async (req: Request, res: Response, next: N
 
     const { start, end, vehicle } = req.body;
 
-    if (!start || !end || !vehicle) {
-      res.status(400).json({ message: 'Start date, end date, and vehicle ID are required' });
-      return; 
-    }
-
     const startDate: Date = new Date(start);  
     const endDate: Date = new Date(end);
 
+    if (isNaN(startDate.getTime())) {
+      res.status(400).json({ message: 'Invalid start date' });
+      return; 
+    }
+
+    if (isNaN(endDate.getTime())) {
+      res.status(400).json({ message: 'Invalid end date' });
+      return; 
+    }
+
     const isAvailable: boolean = await vehicleService.checkAvailability(vehicle, startDate, endDate);
 
-    isAvailable ? res.status(200).json(true) : res.status(200).json(false);;
+    res.status(200).json(isAvailable);
     return;
     
   } catch (err) {

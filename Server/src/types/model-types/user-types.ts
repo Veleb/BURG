@@ -28,10 +28,14 @@ export interface UserForAuth {
 
 export interface UserFromDB {
   _id: string;
+  
   fullName: string
   email: string;
   phoneNumber?: string;
+
   rents: RentInterface[];
+  likes: string[] | VehicleInterface[];
+
   created_at: Date;
   updated_at: Date;
 }

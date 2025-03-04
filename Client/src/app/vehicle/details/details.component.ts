@@ -13,6 +13,7 @@ import { LocationPickerComponent } from "../../shared/components/location-picker
 import { UserService } from '../../user/user.service';
 import { StripeService } from '../../services/stripe.service';
 import { RentInterface } from '../../../types/rent-types';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-details',
@@ -21,7 +22,8 @@ import { RentInterface } from '../../../types/rent-types';
     SliderComponent,
     CurrencyConverterPipe,
     CurrencyPipe,
-    LocationPickerComponent
+    LocationPickerComponent,
+    FormsModule
   ],
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css']
@@ -43,7 +45,9 @@ export class DetailsComponent implements OnInit {
   currentImage: string | undefined;
   galleryOpen: boolean = false;
 
-  selectedLocation: string = '';
+  isSameLocation: boolean = false;
+  pickupLocation: string = '';
+  dropoffLocation: string = '';
   startDate: Date | null = null;
   endDate: Date | null = null;
   
@@ -123,8 +127,22 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  onLocationSelected(location: string): void {
-    this.selectedLocation = location;
+  onLocationSelected(location: string, isCombined: boolean, type?: 'pickup' | 'dropoff'): void {
+
+    if (isCombined || this.isSameLocation) {
+
+      this.pickupLocation = location;
+      this.dropoffLocation = location;
+
+    } else if (type === 'pickup') {
+
+      this.pickupLocation = location;
+
+    } else if (type === 'dropoff') {
+
+      this.dropoffLocation = location;
+
+    }
   }
 
   calculatePrice(): void {
@@ -147,7 +165,7 @@ export class DetailsComponent implements OnInit {
       this.toastr.error('Please select start and end dates.');
       return;
     }
-    if (!this.selectedLocation) {
+    if (!this.pickupLocation || !this.dropoffLocation) {
       this.toastr.error('Please select a location.');
       return;
     }
@@ -164,7 +182,8 @@ export class DetailsComponent implements OnInit {
       start: this.startDate,
       end: this.endDate,
       vehicle: this.vehicleId, 
-      location: this.selectedLocation,
+      pickupLocation: this.pickupLocation,
+      dropoffLocation: this.dropoffLocation,
       user: null,
       status: "pending",
     };

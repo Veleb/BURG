@@ -143,16 +143,16 @@
 
      <div class="location-picker-wrapper"> 
       @if (locationCheckbox.checked) {
-        <app-location-picker class="location-input" (locationSelected)="onLocationSelected($event)"/>
+        <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
       } @else {
         <div class="location-picker-wrapper-different">
-          <app-location-picker class="half-width-input" (locationSelected)="onLocationSelected($event)"/>
-          <app-location-picker class="half-width-input" (locationSelected)="onLocationSelected($event)"/>
+          <app-location-picker id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
+          <app-location-picker id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
         </div>        
       }
       
       <div class="location-checkbox-wrapper">
-        <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox>
+        <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox [(ngModel)]="isSameLocation">
         <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
       </div>
           

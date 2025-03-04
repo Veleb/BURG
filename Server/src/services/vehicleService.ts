@@ -26,27 +26,21 @@ async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
 }
 
 async function checkAvailability(vehicleId: string, startDate: Date, endDate: Date): Promise<boolean> {
-  if (startDate >= endDate) {
-    return false;
-  }
-  
-  const existingReservation = await RentModel.findOne({
+  const utcStart = new Date(startDate.toISOString());
+  const utcEnd = new Date(endDate.toISOString());
+
+  if (utcStart >= utcEnd) return false;
+
+  const conflict = await RentModel.findOne({
     vehicle: vehicleId,
-    status: { $in: ['confirmed', 'pending'] },
-    $or: [
-      { start: { $lt: endDate }, end: { $gt: startDate } },
-      { start: { $lte: startDate }, end: { $gte: endDate } }
-    ],
+    status: { $in: ['confirmed', 'pending', 'active'] },
+    $nor: [
+      { end: { $lte: utcStart } },
+      { start: { $gte: utcEnd } }
+    ]
   }).lean();
 
-  const isAvailable = !existingReservation;
-
-  await VehicleModel.findByIdAndUpdate(vehicleId, 
-    { $set: { available: isAvailable } }, 
-    { new: true }
-  );
-
-  return isAvailable;
+  return !conflict;
 }
 
 async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {

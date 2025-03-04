@@ -4,6 +4,7 @@ export interface RentInterface {
   end: Date;
   vehicle: string;
   user: string | null;    
-  location: string;
+  pickupLocation: string;
+  dropoffLocation: string;
   status: 'pending' | 'confirmed' | 'canceled';
 }

@@ -2,7 +2,7 @@ import { Environment } from "../types/environment";
 
 export const environment: Environment = {
   production: true,
-  apiUrl: 'https://burg-uu6y.onrender.com', // change this
+  apiUrl: 'https://burg-uu6y.onrender.com', 
   categories: [
     "cars",
     "trucks",

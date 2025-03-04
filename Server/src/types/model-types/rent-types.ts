@@ -6,14 +6,10 @@ export interface RentInterface {
   start: Date;
   end: Date;
   vehicle: VehicleInterface;  
-  location: string;
+  pickupLocation: string;
+  dropoffLocation: string;
   user: UserFromDB;
   status: 'pending' | 'confirmed' | 'canceled';
 }
 
-export interface RentInterfaceWithoutUser {
-  start: Date;
-  end: Date;
-  location: string;
-  vehicle: VehicleInterface;
-}
+export type RentInterfaceWithoutUser = Omit<RentInterface, 'user'>;

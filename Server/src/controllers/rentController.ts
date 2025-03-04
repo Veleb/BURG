@@ -25,8 +25,8 @@ rentController.post('/', async (req: authenticatedRequest, res: Response, next: 
 
     const rentData = req.body as Partial<RentInterface>;
 
-    if (!rentData.start || !rentData.end || !rentData.vehicle || !rentData.location) {
-      res.status(400).json({ message: 'Missing required rent details (start, end, vehicle, location)' });
+    if (!rentData.start || !rentData.end || !rentData.vehicle || !rentData.pickupLocation || !rentData.dropoffLocation) {
+      res.status(400).json({ message: 'Missing required rent details (start, end, vehicle, pickup and dropoff locations)' });
       return; 
     }
 

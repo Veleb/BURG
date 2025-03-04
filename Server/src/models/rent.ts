@@ -19,10 +19,17 @@ const RentSchema = new Schema<RentInterface>({
     required: true,
   },
 
-  location: {
+  pickupLocation: {
     type: String,
     required: true,
   },
+
+  dropoffLocation: {
+    type: String,
+    required: true,
+  },
+
+  
 
   user: {
     type: Types.ObjectId,
