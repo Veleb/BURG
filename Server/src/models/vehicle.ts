@@ -3,17 +3,17 @@ import { Size, Category } from "../types/model-types/enums";
 import { VehicleInterface } from "../types/model-types/vehicle-types";
 
 const VehicleSchema = new Schema<VehicleInterface>({
-  company: { 
-    type: Types.ObjectId, 
-    ref: 'Company', 
-    required: true,
-    index: true
-  },
 
   reserved: [{
     type: Types.ObjectId, 
     ref: 'Rent'
   }],
+
+  company: { 
+    ref: 'Company', 
+    type: Types.ObjectId, 
+    required: true,
+  },
 
   details: {
     name: { type: String, required: true },
@@ -24,6 +24,7 @@ const VehicleSchema = new Schema<VehicleInterface>({
     category: { type: String, enum: Object.values(Category), required: true },
     pricePerDay: { type: Number, required: true },
     pricePerKm: { type: Number, required: true },
+    year: { type: Number, required: true },
   },
 
   available: { type: Boolean, required: true },

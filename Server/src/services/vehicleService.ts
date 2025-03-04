@@ -16,7 +16,10 @@ async function getAllVehicles(): Promise<VehicleInterface[]> {
 }
 
 async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
-  const vehicle: VehicleInterface | null = await VehicleModel.findById(vehicleId).lean();
+  const vehicle = await VehicleModel.findById(vehicleId)
+    .populate('company')
+    .populate('likes')
+    .lean();
   
   if (!vehicle) {
     throw new Error('Vehicle not found'); 

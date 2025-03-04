@@ -4,7 +4,7 @@ import { RentInterface } from "./rent-types";
 
 export interface VehicleInterface {
   _id: string;
-  company: CompanyInterface;
+  company: CompanyInterface | string;
   reserved: string[] | RentInterface[];
   available: boolean;
   details: VehicleDetails;
