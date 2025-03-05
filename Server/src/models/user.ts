@@ -53,7 +53,7 @@ const UserSchema = new Schema<UserInterface>({
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 UserSchema.pre('save', async function(next) {
-  if (this.isModified('passUserFromDBord')) {
+  if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
