@@ -9,4 +9,6 @@ export enum Category {
   Trucks = 'trucks',
   HeavyMachinery = 'heavy machinery',
   CommercialCars = 'commercial cars',
+  CommercialEquipment = 'commercial equipment',
+  Other = 'other',
 }

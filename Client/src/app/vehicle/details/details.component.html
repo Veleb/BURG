@@ -113,9 +113,12 @@
       </div>
 
       <div class="contact-wrapper">
-        <h3>Contact</h3>
+        <h3 (click)="toggleContactDropdown()">Contact</h3>
         <i class="fa-solid fa-sort-down"></i>
       </div>
+     
+      
+      
       <!-- TODO: add a contact component instead of the div -->
        
     </div>
@@ -172,7 +175,7 @@
           </div>
   
           <div class="price-breakdown">
-            <p class="price-factor">Random Fee ( 18% )</p>
+            <p class="price-factor">Goods and Services tax ( 18% )</p>
             <p>{{ ( (totalPrice ?? 0) - (totalPriceBeforeTax ?? 0) ) | currencyConverter | currency: selectedCurrency }}</p>
           </div>
   

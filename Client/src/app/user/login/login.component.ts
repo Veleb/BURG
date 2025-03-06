@@ -3,10 +3,12 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
 import { ToastrService } from 'ngx-toastr';
+import { EmailDirective } from '../../directives/email.directive';
+import { PasswordDirective } from '../../directives/password.directive';
 
 @Component({
     selector: 'app-login',
-    imports: [FormsModule, RouterLink],
+    imports: [FormsModule, RouterLink, EmailDirective, PasswordDirective],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })

@@ -1,4 +1,4 @@
-.register-wrapper {
+  .register-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,7 +18,6 @@
   color: white;
   font-size: 2.5rem;
   font-weight: 700;
-  font-family: Libre Franklin;
   margin-bottom: 20px;
 }
 
@@ -52,7 +51,6 @@
 
   font-size: 0.8rem;
   font-weight: 500;
-  font-family: Poppins, sans-serif;
 
   transition: all 0.3s ease;
   pointer-events: none;
@@ -156,7 +154,6 @@
 }
 
 .msg {
-  font-family: Poppins;
   font-size: 1.2rem;
   color: white;
 }
@@ -380,4 +377,17 @@
     background-color: transparent;
     padding: 0 5px 0 5px;
   }
+}
+
+.error {
+  border: 2px solid red
+}
+
+.success {
+  border: 2px solid #8ac926;
+}
+
+.input-error {
+  color: red;
+  font-size: 12px;
 }

@@ -4,7 +4,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { ContactComponent } from './contact/contact.component';
 
 export const routes: Routes = [
-  { path: "", redirectTo: "home", pathMatch: "full" },
+  { path: "", redirectTo: "catalog", pathMatch: "full" },
   { path: "home", component: HomeComponent },
   { path: "contact", component: ContactComponent },
   
@@ -21,7 +21,7 @@ export const routes: Routes = [
   {
     path: "payments",
     loadChildren: () => import('./payments/payment.routes').then(m => m.PAYMENT_ROUTES)
-  },
+  }, 
   
   { path: "404", component: PageNotFoundComponent },
   { path: "**", redirectTo: "/404", pathMatch: "full" }

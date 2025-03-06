@@ -5,10 +5,14 @@ import { UserService } from '../user.service';
 import { ToastrService } from 'ngx-toastr';
 import intlTelInput from 'intl-tel-input';
 import { isPlatformBrowser } from '@angular/common';
+import { PasswordDirective } from '../../directives/password.directive';
+import { RepassDirective } from '../../directives/repass.directive';
+import { EmailDirective } from '../../directives/email.directive';
+import { FullnameDirective } from '../../directives/fullname.directive';
 
 @Component({
     selector: 'app-register',
-    imports: [FormsModule, RouterLink],
+    imports: [FormsModule, RouterLink, PasswordDirective, RepassDirective, EmailDirective, FullnameDirective],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
 })
@@ -42,7 +46,7 @@ export class RegisterComponent implements AfterViewInit {
 
     const phoneNumber = this.iti.getNumber(); 
     
-    if (!this.iti.isValidNumber()) {
+    if (phoneNumber && !this.iti.isValidNumber()) {
       this.toastr.error('Phone number is invalid!', 'Error occurred!');
       return;
     }
@@ -69,4 +73,5 @@ export class RegisterComponent implements AfterViewInit {
 
     formElement.reset();
   }
+  
 }

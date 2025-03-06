@@ -37,6 +37,7 @@ const UserSchema = new Schema<UserInterface>({
       },
       message: (props) => `${props.value} is not a valid phone number!`,
     },
+    required: false,
   },
 
   rents: [{

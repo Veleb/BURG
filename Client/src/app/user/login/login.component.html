@@ -4,14 +4,78 @@
     <h1 class="header">Log In</h1>
     <form class="login-form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
       
-        <div class="form-group">
-          <input class="form-input" type="text" id="email" name="email" #email="ngModel" ngModel required placeholder=" ">
-          <label class="form-label" for="email">Email</label>
-        </div>
+      <div class="form-group">
+        <input
+          [class]="email.touched ? (email.errors ? 'error' : 'success') : '' "
+          class="form-input"
+          type="text"
+          id="email"
+          name="email"
+          required
+          ngModel
+          #email="ngModel"
+          placeholder=" "
+          minlength="6"
+          maxlength="254"
+          appEmail
+        />
+        <label class="form-label" for="email">Email</label>
+
+        @if (email.touched && email.errors) {
+          <div class="errors">
+            @if (email?.errors?.['required']) {
+              <p class="input-error">Email is required!</p>
+            }
+            @if (email?.errors?.['minlength']) {
+              <p class="input-error">Email must be at least 6 characters long!</p>
+            }
+            @if (email?.errors?.['maxlength']) {
+              <p class="input-error">Email must shorter than 254 characters!</p>
+            }
+            @if (email?.errors?.['emailInvalid']) {
+              <p class="input-error">Invalid email. Make sure to use alphanumeric characters and &#64;</p>
+            }
+          </div>
+        }
+
+      </div>
   
         <div class="form-group">
-          <input class="form-input" type="password" id="password" name="password" ngModel required placeholder=" ">
+
+          <input
+            [class]="password.touched ? (password.errors ? 'error' : 'success') : '' "
+            class="form-input"
+            type="password"
+            id="password"
+            name="password"
+            ngModel
+            required
+            placeholder=" "
+            minlength="8"
+            maxlength="64"
+            #password="ngModel"
+            appPassword
+          />
+  
           <label class="form-label" for="password">Password</label>
+  
+          @if (password.touched && password.errors) {
+            <div class="errors">
+              @if (password?.errors?.['required']) {
+                <p class="input-error">Password is required!</p>
+              }
+              @if (password?.errors?.['minlength']) {
+                <p class="input-error">Password must be at least 8 characters long!</p>
+              }
+              @if (password?.errors?.['maxlength']) {
+                <p class="input-error">Password must shorter than 254 characters!</p>
+              }
+              @if (password?.errors?.['passwordInvalid']) {
+                <p class="input-error">Invalid password. Make sure to use alphanumeric characters and ( _ &#64; ! )</p>
+              }
+            </div>
+          }
+  
         </div>
 
         <p class="msg register-msg" routerLink="/auth/register" >Don't have an account yet?</p>

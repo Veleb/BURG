@@ -93,7 +93,7 @@ userController.post('/login', async (req: Request, res: Response, next: NextFunc
     }
 });
 
-userController.post('/logout', async (req: Request, res: Response, next: NextFunction) => {
+userController.post('/logout', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
     try {
         userService.logoutUser(res); // logout user
         res.status(200).json({ message: 'Logged out successfully' });

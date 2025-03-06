@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { of, Subject, switchMap, takeUntil } from 'rxjs';
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
 import { DatepickerComponent } from "../../datepicker/datepicker.component";
@@ -28,10 +28,12 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css']
 })
-export class DetailsComponent implements OnInit {
+export class DetailsComponent implements OnInit, OnDestroy {
+
+  private destroy$ = new Subject<void>();
 
   vehicleId: string | null = null;
-  vehicle: VehicleInterface | undefined = undefined;
+  vehicle: VehicleInterface | null | undefined = undefined;
 
   isPricePerDay: boolean = true;
   kilometers?: number;
@@ -44,6 +46,10 @@ export class DetailsComponent implements OnInit {
 
   currentImage: string | undefined;
   galleryOpen: boolean = false;
+  
+  isContactDropdownOpen = false;
+  private tawkApi: any;
+  isTawkInitialized = false;
 
   isSameLocation: boolean = false;
   pickupLocation: string = '';
@@ -51,7 +57,7 @@ export class DetailsComponent implements OnInit {
   startDate: Date | null = null;
   endDate: Date | null = null;
   
-  userId: string | null = null;
+  private userId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -63,14 +69,15 @@ export class DetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.vehicleId = params.get('id');
-      if (this.vehicleId) {
-        this.vehicleService.getVehicleById(this.vehicleId).subscribe(vehicle => {
-          this.vehicle = vehicle;
-          this.calculatePrice();
-        });
-      }
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$),
+      switchMap(params => {
+        this.vehicleId = params.get('id');
+        return this.vehicleId ? this.vehicleService.getVehicleById(this.vehicleId) : of(null);
+      })
+    ).subscribe(vehicle => {
+      this.vehicle = vehicle;
+      this.calculatePrice();
     });
 
     this.currencyService.getCurrency().subscribe({
@@ -82,6 +89,10 @@ export class DetailsComponent implements OnInit {
     this.userService.user$.subscribe(user => {
       this.userId = user?._id || null;
     });
+  }
+
+  toggleContactDropdown() {
+    this.isContactDropdownOpen = !this.isContactDropdownOpen;
   }
 
   updateMainImage(image: string | undefined): void {
@@ -202,4 +213,10 @@ export class DetailsComponent implements OnInit {
         error: () => this.toastr.error('Error initiating payment'),
       });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
 }

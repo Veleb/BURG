@@ -6,31 +6,79 @@
     <form class="register-form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
 
       <div class="form-group">
+
         <input
+          [class]="fullName.touched ? (fullName.errors ? 'error' : 'success') : '' "
+
           class="form-input"
           type="text"
           id="fullName"
           name="fullName"
           ngModel
           required
+          minlength="3"
+          maxlength="100" 
           placeholder=" "
+          #fullName="ngModel"
+          appFullname
         />
+        
         <label class="form-label" for="fullName">Full Name</label>
+
+        @if (fullName.touched && fullName.errors) {
+          <ul class="errors">
+            @if (fullName?.errors?.['required']) {
+              <li class="input-error">Full name is required!</li>
+            }
+            @if (fullName?.errors?.['minlength']) {
+              <li class="input-error">Full name must be at least 3 characters long!</li>
+            }
+            @if (fullName?.errors?.['maxlength']) {
+              <li class="input-error">Full name must shorter than 100 characters!</li>
+            }
+            @if (fullName?.errors?.['fullNameInvalid']) {
+              <li class="input-error">Full name must include first and last name with valid characters.</li>
+            }
+          </ul>
+        }
       </div>
 
       <div class="form-group">
         <input
+          [class]="email.touched ? (email.errors ? 'error' : 'success') : '' "
           class="form-input"
           type="text"
           id="email"
           name="email"
-          ngModel
           required
+          ngModel
+          #email="ngModel"
           placeholder=" "
+          minlength="6"
+          maxlength="254"
+          appEmail
         />
         <label class="form-label" for="email">Email</label>
+
+        @if (email.touched && email.errors) {
+          <ul class="errors">
+            @if (email?.errors?.['required']) {
+              <li class="input-error">Email is required!</li>
+            }
+            @if (email?.errors?.['minlength']) {
+              <li class="input-error">Email must be at least 6 characters long!</li>
+            }
+            @if (email?.errors?.['maxlength']) {
+              <li class="input-error">Email must shorter than 254 characters!</li>
+            }
+            @if (email?.errors?.['emailInvalid']) {
+              <li class="input-error">Invalid email. Make sure to use alphanumeric characters and &#64;</li>
+            }
+          </ul>
+        }
+
       </div>
-      
+
       <div class="form-group phone-group">
 
         <input 
@@ -40,14 +88,15 @@
         name="phoneNumber"
         #phoneInput
         ngModel
-        required
-        placeholder=" ">
+        placeholder=" "
+        >
         
       </div>
 
       <div class="form-group">
 
         <input
+          [class]="password.touched ? (password.errors ? 'error' : 'success') : '' "
           class="form-input"
           type="password"
           id="password"
@@ -55,22 +104,62 @@
           ngModel
           required
           placeholder=" "
+          minlength="8"
+          maxlength="64"
+          #password="ngModel"
+          appPassword
         />
 
         <label class="form-label" for="password">Password</label>
+
+        @if (password.touched && password.errors) {
+          <ul class="errors">
+            @if (password?.errors?.['required']) {
+              <li class="input-error">Password is required!</li>
+            }
+            @if (password?.errors?.['minlength']) {
+              <li class="input-error">Password must be at least 8 characters long!</li>
+            }
+            @if (password?.errors?.['maxlength']) {
+              <li class="input-error">Password must shorter than 254 characters!</li>
+            }
+            @if (password?.errors?.['passwordInvalid']) {
+              <li class="input-error">Invalid password. Make sure to use alphanumeric characters and ( _ &#64; ! )</li>
+            }
+          </ul>
+        }
+
       </div>
 
       <div class="form-group">
         <input
+          [class]="reppass.touched ? (reppass.errors ? 'error' : 'success') : '' "
           class="form-input"
           type="password"
           id="confirmPassword"
           name="confirmPassword"
           ngModel
           required
+          minlength="8"
+          maxlength="64"
+          #reppass="ngModel"
           placeholder=" "
+          appRepass
         />
+
         <label class="form-label" for="confirmPassword">Confirm Password</label>
+
+        @if (reppass.touched && reppass.errors) {
+          <ul class="errors">
+            @if (reppass?.errors?.['required']) {
+              <li class="input-error">You must confirm your password!</li>
+            }
+            @if (reppass?.errors?.['repasswordValidator']) {
+              <li class="input-error">Passwords don't match!</li>
+            }
+          </ul>
+        }
+
       </div>
 
       <p routerLink="/auth/login" class="msg login-msg">Already have an account?</p>
@@ -82,6 +171,6 @@
   <div class="login-wrapper">
     <h1 class="header">Welcome to register</h1>
     <p routerLink="/auth/login" class="msg">Already have an account?</p>
-    <button routerLink="/auth/login" class="login-button">Login</button>
+    <button routerLink="/auth/login" class="login-button" >Login</button>
   </div>
 </div>
