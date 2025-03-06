@@ -8,6 +8,18 @@
   background-color: #FFFDFD;
   border-bottom: 2px solid #A5A5A5;
   padding: 0 25px 0 25px;
+  width: 100%;
+}
+
+.navbar-transparent {
+  background-color: transparent !important;
+  position: absolute;
+  z-index: 1;
+  color: white;
+
+  .currency-picker {
+    color: white;
+  }
 }
 
 .nav-menu {

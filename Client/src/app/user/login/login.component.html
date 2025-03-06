@@ -1,9 +1,12 @@
 <div class="login-wrapper">
+  <img role="presentation" loading="lazy" class="background-image" src="/images/excavator-background-desktop.webp" alt="Excavator background"/>
 
-  <div class="form-wrapper">
-    <h1 class="header">Log In</h1>
+  <div class="form-wrapper glass-card">
+    
+    <h2 class="header">Log In</h2>
+
     <form class="login-form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
-      
+
       <div class="form-group">
         <input
           [class]="email.touched ? (email.errors ? 'error' : 'success') : '' "
@@ -14,7 +17,7 @@
           required
           ngModel
           #email="ngModel"
-          placeholder=" "
+          placeholder="johndoe@example.com"
           minlength="6"
           maxlength="254"
           appEmail
@@ -22,73 +25,73 @@
         <label class="form-label" for="email">Email</label>
 
         @if (email.touched && email.errors) {
-          <div class="errors">
+          <ul class="errors">
             @if (email?.errors?.['required']) {
-              <p class="input-error">Email is required!</p>
+              <li class="error-msg">Email is required!</li>
             }
             @if (email?.errors?.['minlength']) {
-              <p class="input-error">Email must be at least 6 characters long!</p>
+              <li class="error-msg">Email must be at least 6 characters long!</li>
             }
             @if (email?.errors?.['maxlength']) {
-              <p class="input-error">Email must shorter than 254 characters!</p>
+              <li class="error-msg">Email must shorter than 254 characters!</li>
             }
             @if (email?.errors?.['emailInvalid']) {
-              <p class="input-error">Invalid email. Make sure to use alphanumeric characters and &#64;</p>
+              <li class="error-msg">Invalid email format</li>
             }
-          </div>
+          </ul>
         }
-
       </div>
-  
-        <div class="form-group">
 
-          <input
-            [class]="password.touched ? (password.errors ? 'error' : 'success') : '' "
-            class="form-input"
-            type="password"
-            id="password"
-            name="password"
-            ngModel
-            required
-            placeholder=" "
-            minlength="8"
-            maxlength="64"
-            #password="ngModel"
-            appPassword
-          />
-  
-          <label class="form-label" for="password">Password</label>
-  
-          @if (password.touched && password.errors) {
-            <div class="errors">
-              @if (password?.errors?.['required']) {
-                <p class="input-error">Password is required!</p>
-              }
-              @if (password?.errors?.['minlength']) {
-                <p class="input-error">Password must be at least 8 characters long!</p>
-              }
-              @if (password?.errors?.['maxlength']) {
-                <p class="input-error">Password must shorter than 254 characters!</p>
-              }
-              @if (password?.errors?.['passwordInvalid']) {
-                <p class="input-error">Invalid password. Make sure to use alphanumeric characters and ( _ &#64; ! )</p>
-              }
-            </div>
-          }
-  
-        </div>
+      <div class="form-group">
+        <input
+          [class]="password.touched ? (password.errors ? 'error' : 'success') : '' "
+          class="form-input"
+          type="password"
+          id="password"
+          name="password"
+          ngModel
+          required
+          placeholder="Enter your password"
+          minlength="8"
+          maxlength="64"
+          #password="ngModel"
+          appPassword
+        />
+        <label class="form-label" for="password">Password</label>
 
-        <p class="msg register-msg" routerLink="/auth/register" >Don't have an account yet?</p>
+        @if (password.touched && password.errors) {
+          <ul class="errors">
+            @if (password?.errors?.['required']) {
+              <li class="error-msg">Password is required!</li>
+            }
+            @if (password?.errors?.['minlength']) {
+              <li class="error-msg">Password must be at least 8 characters long!</li>
+            }
+            @if (password?.errors?.['maxlength']) {
+              <li class="error-msg">Password must shorter than 64 characters!</li>
+            }
+            @if (password?.errors?.['passwordInvalid']) {
+              <li class="error-msg">Invalid password format</li>
+            }
+          </ul>
+        }
+      </div>
 
-      <button  class="submit-button" type="submit" [disabled]="!userForm.valid">Log In</button>
+      <button class="submit-button" type="submit" [disabled]="!userForm.valid">Log In</button>
     </form>
-  </div>
 
-  <div class="sign-up-wrapper">
-    <h1 class="header">Welcome to login</h1>
-    <p routerLink="/auth/register" class="msg">Don't have an account?</p>
-    <button routerLink="/auth/register" class="register-button">Register</button>
+    <div class="line-header-wrapper">
+      <hr>
+      <h4 class="social-header">Login with social accounts</h4>
+      <hr>
+    </div>
+    
+    <div class="social-icons">
+      <i class="fa-brands fa-google"></i>
+      <i class="fa-brands fa-facebook"></i>
+      <i class="fa-brands fa-apple"></i>
+    </div>
+    
+    <p routerLink="/auth/register" class="msg login-msg">Don't have an account? <span>Register</span></p>
   </div>
-
-  <img class="background-image" src="/images/dark-red-gradient.jpg" alt="An image of a dark red gradient">
 </div>

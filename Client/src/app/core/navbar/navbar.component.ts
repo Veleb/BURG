@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { Observable } from 'rxjs';
@@ -12,7 +12,7 @@ import { CurrencyComponent } from "../../currency/currency.component";
     styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  
+  @Input() isTransparent: boolean = false;
   isLoggedIn$: Observable<boolean>;
   
   constructor(private userService: UserService) {

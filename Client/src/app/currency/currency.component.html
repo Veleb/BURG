@@ -1,7 +1,7 @@
 <div class="currency-wrapper">
-  <select [(ngModel)]="selectedCurrency" (change)="onCurrencyChange($event)" class="currency-select">
+  <select [(ngModel)]="selectedCurrency" (change)="onCurrencyChange($event)" [class]="color === 'black' ? 'currency-select' : 'currency-select white' ">
     @for (currency of currencies; track $index) {
-      <option class="currency-option" [value]="currency">{{ currency }}</option>
+      <option [class]="color === 'black' ? 'currency-option' : 'currency-option white' " [value]="currency">{{ currency }}</option>
     }
   </select>
 </div>

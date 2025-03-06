@@ -31,7 +31,6 @@ userController.get('/profile', async (req: Request, res: Response, next: NextFun
 
 userController.get('/likes', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
     const userId: string | undefined = req.user?._id;
-    console.log(userId);
     
     try {
         if (!userId) {

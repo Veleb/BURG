@@ -1,12 +1,12 @@
 <nav class="navigation">
   
-  <div class="nav-wrapper">
+  <div class="nav-wrapper" [class]="{ 'navbar-transparent': isTransparent }">
 
     <h1 class="logo-link" routerLink="/home">Burg</h1>
 
     <div class="nav-menu">
 
-      <app-currency />
+      <app-currency [color]="isTransparent ? 'white' : 'black'"/>
 
       @if (isLoggedIn$ | async) {
         

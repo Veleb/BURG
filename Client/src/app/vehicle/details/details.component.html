@@ -8,6 +8,7 @@
       [src]="image"
       alt="Vehicle Image" 
       (click)="updateMainImage(image)"
+      loading="lazy"
       >
     }
 
@@ -21,6 +22,7 @@
           [src]="vehicle?.details?.images?.[3]"
           alt="Vehicle Image"
           class="overlayed-image"
+          loading="lazy"
       />
         <div class="image-overlay">
           +{{ (vehicle?.details?.images?.length ?? 0) - 4 }}
@@ -34,7 +36,7 @@
 
  
    
-  <img class="vehicle-image" [src]="currentImage || vehicle?.details?.images?.[0]" alt="Vehicle Image">
+  <img loading="lazy" class="vehicle-image" [src]="currentImage || vehicle?.details?.images?.[0]" alt="Vehicle Image">
   
   @if (galleryOpen) {
 
@@ -92,7 +94,7 @@
 
         <div class="company-details">
   
-          <!-- <img src="" alt="Company Profile Picture"> -->
+          <!-- <img loading="lazy" src="" alt="Company Profile Picture"> -->
           <div class="company-profile-picture"></div>
           <!-- <h4 class="company-name"> {{ vehicle?.company?.name }} </h4> -->
           <h4 class="company-name">{{ vehicle?.company?.name }}</h4>

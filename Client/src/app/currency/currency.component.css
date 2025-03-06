@@ -5,13 +5,19 @@
   border: none;
   appearance: none;
   font-size: 16px;
+  color: black;
 }
 
 .currency-option {
   font-size: 16px;
   font-weight: 300;
+  color: black;
 }
 
 .currency-select:hover, .currency-option:hover {
   cursor: pointer;
+}
+
+.white {
+  color: white;
 }

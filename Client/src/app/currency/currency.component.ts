@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CurrencyService } from './currency.service';
 import { FormsModule } from '@angular/forms';
 
@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './currency.component.css'
 })
 export class CurrencyComponent {
+  @Input() color: string = "black";
+
   currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD'];
   selectedCurrency = 'USD';
 

@@ -1,8 +1,10 @@
 <div class="register-wrapper">
-  <img class="background-image" src="/images/dark-red-gradient.jpg" alt="An image of a dark red gradient"/>
+  <img role="presentation" loading="lazy" class="background-image" src="/images/excavator-background-desktop.webp" alt="An image of an excavator"/>
 
-  <div class="form-wrapper">
-    <h1 class="header">Register</h1>
+  <div class="form-wrapper glass-card">
+
+    <h2 class="header">Register</h2>
+
     <form class="register-form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
 
       <div class="form-group">
@@ -18,7 +20,7 @@
           required
           minlength="3"
           maxlength="100" 
-          placeholder=" "
+          placeholder="John Doe"
           #fullName="ngModel"
           appFullname
         />
@@ -28,16 +30,16 @@
         @if (fullName.touched && fullName.errors) {
           <ul class="errors">
             @if (fullName?.errors?.['required']) {
-              <li class="input-error">Full name is required!</li>
+              <li class="error-msg">Full name is required!</li>
             }
             @if (fullName?.errors?.['minlength']) {
-              <li class="input-error">Full name must be at least 3 characters long!</li>
+              <li class="error-msg">Full name must be at least 3 characters long!</li>
             }
             @if (fullName?.errors?.['maxlength']) {
-              <li class="input-error">Full name must shorter than 100 characters!</li>
+              <li class="error-msg">Full name must shorter than 100 characters!</li>
             }
             @if (fullName?.errors?.['fullNameInvalid']) {
-              <li class="input-error">Full name must include first and last name with valid characters.</li>
+              <li class="error-msg">Full name must include first and last name with valid characters.</li>
             }
           </ul>
         }
@@ -53,7 +55,7 @@
           required
           ngModel
           #email="ngModel"
-          placeholder=" "
+          placeholder="johndoe@example.com"
           minlength="6"
           maxlength="254"
           appEmail
@@ -63,16 +65,16 @@
         @if (email.touched && email.errors) {
           <ul class="errors">
             @if (email?.errors?.['required']) {
-              <li class="input-error">Email is required!</li>
+              <li class="error-msg">Email is required!</li>
             }
             @if (email?.errors?.['minlength']) {
-              <li class="input-error">Email must be at least 6 characters long!</li>
+              <li class="error-msg">Email must be at least 6 characters long!</li>
             }
             @if (email?.errors?.['maxlength']) {
-              <li class="input-error">Email must shorter than 254 characters!</li>
+              <li class="error-msg">Email must shorter than 254 characters!</li>
             }
             @if (email?.errors?.['emailInvalid']) {
-              <li class="input-error">Invalid email. Make sure to use alphanumeric characters and &#64;</li>
+              <li class="error-msg">Invalid email. Make sure to use alphanumeric characters and &#64;</li>
             }
           </ul>
         }
@@ -81,6 +83,8 @@
 
       <div class="form-group phone-group">
 
+        <label class="form-label" for="phoneNumber">Phone Number (Optional) </label>
+
         <input 
         class="form-input phone-input"
         type="tel"
@@ -88,7 +92,7 @@
         name="phoneNumber"
         #phoneInput
         ngModel
-        placeholder=" "
+        placeholder=""
         >
         
       </div>
@@ -103,7 +107,7 @@
           name="password"
           ngModel
           required
-          placeholder=" "
+          placeholder="Enter your password"
           minlength="8"
           maxlength="64"
           #password="ngModel"
@@ -115,16 +119,16 @@
         @if (password.touched && password.errors) {
           <ul class="errors">
             @if (password?.errors?.['required']) {
-              <li class="input-error">Password is required!</li>
+              <li class="error-msg">Password is required!</li>
             }
             @if (password?.errors?.['minlength']) {
-              <li class="input-error">Password must be at least 8 characters long!</li>
+              <li class="error-msg">Password must be at least 8 characters long!</li>
             }
             @if (password?.errors?.['maxlength']) {
-              <li class="input-error">Password must shorter than 254 characters!</li>
+              <li class="error-msg">Password must shorter than 254 characters!</li>
             }
             @if (password?.errors?.['passwordInvalid']) {
-              <li class="input-error">Invalid password. Make sure to use alphanumeric characters and ( _ &#64; ! )</li>
+              <li class="error-msg">Invalid password. Make sure to use alphanumeric characters and ( _ &#64; ! )</li>
             }
           </ul>
         }
@@ -143,7 +147,7 @@
           minlength="8"
           maxlength="64"
           #reppass="ngModel"
-          placeholder=" "
+          placeholder="Confirm your password"
           appRepass
         />
 
@@ -152,25 +156,37 @@
         @if (reppass.touched && reppass.errors) {
           <ul class="errors">
             @if (reppass?.errors?.['required']) {
-              <li class="input-error">You must confirm your password!</li>
+              <li class="error-msg">You must confirm your password!</li>
             }
             @if (reppass?.errors?.['repasswordValidator']) {
-              <li class="input-error">Passwords don't match!</li>
+              <li class="error-msg">Passwords don't match!</li>
             }
           </ul>
         }
 
       </div>
 
-      <p routerLink="/auth/login" class="msg login-msg">Already have an account?</p>
-
       <button class="submit-button" type="submit" [disabled]="!userForm.valid">Register</button>
+      
     </form>
+
+    <div class="line-header-wrapper">
+        
+      <hr id="firstLine">
+      
+      <h4 class="social-header">Login with social accounts</h4>
+      
+      <hr id="secondLine">
+
+    </div>
+    
+    <div class="social-icons">
+      <i class="fa-brands fa-google"></i>
+      <i class="fa-brands fa-facebook"></i>
+      <i class="fa-brands fa-apple"></i>
+    </div>
+    
+    <p routerLink="/auth/login" class="msg login-msg">Already have an account? <span>Log In</span></p>
   </div>
 
-  <div class="login-wrapper">
-    <h1 class="header">Welcome to register</h1>
-    <p routerLink="/auth/login" class="msg">Already have an account?</p>
-    <button routerLink="/auth/login" class="login-button" >Login</button>
-  </div>
 </div>
