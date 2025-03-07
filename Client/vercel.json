@@ -6,7 +6,7 @@
   "outputDirectory": "dist/browser",
   "trailingSlash": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/dist/client/browser/index.html/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "redirects": [
     { "source": "/(.*)", "destination": "/", "statusCode": 308 }
