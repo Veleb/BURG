@@ -1,0 +1,120 @@
+.eula-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.last-updated-date {
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.eula-container h1 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #3498db;
+}
+
+.eula-container h2 {
+  color: #34495e;
+  margin: 2rem 0 1rem;
+  font-size: 1.4rem;
+}
+
+.eula-container h3 {
+  color: #2c3e50;
+  margin: 1.5rem 0 1rem;
+  font-size: 1.2rem;
+}
+
+.eula-container p {
+  margin-bottom: 1rem;
+}
+
+.eula-container ul {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.eula-container li {
+  margin-bottom: 0.8rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.eula-container li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-weight: bold;
+}
+
+.eula-container a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.eula-container a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .eula-container {
+    padding: 1rem;
+  }
+  
+  .eula-container h1 {
+    font-size: 1.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .eula-container h2 {
+    font-size: 1.25rem;
+    margin: 1.75rem 0 0.75rem;
+  }
+  
+  .eula-container h3 {
+    font-size: 1.1rem;
+    margin: 1.25rem 0 0.75rem;
+  }
+  
+  .eula-container p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  .eula-container ul {
+    padding-left: 1.25rem;
+  }
+  
+  .eula-container li {
+    padding-left: 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .eula-container h1 {
+    font-size: 1.3rem;
+  }
+  
+  .eula-container h2 {
+    font-size: 1.15rem;
+  }
+  
+  .eula-container h3 {
+    font-size: 1rem;
+  }
+  
+  .eula-container li::before {
+    left: -0.25rem;
+  }
+}

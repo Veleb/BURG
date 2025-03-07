@@ -1,5 +1,6 @@
 .sidebar-wrapper {
-  width: 250px;
+  width: 100%;
+  padding: 0 16px;
 }
 
 .section-break {
@@ -13,11 +14,14 @@
 .category-checkbox-wrapper {
   gap: 4px;
   position: relative;
-  left: 16px;
+  /* left: 16px; */
   width: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;
+  left: 0;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .category-checkbox {
@@ -53,4 +57,37 @@
   position: relative;
   left: 8px;
   font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .sidebar-wrapper {
+    width: 250px;
+    min-width: 250px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-heading {
+    font-size: 1.2rem;
+    left: 0;
+  }
+
+  .category-heading {
+    font-size: 0.9rem;
+    left: 0;
+  }
+
+  .category-checkbox {
+    width: 14px;
+    height: 14px;
+  }
+
+  .category-checkbox:checked::after {
+    font-size: 11px;
+  }
+
+  .checkbox-label {
+    font-size: 0.9rem;
+  }
 }

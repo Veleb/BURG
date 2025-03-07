@@ -1,32 +1,50 @@
+<!-- navbar.component.html -->
 <nav class="navigation">
-  
-  <div class="nav-wrapper" [class]="{ 'navbar-transparent': isTransparent }">
-
+  <div class="nav-wrapper" [class.navbar-transparent]="isTransparent">
     <h1 class="logo-link" routerLink="/home">Burg</h1>
 
-    <div class="nav-menu">
-
+    <div class="nav-menu" #navMenu>
       <app-currency [color]="isTransparent ? 'white' : 'black'"/>
 
       @if (isLoggedIn$ | async) {
-        
         <i routerLink="/auth/profile" class="fa-solid fa-user desktop-user-icon"></i>
-        
       } @else {
-        
         <div routerLink="/auth/login" class="login-link">
           <h4>Sign In</h4>
           <i class="fa-solid fa-angle-right"></i>
         </div>
-
       }
-    
-      <div class="hamburger-menu">
-        <i class="fa-solid fa-bars"></i>
+
+      <div class="hamburger-menu" (click)="toggleMenu()">
+        <i [class]="isMenuOpen ? 'fa-solid fa-times' : 'fa-solid fa-bars'" 
+           [@iconAnimation]="isMenuOpen ? 'open' : 'closed'"></i>
       </div>
 
+      @if (isMenuOpen) {
+        <div class="dropdown-menu" [class.show]="isMenuOpen">
+          <a routerLink="/become-host" class="become-host-link" (click)="isMenuOpen = false">
+            Become a host
+          </a>
+  
+          <hr class="dotted-hr">
+  
+          <div class="links">
+            <a routerLink="/terms" class="dropdown-item" (click)="isMenuOpen = false">
+              <i class="fa-solid fa-file-contract link-icon"></i> Terms of Service
+            </a>
+            <a routerLink="/cookies-policy" class="dropdown-item" (click)="isMenuOpen = false">
+              <i class="fa-solid fa-cookie-bite link-icon"></i> Cookies Policy
+            </a>
+            <a routerLink="/about" class="dropdown-item" (click)="isMenuOpen = false">
+              <i class="fa-solid fa-info-circle link-icon"></i> About Us
+            </a>
+            <a routerLink="/eula" class="dropdown-item" (click)="isMenuOpen = false">
+              <i class="fa-solid fa-scroll link-icon"></i> EULA
+            </a>
+          </div>
+        </div>
+      }
+
     </div>
-
-
   </div>
 </nav>

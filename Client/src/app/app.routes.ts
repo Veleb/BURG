@@ -2,12 +2,21 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ContactComponent } from './contact/contact.component';
+import { TermsComponent } from './legal/terms/terms.component';
+import { CookiesPolicyComponent } from './legal/cookies-policy/cookies-policy.component';
+import { EulaComponent } from './legal/eula/eula.component';
 
 export const routes: Routes = [
   { path: "", redirectTo: "catalog", pathMatch: "full" },
   { path: "home", component: HomeComponent },
   { path: "contact", component: ContactComponent },
   
+  { path: "terms", component: TermsComponent },
+  { path: "cookies-policy", component: CookiesPolicyComponent },
+  { path: "eula", component: EulaComponent },
+  // { path: "about", component: AboutComponent },
+  // { path: "become-host", component: BecomeHostComponent },
+
   { 
     path: "auth",
     loadChildren: () => import('./user/user.routes').then(m => m.USER_ROUTES)
@@ -22,7 +31,7 @@ export const routes: Routes = [
     path: "payments",
     loadChildren: () => import('./payments/payment.routes').then(m => m.PAYMENT_ROUTES)
   }, 
-  
+
   { path: "404", component: PageNotFoundComponent },
   { path: "**", redirectTo: "/404", pathMatch: "full" }
 ];

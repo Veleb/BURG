@@ -3,5 +3,8 @@
   "framework": "angular",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": "dist/client/browser"
+  "outputDirectory": "dist/client/browser",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
