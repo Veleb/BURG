@@ -3,8 +3,12 @@
   "framework": "angular",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": "dist/client/browser",
+  "outputDirectory": "dist/browser",
+  "trailingSlash": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/dist/client/browser/index.html/index.html" }
+  ],
+  "redirects": [
+    { "source": "/(.*)", "destination": "/", "statusCode": 308 }
   ]
 }
