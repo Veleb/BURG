@@ -7,8 +7,5 @@
   "trailingSlash": true,
   "rewrites": [
     { "source": "/(.*)", "destination": "/dist/client/browser/index.html/index.html" }
-  ],
-  "redirects": [
-    { "source": "/(.*)", "destination": "/", "statusCode": 308 }
   ]
 }
