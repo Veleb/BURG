@@ -89,11 +89,6 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onHeartIconClick(): void {
-    if (!this.userId) {
-      this.toastr.error(`Unauthorized!`, `Error Occurred!`)
-      return;
-    }
-
     if (!this.vehicle?._id) {
       this.toastr.error(`Vehicle not found!`, `Error Occurred!`)
       return;

@@ -1,0 +1,137 @@
+button:hover {
+  cursor: pointer;
+}
+
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #FFFDFD;
+  padding: 2rem;
+}
+
+.content-wrapper {
+  text-align: center;
+  max-width: 600px;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.graphic-wrapper {
+  margin-bottom: 2rem;
+}
+
+.astronaut {
+  width: 200px;
+  height: 200px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.text-content {
+  margin-top: 1.5rem;
+}
+
+.error-code {
+  font-size: 4rem;
+  color: #2c3e50;
+  margin: 0;
+  line-height: 1;
+}
+
+.error-message {
+  font-size: 1.75rem;
+  color: #34495e;
+  margin: 1rem 0;
+}
+
+.error-description {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.back-button, .home-button {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.back-button {
+  background: white;
+  border: 2px solid #3498db;
+  color: #3498db;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+.home-button {
+  background: #3498db;
+  border: 2px solid #3498db;
+  color: white;
+}
+
+.home-button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1.5rem;
+  }
+
+  .error-code {
+    font-size: 3rem;
+  }
+
+  .error-message {
+    font-size: 1.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .back-button, .home-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .astronaut {
+    width: 150px;
+    height: 150px;
+  }
+
+  .error-code {
+    font-size: 2.5rem;
+  }
+
+  .error-message {
+    font-size: 1.25rem;
+  }
+}

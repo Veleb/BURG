@@ -1,0 +1,18 @@
+<div class="carousel-wrapper">
+  
+  <div class="images-wrapper" [style.transform]="'translateX(-' + (currentIndex * 100) + '%)'">
+    @for (image of images; track $index) {
+      <img src="{{ image }}" alt="Machinery" class="carousel-image">
+    }
+  </div>
+  
+  <div class="arrows-wrapper">
+    <button (click)="prevImage()" aria-label="Next image" class="arrow-button left">
+      <i class="fa-solid fa-angle-left arrow"></i>
+    </button>
+    <button (click)="nextImage()" aria-label="Previous image" class="arrow-button right">
+      <i class="fa-solid fa-angle-right arrow"></i>
+    </button>
+  </div>
+
+</div>

@@ -1,4 +1,136 @@
-.liked-vehicles-wrapper {
+/* General Layout */
+.profile-container {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
   display: flex;
-  gap: 50px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Buttons */
+.btn-edit,
+.btn-save,
+.btn-cancel,
+.btn-logout {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background: #007bff;
+  color: white;
+}
+
+.btn-save {
+  background: #28a745;
+  color: white;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-logout {
+  width: 100%;
+  background: #dc3545;
+  color: white;
+  margin-top: 2rem;
+}
+
+.btn-edit:hover { background: #0056b3; }
+.btn-save:hover { background: #218838; }
+.btn-cancel:hover { background: #5a6268; }
+.btn-logout:hover { background: #c82333; }
+
+/* Forms */
+.edit-form {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Error Messages */
+.error-message {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* Sections */
+.rents-wrapper,
+.liked-vehicles-wrapper {
+  margin-top: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  font-size: 1rem;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem;
+  color: #007bff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-logout {
+    margin-top: 1rem;
+  }
 }

@@ -1,1 +1,31 @@
-<p>page-not-found works!</p>
+<!-- 404.component.html -->
+<div class="not-found-container">
+  <div class="content-wrapper">
+    <div class="graphic-wrapper">
+      <svg class="astronaut" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="90" fill="#F5F5F5"/>
+        <path d="M80 120 Q 100 80 120 120" stroke="#2c3e50" fill="none" stroke-width="2"/>
+        <circle cx="85" cy="95" r="8" fill="#2c3e50"/>
+        <circle cx="115" cy="95" r="8" fill="#2c3e50"/>
+        <path d="M70 140 L130 140" stroke="#2c3e50" stroke-width="2"/>
+      </svg>
+    </div>
+    
+    <div class="text-content">
+      <h1 class="error-code">404</h1>
+      <h2 class="error-message">Page Not Found</h2>
+      <p class="error-description">Oops! You're lost in space...</p>
+      
+      <div class="button-group">
+        <button class="back-button" (click)="goBack()">
+          <i class="fa-solid fa-arrow-left"></i>
+          Go Back
+        </button>
+        <button class="home-button" routerLink="/home">
+          Return Home
+          <i class="fa-solid fa-house"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

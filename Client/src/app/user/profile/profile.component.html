@@ -1,22 +1,75 @@
-<h1>{{ user?.fullName }}</h1>
-
-<div class="rents-wrapper">
-  <h2>Rent history</h2>
-  @if (user && user.rents && user.rents.length > 0) {
-
-    @for (rent of user.rents; track $index) {
-      <app-rent-card [rentId]="rent"/>
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>{{ editMode ? 'Edit Profile' : user?.fullName }}</h1>
+    @if (!editMode) {
+      <button class="btn-edit" (click)="toggleEditMode()">Edit</button>
     }
+  </div>
 
-  } @else {
-    <h3>No rent history!</h3>
-  }
-</div>
+  @if (editMode) {
+    <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" class="edit-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" name="fullName" [(ngModel)]="editModel.fullName" required #fullName="ngModel">
+        @if (fullName.invalid && fullName.touched) {
+          <div class="error-message">Name is required</div>
+        }
+      </div>
 
-<div class="liked-vehicles-wrapper">
-  @for (likedVehicle of likedVehicles; track $index) {
-    <app-product-card [vehicle]="likedVehicle"/>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" [(ngModel)]="editModel.email" required email #email="ngModel">
+        @if (email.invalid && email.touched) {
+          <div class="error-message">
+            @if (email.errors?.['required']) { Email is required }
+            @if (email.errors?.['email']) { Invalid email format }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" name="phone" [(ngModel)]="editModel.phoneNumber" pattern="[0-9]{10}">
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel" (click)="toggleEditMode()">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="editForm.invalid || isUpdating">Save</button>
+      </div>
+    </form>
   }
-  
+
+  @if (isLoading) {
+    <div class="loading">Loading...</div>
+  }
+
+  <div class="rents-wrapper">
+    <h2>Rent History</h2>
+    @if (!isLoading) {
+      @if (user?.rents?.length) {
+        <div class="rent-list">
+          @for (rent of user?.rents; track $index) {
+            <app-rent-card [rentId]="rent"/>
+          }
+        </div>
+      } @else {
+        <p class="empty-state">No rent history</p>
+      }
+    }
+  </div>
+
+  <div class="liked-vehicles-wrapper">
+    <h2>Saved Vehicles</h2>
+    @if (likedVehicles.length) {
+      <div class="vehicle-grid">
+        @for (vehicle of likedVehicles; track $index) {
+          <app-product-card [vehicle]="vehicle"/>
+        }
+      </div>
+    } @else {
+      <p class="empty-state">No saved vehicles</p>
+    }
+  </div>
+
+  <button class="btn-logout" (click)="confirmLogout()">Logout</button>
 </div>
-<button (click)="logout()">Logout</button>

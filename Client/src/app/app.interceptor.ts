@@ -25,10 +25,15 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
 
       const isAuthRequest = req.url.includes('/login') || req.url.includes('/auth');
       const isProfileUnauthorized = err.status === 401 && req.url.includes('/users/profile');
+      const isInvalidVehicleRequest = 
+        err.status === 400 && 
+        req.method === 'GET' && 
+        req.url.includes('/vehicles/');
 
-      if (isAuthRequest || isProfileUnauthorized) {
+      if (isAuthRequest || isProfileUnauthorized || isInvalidVehicleRequest) {
         return throwError(() => err);
       }
+      
 
       let message = '';
       let title = '';
@@ -44,6 +49,8 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
 
             title = 'Unauthorized';
             message = err.error?.message || 'You are not authorized. Please log in.';
+
+            router.navigate(['/auth/login']);
 
             if (!router.url.startsWith('/login')) {
               toastr.error(message, title);

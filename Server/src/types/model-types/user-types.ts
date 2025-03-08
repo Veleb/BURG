@@ -8,7 +8,8 @@ export interface UserInterface {
   password: string;
   rents: RentInterface[];
   likes: string[] | VehicleInterface[];
-
+  role: { type: String, enum: ["user", "admin"], default: "user" },
+  
   _id: string;
   created_at: Date;
   updated_at: Date;

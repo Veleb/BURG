@@ -23,7 +23,7 @@
 .images-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
 }
 
 .last-image-overlay {
@@ -364,3 +364,4 @@
   text-align: center;
   color: #666;
 }
+

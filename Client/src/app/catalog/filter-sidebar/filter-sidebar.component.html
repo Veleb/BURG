@@ -9,10 +9,13 @@
       <h5 class="category-heading">Time period:</h5>
 
       <app-datepicker 
+      [startDateInput]="startDateFilter"
+      [endDateInput]="endDateFilter"
       (startDateChange)="onStartDateChange($event)" 
       (endDateChange)="onEndDateChange($event)"
       [functionality]="['search', null]" 
-      layoutType="column" />
+      layoutType="column" 
+      />
     </div>
 
     <hr class="section-break">

@@ -45,7 +45,8 @@ const UserSchema = new Schema<UserInterface>({
   likes: [{
     ref: "Vehicle",
     type: Types.ObjectId,
-  }]
+  }],
+  role: { type: String, enum: ["user", "admin"], default: "user" },
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });

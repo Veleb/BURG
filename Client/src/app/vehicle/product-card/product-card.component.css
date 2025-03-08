@@ -80,6 +80,7 @@
   aspect-ratio: 4/3;
   object-fit: cover;
 }
+
 .arrows-wrapper {
   position: absolute;
   width: 100%;
@@ -98,6 +99,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.arrow-button:hover {
+  cursor: pointer;
 }
 
 .arrow {

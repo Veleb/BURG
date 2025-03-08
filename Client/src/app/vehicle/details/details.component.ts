@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { of, Subject, switchMap, takeUntil } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
 import { DatepickerComponent } from "../../datepicker/datepicker.component";
@@ -48,7 +48,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   galleryOpen: boolean = false;
   
   isContactDropdownOpen = false;
-  private tawkApi: any;
   isTawkInitialized = false;
 
   isSameLocation: boolean = false;
@@ -66,6 +65,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private currencyService: CurrencyService,
     private userService: UserService,
     private stripeService: StripeService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -73,9 +73,22 @@ export class DetailsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       switchMap(params => {
         this.vehicleId = params.get('id');
-        return this.vehicleId ? this.vehicleService.getVehicleById(this.vehicleId) : of(null);
+        return this.vehicleId ? 
+          this.vehicleService.getVehicleById(this.vehicleId).pipe(
+            catchError((error) => {
+              if (error.status === 400 || error.status === 404) {
+                this.router.navigate(['/404']);
+              }
+              return of(null);
+            })
+          ) 
+          : of(null);
       })
     ).subscribe(vehicle => {
+      if (!vehicle) {
+        this.router.navigate(['/404']);
+        return;
+      }
       this.vehicle = vehicle;
       this.calculatePrice();
     });

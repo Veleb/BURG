@@ -4,6 +4,7 @@ import { VehicleService } from '../vehicle/vehicle.service';
 import { VehicleInterface } from '../../types/vehicle-types';
 import { FilterSidebarComponent } from './filter-sidebar/filter-sidebar.component';
 import { SortDropdownComponent } from "../shared/components/sort-dropdown/sort-dropdown.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-catalog',
@@ -17,9 +18,23 @@ export class CatalogComponent implements OnInit {
   mainCategory: string = "vehicles";
   sort: string = 'Most popular';
 
-  constructor(private vehicleService: VehicleService) {}
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+
+  constructor(
+    private vehicleService: VehicleService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe(params => {
+      this.startDate = params['start'] ? new Date(params['start']) : null;
+      this.endDate = params['end'] ? new Date(params['end']) : null;
+      
+      this.vehicleService.updateAvailableVehicles(this.startDate, this.endDate);
+    })
+
     this.vehicleService.getAll();
     
     this.vehicleService.filteredVehicles$.subscribe(filtered => {

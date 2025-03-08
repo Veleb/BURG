@@ -21,7 +21,6 @@
   width: min(95%, 600px); 
   padding: clamp(1.5rem, 5vw, 2rem);
   position: relative;
-  z-index: 1;
   min-height: 500px; 
   display: flex;
   flex-direction: column;

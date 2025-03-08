@@ -104,8 +104,16 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
 
 stripeController.post('/verify-payment', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
+    const { sessionId } = req.body;
+
+    if (!sessionId || typeof sessionId !== 'string' || sessionId.length > 66) {
+      res.status(400).json({ message: 'Invalid sessionId' });
+      return; 
+    }
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
     res.status(200).json({ status: session.payment_status });
+
   } catch (error) {
     next(error);
   }

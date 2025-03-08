@@ -18,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimations(),
     provideToastr({
+      timeOut: 5000,
       maxOpened: 3,
       closeButton: true, 
       progressBar: true,

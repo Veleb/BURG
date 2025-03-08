@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { DatepickerComponent } from "../../datepicker/datepicker.component";
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { environment } from '../../../environments/environment';
@@ -12,6 +12,10 @@ import { UppercasePipe } from '../../shared/pipes/uppercase.pipe';
 })
 export class FilterSidebarComponent implements OnChanges {
   @Input() mainCategory!: string;
+  @Input() startDate: Date | null = null;
+  @Input() endDate: Date | null = null;
+  
+  @ViewChild(DatepickerComponent) datepicker!: DatepickerComponent;
 
   startDateFilter: Date | null = null;
   endDateFilter: Date | null = null;
@@ -19,7 +23,16 @@ export class FilterSidebarComponent implements OnChanges {
   categories: string[] = environment.categories;
   activeCategories: string[] = []; 
   
-  ngOnChanges() { // we reset all of the categories when the main category is changed
+  ngOnChanges(changes: SimpleChanges) { // we reset all of the categories when the main category is changed
+
+    if (changes['startDate'] || changes['endDate']) {
+
+      this.datepicker.startDate.nativeElement.value = this.startDate;
+      this.datepicker.endDate.nativeElement.value = this.endDate;
+
+      this.vehicleService.updateAvailableVehicles(this.startDate, this.endDate);
+    }
+
     this.activeCategories = [];
     this.vehicleService.setCategories(this.activeCategories);
   }

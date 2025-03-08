@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import vehicleService from "../services/vehicleService";
 import { VehicleInterface } from "../types/model-types/vehicle-types";
 import { authenticatedRequest } from "../types/requests/authenticatedRequest";
+import mongoose from "mongoose";
 
 const vehicleController = Router();
 
@@ -24,6 +25,11 @@ vehicleController.get('/:vehicleId', async (req: Request, res: Response, next: N
   if (!vehicleId) {
     res.status(400).json({ message: 'Vehicle ID is required' });
     return;
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
+    res.status(400).json({ message: 'Invalid vehicle ID format' });
+    return; 
   }
 
   try {
@@ -81,9 +87,9 @@ vehicleController.post('/like/:vehicleId', async (req: authenticatedRequest, res
     }
 
     const userId: string | undefined = req.user?._id;
-
+    
     if (!userId) {
-      res.status(401).json({ message: 'Unauthorized.' });
+      res.status(401).json({ message: 'Please log in to continue!' });
       return;
     }
 
@@ -95,7 +101,7 @@ vehicleController.post('/like/:vehicleId', async (req: authenticatedRequest, res
     }
 
     res.status(200).json({
-      message: 'Like updated successfully!',
+      message: 'Liked vehicle successfully!',
       likes: updatedVehicle.likes
     });
 
@@ -129,7 +135,7 @@ vehicleController.put('/unlike/:vehicleId', async (req: authenticatedRequest, re
     }
 
     res.status(200).json({
-      message: 'Like removed successfully!',
+      message: 'Unliked vehicle successfully!',
       likes: updatedVehicle.likes
     });
 

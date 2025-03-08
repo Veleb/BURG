@@ -29,7 +29,7 @@
         
         <div class="input-label-wrapper-column">
            <label class="date-label-column" for="startDate">Pick Up</label>
-           <input id="startDate" type="text" class="date-input-column" placeholder="start date" (change)="onStartDateSelect()" #startDate>
+           <input id="startDate" type="text" class="date-input-column" placeholder="start date"  #startDate>
         </div>
       
            <i class="fa-solid fa-calendar-days calendar-icon-left-column" (click)="openCalendar(startDate)"></i>
@@ -41,7 +41,7 @@
           
         <div class="input-label-wrapper-column">
            <label class="date-label-column" for="endDate">Drop Off</label>
-           <input id="endDate" type="text" class="date-input-column" placeholder="end date" (change)="onEndDateSelect()" #endDate>
+           <input id="endDate" type="text" class="date-input-column" placeholder="end date"  #endDate>
         </div>
       
            <i class="fa-solid fa-calendar-days calendar-icon-right-column" (click)="openCalendar(endDate)"></i>
