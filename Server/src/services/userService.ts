@@ -18,6 +18,16 @@ async function getUserById(id: string | undefined): Promise<UserFromDB> {
   return user;
 }
 
+async function getUserByEmail(email: string | undefined): Promise<UserFromDB> { 
+  if (!email) throw new Error("Email is required");
+
+  const user = await UserModel.findOne({ email }).select('-password').lean();
+
+  if (!user) throw new Error("User not found");
+
+  return user;
+}
+
 async function createUser(user: UserForAuth): Promise<UserFromDB> { // create new user
 
   if (!user) {
@@ -94,8 +104,10 @@ const UserService = {
   registerUser,
   logoutUser,
   getUserById,
+  getUserByEmail,
   getUserLikedVehicles,
-
+  createUser,
+  generateTokens,
 }
 
 export default UserService;

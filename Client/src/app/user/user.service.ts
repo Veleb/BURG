@@ -38,6 +38,10 @@ export class UserService {
     );
   }
 
+  googleLogin(idToken: string): Observable<any> {
+    return this.http.post('/api/users/google-login', { idToken });
+  }
+
   register(user: UserForRegister): Observable<UserFromDB> {
     return this.http.post<UserFromDB>('/api/users/register', user).pipe(
       tap(userData => this.user$$.next(userData)),

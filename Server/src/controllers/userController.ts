@@ -3,8 +3,12 @@ import userService from '../services/userService';
 import { UserForAuth } from '../types/model-types/user-types';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
 import setAuthTokens from '../utils/setAuthTokens';
+import { OAuth2Client } from 'google-auth-library';
+
+const GOOGLECLIENTID = process.env.GOOGLE_CLIENT_ID as string;
 
 const userController = Router();
+const client = new OAuth2Client(GOOGLECLIENTID);
 
 userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -80,8 +84,9 @@ userController.post('/register', async (req: Request, res: Response, next: NextF
 
 userController.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log(req.body);
         const { email, password } = req.body; // get email and password from request body
-
+        
         const { accessToken, refreshToken } = await userService.loginUser({ email, password }); 
         setAuthTokens(res, accessToken, refreshToken); // set auth cookies 
         
@@ -102,5 +107,43 @@ userController.post('/logout', async (req: authenticatedRequest, res: Response, 
     }
 });
 
+userController.post('/google-login', async (req: Request, res: Response, next: NextFunction) => {
+    const { idToken } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: GOOGLECLIENTID,
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+    const name = payload?.name;
+
+    if (!email) {
+      res.status(400).json({ message: 'Invalid Google token' });
+      return 
+    }
+
+    let user = await userService.getUserByEmail(email);
+
+    if (!user) {
+        const newUser: UserForAuth = {
+            email,
+            fullName: name || '',
+            password: '', 
+        };
+        user = await userService.createUser(newUser);
+    }
+
+    const { accessToken, refreshToken } = await userService.generateTokens(user);
+
+    setAuthTokens(res, accessToken, refreshToken);
+
+    res.status(200).json({ message: 'Google login successful', user });
+  } catch (err) {
+    next(err);
+  }
+})
 
 export default userController;
