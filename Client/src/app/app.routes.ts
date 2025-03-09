@@ -10,7 +10,7 @@ import { AboutComponent } from './about/about.component';
 import { FaqComponent } from './faq/faq.component';
 
 export const routes: Routes = [
-  { path: "", redirectTo: "catalog", pathMatch: "full" },
+  { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "home", component: HomeComponent },
   { path: "contact", component: ContactComponent },
   
