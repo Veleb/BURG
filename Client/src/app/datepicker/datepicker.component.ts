@@ -4,6 +4,7 @@ import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
 import { VehicleService } from '../vehicle/vehicle.service';
 import { ToastrService } from 'ngx-toastr';
+import { DateOption } from 'flatpickr/dist/types/options';
 
 @Component({
     selector: 'app-datepicker',
@@ -39,12 +40,12 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['startDateInput'] && this.startDateInstance) {
-      console.log(this.startDate.nativeElement.value);
-      
-      this.startDateInstance.setDate(this.startDate.nativeElement.value);
+      // Use the Date input directly
+      this.startDateInstance.setDate(this.startDateInput as DateOption);
     }
     if (changes['endDateInput'] && this.endDateInstance) {
-      this.endDateInstance.setDate(this.endDate.nativeElement.value);
+      // Use the Date input directly
+      this.endDateInstance.setDate(this.endDateInput as DateOption);
     }
   }
 
@@ -112,28 +113,38 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
       }
     };
   
-    this.startDateInstance = flatpickr(this.startDate.nativeElement, {
-      ...commonConfig,
-      onChange: (selectedDates, dateStr, instance) => {
-        if (selectedDates[0]) {
-          this.endDateInstance?.set('minDate', selectedDates[0]);
-        }
-        this.startDateChange.emit(selectedDates[0] || null); 
-        commonConfig.onChange(selectedDates, dateStr, instance);
-      }
+    // In DatepickerComponent's initializeFlatpickr()
+this.startDateInstance = flatpickr(this.startDate.nativeElement, {
+  ...commonConfig,
+  onChange: (selectedDates, dateStr, instance) => {
+    if (selectedDates[0]) {
+      this.endDateInstance?.set('minDate', selectedDates[0]);
+    }
+    this.startDateChange.emit(selectedDates[0] || null);
+    // Add this line:
+    this.dateSelected.emit({ 
+      startDate: selectedDates[0] || null, 
+      endDate: this.endDateInstance?.selectedDates[0] || null 
     });
-  
-  
-    this.endDateInstance = flatpickr(this.endDate.nativeElement, {
-      ...commonConfig,
-      onChange: (selectedDates, dateStr, instance) => {
-        if (selectedDates[0]) {
-          this.startDateInstance?.set('maxDate', selectedDates[0]);
-        }
-        this.endDateChange.emit(selectedDates[0] || null);
-        commonConfig.onChange(selectedDates, dateStr, instance);
-      }
+    commonConfig.onChange(selectedDates, dateStr, instance);
+  }
+});
+
+this.endDateInstance = flatpickr(this.endDate.nativeElement, {
+  ...commonConfig,
+  onChange: (selectedDates, dateStr, instance) => {
+    if (selectedDates[0]) {
+      this.startDateInstance?.set('maxDate', selectedDates[0]);
+    }
+    this.endDateChange.emit(selectedDates[0] || null);
+    // Add this line:
+    this.dateSelected.emit({ 
+      startDate: this.startDateInstance?.selectedDates[0] || null, 
+      endDate: selectedDates[0] || null 
     });
+    commonConfig.onChange(selectedDates, dateStr, instance);
+  }
+});
   }
 
   search(): void {

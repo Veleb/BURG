@@ -139,6 +139,8 @@
 
       <div class="datepicker-wrapper">
         <app-datepicker 
+        [startDateInput]="startDate"
+        [endDateInput]="endDate"
         [isPricePerDay]="isPricePerDay" 
         [vehicleId]="vehicle?._id"
         [functionality]="['rent', vehicle?._id]"
