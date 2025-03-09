@@ -1,0 +1,182 @@
+
+
+/* Base Styles */
+.about-us {
+  font-family: 'Inter', sans-serif;
+  color:#1f2937;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Hero Section */
+.hero {
+  background-color: #2563eb;
+  color: white;
+  padding: 6rem 0;
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero .lead {
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
+
+/* Section Styling */
+.section {
+  margin-bottom: 4rem;
+}
+
+.section h2 {
+  font-size: 2rem;
+  color: #1e40af;
+  margin-bottom: 2rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.section h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color:#f59e0b;
+}
+
+/* Mission Section */
+.mission {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.mission .icon-box {
+  background: #2563eb;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  font-size: 2rem;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card i {
+  font-size: 2rem;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+/* How It Works Steps */
+.steps {
+  display: grid;
+  gap: 2rem;
+}
+
+.step {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 2rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* Commitment & CTA */
+.commitment-text {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.cta-box {
+  text-align: center;
+  padding: 3rem;
+  background: #2563eb;
+  color: white;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.contact-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  color: #2563eb;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+}
+
+.contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mission {
+      flex-direction: column;
+  }
+  
+  .step {
+      flex-direction: column;
+      text-align: center;
+  }
+  
+  .hero h1 {
+      font-size: 2rem;
+  }
+  
+  .section h2 {
+      font-size: 1.5rem;
+  }
+}
