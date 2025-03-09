@@ -2,72 +2,135 @@
   position: relative;
   height: 600px;
   overflow: hidden;
-}
-
-.carousel {
+  margin-bottom: 2rem;
   display: flex;
-  transition: transform 0.5s ease-in-out;
+  align-items: center;
+  justify-content: center;
 }
 
-.carousel-image {
-  width: fit-content;
-  height: 600px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.carousel-button {
+.hero::before {
+  content: "";
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  color: white;
-  padding: 1rem;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.4));
+  backdrop-filter: blur(5px);
+  z-index: 1;
 }
 
-.carousel-button.prev { left: 20px; }
-.carousel-button.next { right: 20px; }
+.hero-cta {
+  position: absolute;
+  text-align: center;
+  color: #FFFDFD;
+  z-index: 2;
+  max-width: 800px;
+  width: 90%;
+  padding: 2rem;
+}
+
+.hero-cta h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.hero-cta p {
+  font-size: 1.4rem;
+  font-weight: 400;
+  opacity: 0.9;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+  margin-bottom: 2rem;
+}
 
 .datepicker-section {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   position: relative;
-  /* background-color: #FFFDFD; */
-  padding: 2rem;
-  border-radius: 8px;
-  display: flex;
+  padding: 1.5rem;
+  border-radius: 10px;
+  /* background: rgba(255, 255, 255, 0.1); */
+  /* backdrop-filter: blur(10px); */
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.products-section {
-  padding: 4rem 2rem;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
 }
 
 .search-button {
   background-color: #E4B15A;
-  width: 100px;
-  height: 40px;
+  width: 120px;
+  height: 45px;
   border: none;
   border-radius: 8px;
   color: #FFFDFD;
   font-size: 18px;
   font-weight: 600;
+  transition: all 0.3s ease-in-out;
 }
 
 .search-button:hover {
   background-color: #D8A04A;
+  transform: scale(1.05);
   cursor: pointer;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #E4B15A, #D89A3C);
+  color: #FFFDFD;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cta-button:hover {
+  background: linear-gradient(135deg, #D8A04A, #C78B2E);
+  transform: translateY(-3px) scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: 500px;
+  }
+
+  .hero-cta h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-cta p {
+    font-size: 1.2rem;
+  }
+  
+  .search-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    height: 450px;
+  }
+
+  .hero-cta {
+    padding: 1.5rem;
+  }
+
+  .hero-cta h1 {
+    font-size: 2rem;
+  }
+
+  .hero-cta p {
+    font-size: 1.1rem;
+  }
+
+  .datepicker-section {
+    flex-direction: column;
+    padding: 1rem;
+  }
 }

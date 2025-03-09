@@ -1,25 +1,22 @@
 <section class="hero">
-  <app-image-carousel [images]="images"/>
-</section>
+  <div class="hero-overlay"></div>
+   <img loading="lazy" src="/images/hero-background.jpeg" alt="">
+   <div class="hero-cta">
+    <h1>Find Your Perfect Commercial Vehicle</h1>
+    <p>Rent reliable machinery with transparent pricing and instant booking</p>
+    <!-- <button class="cta-button" routerLink="/catalog">Rent Now</button> -->
 
-<div class="datepicker-section">
+    <div class="datepicker-section">
   
-  <app-datepicker layout="default" 
-  [functionality]="['search', null]"
-  (startDateChange)="onStartDateChange($event)" 
-  (endDateChange)="onEndDateChange($event)"
-  ></app-datepicker>
-
-  <button (click)="onSearch()" class="search-button">Search</button>
-</div>
-
-<section class="products-section">
-  <h2>Featured Machinery</h2>
-  <div class="products-grid">
-
-      @for (vehicle of vehicles; track $index) {
-        <app-product-card [vehicle]="vehicle"/>
-      }
+      <app-datepicker layout="default" 
+      [functionality]="['search', null]"
+      (startDateChange)="onStartDateChange($event)" 
+      (endDateChange)="onEndDateChange($event)"
+      ></app-datepicker>
+    
+      <button (click)="onSearch()" class="search-button">Search</button>
+    </div>    
 
   </div>
 </section>
+

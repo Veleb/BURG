@@ -3,8 +3,8 @@
 .datepicker-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
-
 .date-input-wrapper {
   display: flex;
   justify-content: center;
@@ -40,7 +40,8 @@
   font-size: 10px;
   position: absolute;
   top: 2px;
-  left: 12px
+  left: 12px;
+  color: #1E1E1E;
 }
 
 .search-button {
@@ -137,4 +138,61 @@
 
 .calendar-icon-left-column:hover, .calendar-icon-right-column:hover {
   cursor: pointer;
+}
+
+
+@media (max-width: 768px) { /* For tablets and smaller screens */
+  .datepicker-wrapper {
+    flex-wrap: wrap; /* Allow wrapping when not enough space */
+    gap: 10px;
+  }
+
+  .date-input-wrapper {
+    flex-direction: column; /* Stacks the input fields */
+    width: 100%;
+    align-items: stretch; /* Make them take full width */
+  }
+
+  .date-input {
+    min-width: 100%; /* Make input fill the available space */
+    font-size: 14px;
+  }
+
+  .search-button {
+    width: 100%; /* Full width for the button */
+    font-size: 20px;
+  }
+
+  .calendar-icon-left, .calendar-icon-right {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+  }
+}
+
+@media (max-width: 480px) { /* For mobile screens */
+  .datepicker-wrapper {
+    flex-direction: column; /* Stack inputs vertically on mobile */
+    align-items: center;
+  }
+
+  .date-input-wrapper {
+    width: 90%;
+  }
+
+  .date-input {
+    min-width: 100%;
+    font-size: 13px;
+  }
+
+  .search-button {
+    width: 100%; /* Button fills the screen */
+    font-size: 18px;
+  }
+
+  .calendar-icon-left, .calendar-icon-right {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+  }
 }

@@ -1,1 +1,61 @@
-<app-hero></app-hero>
+<section class="home-page">
+  <app-hero></app-hero>
+
+  <section class="products-section">
+
+    <div class="section-header">
+      <h2>Featured Machinery</h2>
+      <a href="#" class="view-all">View All Equipment →</a>
+    </div>
+    <div class="products-grid">
+      @for (vehicle of vehicles; track $index) {
+        <app-product-card [vehicle]="vehicle"/>
+      }
+    </div>
+  </section>
+
+  <section class="benefits-section">
+    <h2>Why Choose BURG?</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Verified Listings</h3>
+        <p>Every vehicle undergoes rigorous quality checks</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-clock"></i>
+        <h3>Instant Booking</h3>
+        <p>Reserve your machinery in just a few clicks</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-headset"></i>
+        <h3>24/7 Support</h3>
+        <p>Expert assistance whenever you need it</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <i class="fas fa-search"></i>
+        <h3>1. Find Equipment</h3>
+        <p>Browse our catalog to find what you need.</p>
+      </div>
+      <div class="step">
+        <i class="fas fa-calendar-check"></i>
+        <h3>2. Book Online</h3>
+        <p>Reserve instantly with transparent pricing.</p>
+      </div>
+      <div class="step">
+        <i class="fas fa-truck"></i>
+        <h3>3. Get It Delivered</h3>
+        <p>Pick it up or have it delivered to your location.</p>
+      </div>
+    </div>
+  </section>
+
+
+</section>
+
