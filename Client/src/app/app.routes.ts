@@ -5,6 +5,7 @@ import { ContactComponent } from './contact/contact.component';
 import { TermsComponent } from './legal/terms/terms.component';
 import { CookiesPolicyComponent } from './legal/cookies-policy/cookies-policy.component';
 import { EulaComponent } from './legal/eula/eula.component';
+import { BecomeHostComponent } from './become-host/become-host.component';
 
 export const routes: Routes = [
   { path: "", redirectTo: "catalog", pathMatch: "full" },
@@ -15,7 +16,7 @@ export const routes: Routes = [
   { path: "cookies-policy", component: CookiesPolicyComponent },
   { path: "eula", component: EulaComponent },
   // { path: "about", component: AboutComponent },
-  // { path: "become-host", component: BecomeHostComponent },
+  { path: "become-host", component: BecomeHostComponent },
 
   { 
     path: "auth",

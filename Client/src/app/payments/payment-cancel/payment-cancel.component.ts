@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { RentService } from '../../rents/rent.service';
 
 @Component({
     selector: 'app-payment-cancel',
-    imports: [],
+    imports: [ RouterLink ],
     templateUrl: './payment-cancel.component.html',
     styleUrl: './payment-cancel.component.css'
 })

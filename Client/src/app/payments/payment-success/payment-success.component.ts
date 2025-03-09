@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { StripeService } from '../../services/stripe.service';
 
 @Component({
     selector: 'app-payment-success',
-    imports: [],
+    imports: [ RouterLink ],
     templateUrl: './payment-success.component.html',
     styleUrl: './payment-success.component.css'
 })
