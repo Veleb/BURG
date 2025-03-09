@@ -10,7 +10,7 @@
     <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" class="edit-form">
       <div class="form-group">
         <label>Full Name</label>
-        <input type="text" name="fullName" [(ngModel)]="editModel.fullName" required #fullName="ngModel">
+        <input type="text" name="fullName" [(ngModel)]="editModel.fullName" required #fullName="ngModel" appFullname>
         @if (fullName.invalid && fullName.touched) {
           <div class="error-message">Name is required</div>
         }
@@ -18,7 +18,7 @@
 
       <div class="form-group">
         <label>Email</label>
-        <input type="email" name="email" [(ngModel)]="editModel.email" required email #email="ngModel">
+        <input type="email" name="email" [(ngModel)]="editModel.email" required email #email="ngModel" appEmail>
         @if (email.invalid && email.touched) {
           <div class="error-message">
             @if (email.errors?.['required']) { Email is required }

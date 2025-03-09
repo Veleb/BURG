@@ -18,3 +18,9 @@ export interface UserForRegister {
   email: string;
   phoneNumber?: string;  
 }
+
+export interface UpdateUserCredentials {
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+}

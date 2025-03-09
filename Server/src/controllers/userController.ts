@@ -146,4 +146,23 @@ userController.post('/google-login', async (req: Request, res: Response, next: N
   }
 })
 
+userController.put('/update', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId: string | undefined = req.user?._id;
+
+        if (!userId) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        const updatedData = req.body as Partial<UserForAuth>;
+
+        const updatedUser = await userService.updateUser(userId, updatedData);
+
+        res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+    } catch (error) {
+        next(error);
+    }
+});
+
 export default userController;

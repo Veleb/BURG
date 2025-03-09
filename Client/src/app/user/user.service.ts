@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, shareReplay, map, distinctUntilChanged } from 'rxjs/operators';
-import { UserForLogin, UserForRegister, UserFromDB } from '../../types/user-types';
+import { UpdateUserCredentials, UserForLogin, UserForRegister, UserFromDB } from '../../types/user-types';
 import { VehicleInterface } from '../../types/vehicle-types';
 
 @Injectable({ providedIn: 'root' })
@@ -77,4 +77,8 @@ export class UserService {
      catchError(() => of(false))
     );
   }
+
+  updateProfile(updatedData: Partial<UserFromDB>) {
+    return this.http.put<UserFromDB>('/api/users/update', updatedData);
+}
 }

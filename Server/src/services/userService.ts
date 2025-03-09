@@ -99,6 +99,22 @@ async function getUserLikedVehicles(userId: string): Promise<VehicleInterface[]>
   return user?.likes || [];
 }
 
+async function updateUser(userId: string, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
+  const user = await UserModel.findById(userId);
+  if (!user) throw new Error('User not found');
+
+  if (updatedData.fullName) user.fullName = updatedData.fullName;
+  if (updatedData.email) user.email = updatedData.email;
+  if (updatedData.phoneNumber) user.phoneNumber = updatedData.phoneNumber;
+
+  // if (updatedData.password) {
+  //     user.password = await bcrypt.hash(updatedData.password, 10);
+  // }
+
+  await user.save();
+  return user.toObject() as UserFromDB;
+}
+
 const UserService = {
   loginUser,
   registerUser,
@@ -108,6 +124,7 @@ const UserService = {
   getUserLikedVehicles,
   createUser,
   generateTokens,
+  updateUser,
 }
 
 export default UserService;

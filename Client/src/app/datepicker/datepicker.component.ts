@@ -137,6 +137,12 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
   }
 
   search(): void {
+
+    if (!this.startDateInstance || !this.endDateInstance) {
+      this.toastr.error('Date pickers are not initialized.');
+      return;
+    }
+
     const startDateTime = this.startDateInstance?.selectedDates[0];
     const endDateTime = this.endDateInstance?.selectedDates[0];
 

@@ -7,10 +7,12 @@ import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RentCardComponent } from '../../rents/rent-card/rent-card.component';
 import { ProductCardComponent } from '../../vehicle/product-card/product-card.component';
+import { EmailDirective } from '../../directives/email.directive';
+import { FullnameDirective } from '../../directives/fullname.directive';
 
 @Component({
   selector: 'app-profile',
-  imports: [ FormsModule, RentCardComponent, ProductCardComponent ],
+  imports: [ FormsModule, RentCardComponent, ProductCardComponent, EmailDirective, FullnameDirective ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -56,30 +58,40 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleEditMode(): void {
-    this.editMode = !this.editMode;
-    if (!this.editMode) {
-      this.editModel = { ...this.user };
+  toggleEditMode() {
+    if (this.editMode) {
+      this.editModel = {};
+    } else {
+      this.editModel = { 
+        fullName: this.user?.fullName,
+        email: this.user?.email,
+        phoneNumber: this.user?.phoneNumber
+      };
     }
+    this.editMode = !this.editMode;
   }
 
-  onSubmit(form: NgForm): void {
-    if (form.invalid) return;
-    
-    // this.isUpdating = true;
-    // this.userService.updateProfile(this.editModel).subscribe({
-    //   next: (updatedUser) => {
-    //     this.user = updatedUser;
-    //     this.editMode = false;
-    //     this.toastr.success('Profile updated successfully!', 'Success');
-    //     this.isUpdating = false;
-    //   },
-    //   error: (error) => {
-    //     this.toastr.error('Failed to update profile', 'Error');
-    //     this.isUpdating = false;
-    //   }
-    // });
-  }
+  onSubmit(form: NgForm) {
+    if (form.invalid || !this.user) return;
+
+    this.isUpdating = true;
+
+    this.userService.updateProfile(this.editModel).pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+            this.toastr.error('Failed to update profile', 'Error');
+            this.isUpdating = false;
+            return of(null);
+        })
+    ).subscribe(updatedUser => {
+        if (updatedUser) {
+            this.user = updatedUser;
+            this.editMode = false;
+            this.toastr.success('Profile updated successfully');
+        }
+        this.isUpdating = false;
+    });
+}
 
   confirmLogout(): void {
     if (confirm('Are you sure you want to logout?')) {
