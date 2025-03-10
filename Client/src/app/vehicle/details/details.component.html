@@ -1,137 +1,66 @@
 <div class="details-wrapper">
-
   <div class="images-wrapper">
-
+    <!-- Displaying images -->
     @for (image of vehicle?.details?.images?.slice(0, 3); track $index) {
       <img 
-      class="small-image" 
-      [src]="image"
-      alt="Vehicle Image" 
-      (click)="updateMainImage(image)"
-      loading="lazy"
+        class="small-image" 
+        [src]="image"
+        alt="Vehicle Image" 
+        (click)="updateMainImage(image)"
+        loading="lazy"
       >
     }
 
     @if ((vehicle?.details?.images?.length ?? 0) > 4) {
-
-      <div 
-      class="small-image last-image-overlay"
-      (click)="openGallery()">
-  
-      <img
-          [src]="vehicle?.details?.images?.[3]"
-          alt="Vehicle Image"
-          class="overlayed-image"
-          loading="lazy"
-      />
+      <div class="small-image last-image-overlay" (click)="openGallery()">
+        <img [src]="vehicle?.details?.images?.[3]" alt="Vehicle Image" class="overlayed-image" loading="lazy"/>
         <div class="image-overlay">
           +{{ (vehicle?.details?.images?.length ?? 0) - 4 }}
         </div>
-  
-    </div>
-  
+      </div>
     }
-
   </div>
 
- 
-   
+  <!-- Main Vehicle Image -->
   <img loading="lazy" class="vehicle-image" [src]="currentImage || vehicle?.details?.images?.[0]" alt="Vehicle Image">
-  
-  @if (galleryOpen) {
 
+  <!-- Gallery Modal -->
+  @if (galleryOpen) {
     <div class="gallery-modal">
       <div class="gallery-content">
         <i class="fa-solid fa-x close-btn" (click)="closeGallery()"></i>
-        
         @for (image of vehicle?.details?.images; track $index) {
-
-          <img
-          [src]="image"
-          class="gallery-image"
-          (click)="updateMainImageAndCloseGallery(image)">
-
+          <img [src]="image" class="gallery-image" (click)="updateMainImageAndCloseGallery(image)">
         }
-
+      </div>
     </div>
-  </div>
   }
 
+  <!-- Vehicle Details -->
   <div class="vehicle-details-wrapper">
-
     <div class="basic-details-wrapper">
-
       <div class="basic-details">
-  
         <h2 class="vehicle-name"> {{ vehicle?.details?.name }} </h2>
-        
         <div class="vehicle-characteristics">
           <h6 class="vehicle-characteristic">Manual</h6>
           <h6 class="vehicle-characteristic">Petrol</h6>
           <h6 class="vehicle-characteristic">{{ vehicle?.details?.capacity }}</h6>
         </div>
-  
       </div>
-  
-      <div class="rating-wrapper">
-  
-        <div class="rating">
-          <i class="fa-solid fa-star star"></i>
-          <h5>4.6</h5>
-          <!-- <h5>{{ vehicle?.rating }}</h5> -->
-        </div>
-  
-        <!-- <h6 class="reviews">{{ vehicle?.reviews?.length }} reviews</h6> -->
-        <h6 class="reviews">7 reviews</h6>
-  
-      </div>
-
     </div>
 
+    <!-- Company Details -->
     <div class="company-details-wrapper">
-
       <div class="company-basic-details">
-
         <div class="company-details">
-  
-          <!-- <img loading="lazy" src="" alt="Company Profile Picture"> -->
           <div class="company-profile-picture"></div>
-          <!-- <h4 class="company-name"> {{ vehicle?.company?.name }} </h4> -->
           <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
-  
         </div>
-  
-        <div class="company-rating">
-  
-          <div class="rating-box">
-            <h3>8.4</h3>
-            <!-- <h3> {{ vehicle?.company?.rating }} </h3> -->
-          </div>
-  
-          <!-- TODO: mostly positive: rating > 8 etc. -->
-  
-        </div>
-
       </div>
-
-      <div class="contact-wrapper">
-        <h3 (click)="toggleContactDropdown()">Contact</h3>
-        <i class="fa-solid fa-sort-down"></i>
-      </div>
-     
-      
-      
-      <!-- TODO: add a contact component instead of the div -->
-       
     </div>
 
-    <div class="perks-wrapper">
-    <!-- TODO: add a for loop going through the perks or whatever, this section can be skipped -->
-
-    </div>
-
+    <!-- Checkout Section -->
     <div class="checkout-wrapper">
-
       <div class="first-row">
         <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
         <app-slider />
@@ -139,62 +68,58 @@
 
       <div class="datepicker-wrapper">
         <app-datepicker 
-        [startDateInput]="startDate"
-        [endDateInput]="endDate"
-        [isPricePerDay]="isPricePerDay" 
-        [vehicleId]="vehicle?._id"
-        [functionality]="['rent', vehicle?._id]"
-        [kilometers]="kilometers"
-        (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
-      ></app-datepicker>
+          [startDateInput]="startDate"
+          [endDateInput]="endDate"
+          [isPricePerDay]="isPricePerDay" 
+          [vehicleId]="vehicle?._id"
+          [functionality]="['rent', vehicle?._id]"
+          [kilometers]="kilometers"
+          (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
+        ></app-datepicker>
 
-     <div class="location-picker-wrapper"> 
-      @if (locationCheckbox.checked) {
-        <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
-      } @else {
-        <div class="location-picker-wrapper-different">
-          <app-location-picker id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
-          <app-location-picker id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
-        </div>        
-      }
-      
-      <div class="location-checkbox-wrapper">
-        <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox [(ngModel)]="isSameLocation">
-        <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
+        <!-- Location Picker -->
+        <div class="location-picker-wrapper">
+          @if (locationCheckbox.checked) {
+            <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
+          } @else {
+            <div class="location-picker-wrapper-different">
+              <app-location-picker id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
+              <app-location-picker id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
+            </div>        
+          }
+
+          <div class="location-checkbox-wrapper">
+            <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox [(ngModel)]="isSameLocation">
+            <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
+          </div>
+        </div>
       </div>
-          
-    </div>  
 
-      </div>
-
+      <!-- Rent Button -->
       <button class="cta-button" (click)="rentVehicle()">Rent Now</button>
 
+      <!-- Price Breakdown -->
       @if (rentalHours) {
         <div class="price-breakdown-wrapper">
           <h4>Price breakdown:</h4>
-  
           <div class="price-breakdown">
             <p class="price-factor">Rent fee x {{ rentalHours.toFixed(2) }} hours</p>
             <p>{{ totalPriceBeforeTax !== null ? (totalPriceBeforeTax | currencyConverter | currency: selectedCurrency) : '' }}</p>
           </div>
-  
+
           <div class="price-breakdown">
             <p class="price-factor">Goods and Services tax ( 18% )</p>
             <p>{{ ( (totalPrice ?? 0) - (totalPriceBeforeTax ?? 0) ) | currencyConverter | currency: selectedCurrency }}</p>
           </div>
-  
+
           <hr class="dotted-hr">
-  
+
           <div class="price-breakdown">
             <h3 class="total-price">Total</h3>
             <p>{{ totalPrice !== null ? (totalPrice | currencyConverter | currency: selectedCurrency) : '0' }}</p>
           </div>
-  
         </div>
       }
-
     </div>
-    
   </div>
-
 </div>

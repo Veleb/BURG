@@ -1,4 +1,4 @@
-.products-section {
+/* .products-section {
   padding: 4rem 2rem;
   background: #f8f9fa;
 }
@@ -15,6 +15,84 @@
 .section-header h2 {
   font-size: 2rem;
   color: #2D2D2D;
+  margin-bottom: 10px;
+} */
+
+.category-cards-section {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  background: #f8f9fa;
+}
+
+.cards-wrapper {
+  display: flex;
+}
+
+.category-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.category-header h2 {
+  font-size: 1.8rem;
+  color: #2D2D2D;
+}
+
+.view-all {
+  color: #E4B15A;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+}
+
+.view-all:hover {
+  color: #D8A04A;
+}
+
+.category-description {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+.category-card button {
+  background: #E4B15A;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.category-card button:hover {
+  background: #D8A04A;
+}
+
+.how-it-works h2 {
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .view-all {
@@ -43,6 +121,7 @@
 
 .benefits-section h2 {
   text-align: center;
+  margin-bottom: 10px;
 }
 
 

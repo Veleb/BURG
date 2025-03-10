@@ -4,7 +4,7 @@ import { DatepickerComponent } from '../../datepicker/datepicker.component';
 
 @Component({
     selector: 'app-hero',
-    imports: [DatepickerComponent, RouterLink],
+    imports: [DatepickerComponent],
     templateUrl: './hero.component.html',
     styleUrl: './hero.component.css'
 })

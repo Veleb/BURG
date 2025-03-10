@@ -3,16 +3,35 @@
 
   <section class="products-section">
 
-    <div class="section-header">
+    <!-- <div class="section-header">
       <h2>Featured Machinery</h2>
-      <a href="#" class="view-all">View All Equipment →</a>
     </div>
     <div class="products-grid">
       @for (vehicle of vehicles; track $index) {
         <app-product-card [vehicle]="vehicle"/>
-      }
-    </div>
-  </section>
+        }
+      </div>
+    </section> -->
+    
+    <section class="category-cards-section">
+      <div class="category-header">
+        <h2>Categories</h2>
+        <a routerLink="/catalog" class="view-all">Browse Catalog →</a>
+      </div>
+    
+      <div class="cards-wrapper">
+        @for (category of categories.slice(0, 4); track $index) {
+          <div class="category-card">
+            <h3 class="category-heading">{{ ( category.name ) | uppercase }}</h3>
+            <p class="category-description">{{ category.description }}</p>
+            <button [routerLink]="['/catalog']" [queryParams]="{ category: category.name }">
+              Rent {{ category.name | uppercase }}
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+    
 
   <section class="benefits-section">
     <h2>Why Choose BURG?</h2>

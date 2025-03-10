@@ -27,27 +27,23 @@
 
         <div class="checkbox-wrapper">
           @if (mainCategory === "vehicles") {
-
             @for (category of categories; track $index) {
-  
               <div class="category-checkbox-wrapper">
                 <input 
                   type="checkbox" 
-                  [id]="category" 
-                  [checked]="activeCategories.includes(category)"
-                  (change)="toggleCategory(category)"
+                  [id]="category.name" 
+                  [checked]="activeCategories.includes(category.name)"
+                  (change)="toggleCategory(category.name)"
                   class="category-checkbox"
                 >
-                <label class="checkbox-label" [for]="category">{{ category | uppercase }}</label>
+                <label class="checkbox-label" [for]="category.name">{{ category.name | uppercase }}</label>
               </div>
-  
             }
-            
           } @else {
-            <!-- TODO: CHANGE THE FOR LOOP TO LOOP THROUGH THE CATEGORIES FOR THE MACHINERY INSTEAD OF THE VEHICLE CATEGORIES -->
+            <!-- TODO: Change loop to filter machinery categories -->
           }
         </div>
-    </div>
+      </div>
 
     <hr class="section-break">
 

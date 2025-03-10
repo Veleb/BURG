@@ -4,9 +4,7 @@ export enum Size {
   Large = 'large'
 }
 
-export enum Category {
-  Cars = 'cars',
-  Trucks = 'trucks',
-  HeavyMachinery = 'heavyMachinery',
-  
+export interface Category {
+  name: string,
+  description: string
 }

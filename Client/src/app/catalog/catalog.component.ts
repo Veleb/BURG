@@ -21,6 +21,8 @@ export class CatalogComponent implements OnInit {
   startDate: Date | null = null;
   endDate: Date | null = null;
 
+  queryCategory: string | null = null;
+
   constructor(
     private vehicleService: VehicleService,
     private route: ActivatedRoute
@@ -31,8 +33,10 @@ export class CatalogComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.startDate = params['start'] ? new Date(params['start']) : null;
       this.endDate = params['end'] ? new Date(params['end']) : null;
+      this.queryCategory = params['category'] || null;
       
       this.vehicleService.updateAvailableVehicles(this.startDate, this.endDate);
+      
     })
 
     this.vehicleService.getAll();
