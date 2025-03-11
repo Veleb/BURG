@@ -38,8 +38,12 @@ export class UserService {
     );
   }
 
-  googleLogin(idToken: string): Observable<any> {
-    return this.http.post('/api/users/google-login', { idToken });
+  googleAuth(idToken: string) {
+    return this.http.post<{ 
+      user: unknown, 
+      accessToken: string, 
+      refreshToken: string 
+    }>(`/api/google-auth`, { idToken });
   }
 
   register(user: UserForRegister): Observable<UserFromDB> {

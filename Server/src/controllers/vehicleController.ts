@@ -76,8 +76,10 @@ vehicleController.post('/available', async (req: Request, res: Response, next: N
   }
 });
 
-vehicleController.post('/like/:vehicleId', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
-  const vehicleId: string = req.params.vehicleId;
+vehicleController.post('/like/:vehicleId', async (req: Request, res: Response, next: NextFunction) => {
+  const customReq = req as authenticatedRequest;
+
+  const vehicleId: string = customReq.params.vehicleId;
 
   try {
 
@@ -86,7 +88,7 @@ vehicleController.post('/like/:vehicleId', async (req: authenticatedRequest, res
       return;
     }
 
-    const userId: string | undefined = req.user?._id;
+    const userId: string | undefined = customReq.user?._id;
     
     if (!userId) {
       res.status(401).json({ message: 'Please log in to continue!' });
@@ -110,8 +112,10 @@ vehicleController.post('/like/:vehicleId', async (req: authenticatedRequest, res
   }
 });
 
-vehicleController.put('/unlike/:vehicleId', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
-  const vehicleId: string = req.params.vehicleId;
+vehicleController.put('/unlike/:vehicleId', async (req: Request, res: Response, next: NextFunction) => {
+  const customReq = req as authenticatedRequest;
+  
+  const vehicleId: string = customReq.params.vehicleId;
 
   try {
 
@@ -120,7 +124,7 @@ vehicleController.put('/unlike/:vehicleId', async (req: authenticatedRequest, re
       return;
     }
 
-    const userId: string | undefined = req.user?._id;
+    const userId: string | undefined = customReq.user?._id;
 
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized.' });

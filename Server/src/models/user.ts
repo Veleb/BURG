@@ -19,9 +19,13 @@ const UserSchema = new Schema<UserInterface>({
       message: props => `${props.value} is not a valid email address!`
     }
   },
+  isGoogleUser: { type: Boolean, default: false },
+  tokenVersion: { type: Number, default: 0, required: true },
   password: {
     type: String,
-    required: true,
+    required: function() {
+      return !this.isGoogleUser;
+    }
   },
   phoneNumber: {
     type: String,
@@ -46,7 +50,7 @@ const UserSchema = new Schema<UserInterface>({
     ref: "Vehicle",
     type: Types.ObjectId,
   }],
-  role: { type: String, enum: ["user", "admin"], default: "user" },
+  role: { type: String, enum: ["host", "admin", "user"], default: "user" },
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });
@@ -56,7 +60,7 @@ UserSchema.pre('save', async function(next) {
     this.phoneNumber = undefined;
   }
 
-  if (this.isModified('password')) {
+  if (this.isModified('password') && this.password) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   

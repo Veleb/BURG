@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
@@ -10,15 +10,18 @@ import { RepassDirective } from '../../directives/repass.directive';
 import { EmailDirective } from '../../directives/email.directive';
 import { FullnameDirective } from '../../directives/fullname.directive';
 
+declare var google: any; 
+
 @Component({
     selector: 'app-register',
     imports: [FormsModule, RouterLink, PasswordDirective, RepassDirective, EmailDirective, FullnameDirective],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
 })
-export class RegisterComponent implements AfterViewInit {
+export class RegisterComponent implements AfterViewInit, OnInit {
 
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef;
+  @ViewChild('googleRegisterButtonContainer', { static: true }) googleRegisterButtonContainer!: ElementRef;
   iti: any;  
 
   constructor(
@@ -41,8 +44,39 @@ export class RegisterComponent implements AfterViewInit {
     }
   }
 
-  onSubmit(formElement: NgForm): void {
-    const formData = { ...formElement.value };
+  ngOnInit(): void {
+    google.accounts.id.initialize({
+      client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
+      callback: (response: any) => this.handleCredentialResponse(response)
+    });
+
+    google.accounts.id.renderButton(
+      this.googleRegisterButtonContainer.nativeElement,
+      { 
+        type: 'icon', 
+        shape: 'circle', 
+        theme: 'outline', 
+        size: 'large',
+        text: 'signup_with'
+      }
+    );
+  }
+
+  handleCredentialResponse(response: any): void {
+    this.userService.googleAuth(response.credential).subscribe({
+      next: (res) => {
+        this.toastr.success('Google registration successful!', 'Success');
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.handleGoogleError(err);
+      }
+    });
+  }
+
+  onSubmit(form: NgForm) {
+
+    const formData = form.value;
 
     const phoneNumber = this.iti.getNumber(); 
     
@@ -61,17 +95,26 @@ export class RegisterComponent implements AfterViewInit {
     delete formData.confirmPassword; 
 
     this.userService.register(formData).subscribe({
-      next: (response) => {
-        this.toastr.success('Successful Register!', 'Success');
-        this.router.navigate(['home']);
+      next: (res) => {
+        this.toastr.success('Registration successful!', 'Success');
+        this.router.navigate(['/home']);
       },
-      error: (error) => {
-        console.error(`Error registering user: ${error.message}`);
-        this.toastr.error('Registration failed. Please try again.', 'Error');
+      error: (err) => {
+        this.toastr.error(
+          err.error?.message || 'Registration failed', 
+          'Error'
+        );
       }
     });
-
-    formElement.reset();
   }
-  
+
+  private handleGoogleError(err: any) {
+    const errorMessage = err.error?.code === 'EXISTING_EMAIL_ACCOUNT' 
+      ? 'Account already exists. Please login instead' 
+      : 'Google registration failed';
+      
+    this.toastr.error(errorMessage, 'Error');
+  }
+
+
 }

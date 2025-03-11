@@ -2,20 +2,19 @@ import { Response } from "express";
 
 const setAuthTokens = (res: Response, accessToken: string, refreshToken: string): void => {
   const isProd = process.env.PROD === 'true';
-  const sameSitePolicy = ( isProd ? 'none' : 'lax' );
 
-  res.cookie('auth', accessToken, {
-    httpOnly: true, 
-    secure: isProd, 
-    sameSite: sameSitePolicy, 
-    maxAge: 1000 * 60 * 15,
+  res.cookie('access_token', accessToken, {
+    httpOnly: true,
+    secure: isProd === true,
+    sameSite: 'strict',
+    maxAge: 15 * 60 * 1000
   });
 
   res.cookie('refresh_token', refreshToken, {
-    httpOnly: true, 
-    secure: isProd, 
-    sameSite: sameSitePolicy, 
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+    secure: isProd === true,
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000
   });
     
 };

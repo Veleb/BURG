@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { VehicleInterface } from '../../../../types/vehicle-types';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 import { VehicleService } from '../../../vehicle/vehicle.service';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +18,7 @@ export class SearchBarComponent {
   showDropdown: boolean = false;
   activeIndex: number = -1;
 
-  private searchTerm$ = new Subject<string>();
+  private searchTerm$ = new BehaviorSubject<string>('');
 
   constructor(private vehicleService: VehicleService) {
     this.searchTerm$.pipe(

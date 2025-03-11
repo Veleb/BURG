@@ -3,7 +3,7 @@
   flex: 1;
   max-width: 1200px;
   margin: 0 15px;
-  min-width: 450px;
+  min-width: 624px;
 }
 
 .input-wrapper {
@@ -26,6 +26,7 @@
   border-radius: 24px;
   transition: all 0.3s ease;
   text-indent: 16px;
+  max-height: 40px;
 }
 
 .search-input:focus {
@@ -94,7 +95,7 @@
 
 .icon {
   position: absolute;
-  top: 15px;
+  top: 12px;
   left: 12px;
   opacity: 0.5;
   color: #0B0505;

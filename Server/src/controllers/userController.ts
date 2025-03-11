@@ -33,9 +33,11 @@ userController.get('/profile', async (req: Request, res: Response, next: NextFun
     }
 });
 
-userController.get('/likes', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
-    const userId: string | undefined = req.user?._id;
-    
+userController.get('/likes', async (req: Request, res: Response, next: NextFunction) => {
+
+    const customReq = req as authenticatedRequest;
+    const userId: string | undefined = customReq.user?._id;
+
     try {
         if (!userId) {
             res.status(401).json({ message: "Unauthorized!" })
@@ -84,7 +86,6 @@ userController.post('/register', async (req: Request, res: Response, next: NextF
 
 userController.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body);
         const { email, password } = req.body; // get email and password from request body
         
         const { accessToken, refreshToken } = await userService.loginUser({ email, password }); 
@@ -97,65 +98,72 @@ userController.post('/login', async (req: Request, res: Response, next: NextFunc
     }
 });
 
-userController.post('/logout', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
+userController.post('/logout', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        userService.logoutUser(res); // logout user
-        res.status(200).json({ message: 'Logged out successfully' });
+      const customReq = req as authenticatedRequest;
+      const userId = customReq.user?._id;
+      
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
         return;
+      }
+  
+      await userService.logoutUser(userId, res);
     } catch (error) {
-        next(error);
+      next(error);
     }
-});
+  });
 
-userController.post('/google-login', async (req: Request, res: Response, next: NextFunction) => {
-    const { idToken } = req.body;
-
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken,
-      audience: GOOGLECLIENTID,
-    });
-
-    const payload = ticket.getPayload();
-    const email = payload?.email;
-    const name = payload?.name;
-
-    if (!email) {
-      res.status(400).json({ message: 'Invalid Google token' });
-      return 
-    }
-
-    let user = await userService.getUserByEmail(email);
-
-    if (!user) {
-        const newUser: UserForAuth = {
-            email,
-            fullName: name || '',
-            password: '', 
-        };
-        user = await userService.createUser(newUser);
-    }
-
-    const { accessToken, refreshToken } = await userService.generateTokens(user);
-
-    setAuthTokens(res, accessToken, refreshToken);
-
-    res.status(200).json({ message: 'Google login successful', user });
-  } catch (err) {
-    next(err);
-  }
-})
-
-userController.put('/update', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
+userController.post('/google-auth', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId: string | undefined = req.user?._id;
+      const { idToken } = req.body;
+
+      const ticket = await client.verifyIdToken({
+        idToken,
+        audience: GOOGLECLIENTID,
+      });
+
+      const payload = ticket.getPayload();
+
+      const { accessToken, refreshToken } = await userService.handleGoogleAuth(idToken);
+      
+      setAuthTokens(res, accessToken, refreshToken);
+      
+  
+      const user = await userService.getUserByEmail(payload?.email);
+      res.status(200).json({ 
+        message: 'Google authentication successful',
+        // user: {
+        //   _id: user._id,
+        //   email: user.email,
+        //   fullName: user.fullName
+        // }
+      });
+    } catch (err) {
+      if (err instanceof Error && err.message === 'EXISTING_EMAIL_ACCOUNT') {
+        res.status(409).json({
+          code: 'EXISTING_EMAIL',
+          message: 'Email already registered with regular account'
+        });
+        return;
+      }
+      next(err);
+    }
+  });
+
+userController.put('/update', async (req: Request, res: Response, next: NextFunction) => {
+
+    const customReq = req as authenticatedRequest
+    
+    try {
+        const userId: string | undefined = customReq.user?._id;
 
         if (!userId) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }
 
-        const updatedData = req.body as Partial<UserForAuth>;
+        const updatedData = customReq.body as Partial<UserForAuth>;
 
         const updatedUser = await userService.updateUser(userId, updatedData);
 

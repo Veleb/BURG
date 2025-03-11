@@ -2,9 +2,11 @@
   <div class="nav-wrapper" [class.navbar-transparent]="isTransparent">
     <h1 class="logo-link" routerLink="/home">Burg</h1>
 
-    <app-search-bar 
-      (selectedVehicle)="handleSelectedVehicle($event)">
-    </app-search-bar>
+    @if (!isTransparent) {
+      <app-search-bar 
+        (selectedVehicle)="handleSelectedVehicle($event)">
+      </app-search-bar>
+    }
 
     <div class="nav-menu" #navMenu>
       <app-currency [color]="isTransparent ? 'white' : 'black'"/>

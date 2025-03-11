@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EmailDirective } from '../../directives/email.directive';
 import { PasswordDirective } from '../../directives/password.directive';
 
-declare var google: any; // Declare google API globally for TypeScript to recognize it.
+declare var google: any; 
 
 @Component({
   selector: 'app-login',
@@ -16,56 +16,60 @@ declare var google: any; // Declare google API globally for TypeScript to recogn
 })
 export class LoginComponent implements OnInit {
 
-  @ViewChild('googleButtonContainer', { static: true }) 
-  googleButtonContainer!: ElementRef;
-  
+  @ViewChild('googleButtonContainer', { static: true }) googleButtonContainer!: ElementRef;
+
   constructor(private userService: UserService, private toastr: ToastrService, private router: Router) {}
 
   ngOnInit(): void {
     google.accounts.id.initialize({
-      client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com', // Removed trailing space
-      callback: (response: any) => this.handleCredentialResponse(response)
+      client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
+      callback: (response: { credential: string }) => this.handleCredentialResponse(response)
     });
-    
-    // Add button rendering code
+
     google.accounts.id.renderButton(
       this.googleButtonContainer.nativeElement,
       { 
-        type: 'icon',
-        shape: 'circle',
-        theme: 'outline',
-        size: 'large'
+        type: 'icon', 
+        shape: 'circle', 
+        theme: 'outline', 
+        size: 'large',
+        text: 'signin_with'
       }
     );
   }
-
-  onSubmit(formElement: NgForm): void {
-    const formData = formElement.value;
-
-    this.userService.login(formData).subscribe({
-      next: (response) => {
-        this.toastr.success(`Successful Login!`, `Success`);
-        this.router.navigate(['home']);
+  
+  handleCredentialResponse(response: { credential: string }): void {
+    this.userService.googleAuth(response.credential).subscribe({
+      next: (res) => {
+        this.toastr.success('Google authentication successful!', 'Success');
+        this.router.navigate(['/home']);
       },
-      error: (error) => {
-        console.error(`Error logging in user: ${error}`);
-      }
-    });
-    formElement.reset();
-  }
-
-  handleCredentialResponse(response: any): void {
-    const idToken = response.credential;
-
-    this.userService.googleLogin(idToken).subscribe({
-      next: (response) => {
-        this.toastr.success(`Google Login Successful!`, `Success`);
-        this.router.navigate(['home']);
-      },
-      error: (error) => {
-        console.error(`Error with Google login: ${error}`);
-        this.toastr.error(`Google login failed`, `Error`);
+      error: (err) => {
+        this.handleGoogleError(err);
       }
     });
   }
+
+  onSubmit(form: NgForm) {
+    if (form.invalid) return;
+
+    this.userService.login(form.value).subscribe({
+      next: (res) => {
+        this.toastr.success('Login successful!', 'Success');
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.toastr.error(err.error.message || 'Login failed', 'Error');
+      }
+    });
+  }
+
+  private handleGoogleError(err: any) {
+    const errorMessage = err.error?.code === 'EXISTING_EMAIL_ACCOUNT' 
+      ? 'Email already registered with password' 
+      : 'Google authentication failed';
+      
+    this.toastr.error(errorMessage, 'Error Occurred');
+  }
+
 }

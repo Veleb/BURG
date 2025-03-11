@@ -299,3 +299,7 @@
 .login-msg:hover {
   cursor: pointer;
 }
+
+.google-button-container {
+  padding: 0px;
+}

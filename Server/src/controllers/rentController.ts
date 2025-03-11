@@ -7,9 +7,11 @@ import vehicleService from "../services/vehicleService";
 
 const rentController = Router();
 
-rentController.post('/', async (req: authenticatedRequest, res: Response, next: NextFunction) => {
+rentController.post('/', async (req: Request, res: Response, next: NextFunction) => {
+  const customReq = req as authenticatedRequest;
+
   try {
-    const userId: string | undefined = (req as any).user?._id;
+    const userId: string | undefined = customReq.user?._id;
 
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized' });
@@ -23,7 +25,7 @@ rentController.post('/', async (req: authenticatedRequest, res: Response, next: 
       return; 
     }
 
-    const rentData = req.body as Partial<RentInterface>;
+    const rentData = customReq.body as Partial<RentInterface>;
 
     if (!rentData.start || !rentData.end || !rentData.vehicle || !rentData.pickupLocation || !rentData.dropoffLocation) {
       res.status(400).json({ message: 'Missing required rent details (start, end, vehicle, pickup and dropoff locations)' });
