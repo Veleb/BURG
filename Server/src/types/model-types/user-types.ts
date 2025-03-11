@@ -29,6 +29,7 @@ export interface UserForAuth {
   phoneNumber?: string;
   password?: string;
   isGoogleUser: Boolean;
+  tokenVersion?: number;
 }
 
 export interface GoogleUser extends Omit<UserForAuth, 'password'> {
@@ -45,18 +46,11 @@ export type UserAuthType = GoogleUser | RegularUser;
 
 export interface UserFromDB {
   _id: string;
-  
-  fullName: string
   email: string;
+  fullName: string;
   phoneNumber?: string;
-
-  rents: RentInterface[];
-  likes: string[] | VehicleInterface[];
-
-  isGoogleUser: boolean,
+  password: string | null;
+  isGoogleUser: boolean;
   role: string;
   tokenVersion: number;
-
-  created_at: Date;
-  updated_at: Date;
 }

@@ -1,7 +1,7 @@
 import UserModel from "../models/user";
 import bcrypt from 'bcrypt';
 import { payloadInterface, payloadTokens } from "../types/jwtp/payloads";
-import { GoogleUser, RegularUser, UserForAuth, userForLogin, UserFromDB } from "../types/model-types/user-types";
+import { RegularUser, UserForAuth, userForLogin, UserFromDB } from "../types/model-types/user-types";
 import checkIfUserExists from "../utils/checkIfUserExists";
 import jwtp from "../libs/jwtp";
 import { Response } from "express";
@@ -146,7 +146,7 @@ async function handleGoogleAuth(idToken: string) {
 
   if (!email || !name) throw new Error('GOOGLE_INSUFFICIENT_DATA');
 
-  let user = await UserService.getUserByEmail(email);
+  let user = await UserModel.findOne({ email });
 
   if (user && !user.isGoogleUser) throw new Error('EXISTING_EMAIL_ACCOUNT');
 
@@ -159,13 +159,15 @@ async function handleGoogleAuth(idToken: string) {
       tokenVersion: 0
     });
 
-    user = newUser.toObject() as unknown as UserFromDB;
-    user.isGoogleUser = Boolean(user.isGoogleUser);
+    user = newUser;
+    if (user) {
+      user.isGoogleUser = Boolean(user.isGoogleUser);
+    }
   }
 
   user.tokenVersion += 1;
 
-  return generateTokens(user);
+  return generateTokens(user as unknown as UserFromDB);
 }
 
 const UserService = {
