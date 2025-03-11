@@ -62,7 +62,7 @@ const authMiddleware: RequestHandler = async (
 
         if (customReq.method === 'GET' && customReq.user) {
           const newCsrfToken = generateCsrfToken(customReq.user._id);
-          res.header('X-CSRF-Token', await newCsrfToken);
+          res.header('X-CSRF-Token', await newCsrfToken); 
         }
 
         next();

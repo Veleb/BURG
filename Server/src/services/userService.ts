@@ -160,12 +160,10 @@ async function handleGoogleAuth(idToken: string) {
     });
 
     user = newUser;
-    if (user) {
-      user.isGoogleUser = Boolean(user.isGoogleUser);
-    }
   }
 
   user.tokenVersion += 1;
+  await user.save(); 
 
   return generateTokens(user as unknown as UserFromDB);
 }
