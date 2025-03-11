@@ -118,19 +118,19 @@ userController.post('/google-auth', async (req: Request, res: Response, next: Ne
     try {
       const { idToken } = req.body;
 
-      const ticket = await client.verifyIdToken({
-        idToken,
-        audience: GOOGLECLIENTID,
-      });
+    //   const ticket = await client.verifyIdToken({
+    //     idToken,
+    //     audience: GOOGLECLIENTID,
+    //   });
 
-      const payload = ticket.getPayload();
+    //   const payload = ticket.getPayload();
 
       const { accessToken, refreshToken } = await userService.handleGoogleAuth(idToken);
       
       setAuthTokens(res, accessToken, refreshToken);
       
   
-      const user = await userService.getUserByEmail(payload?.email);
+    //   const user = await userService.getUserByEmail(payload?.email);
       res.status(200).json({ 
         message: 'Google authentication successful',
         // user: {
