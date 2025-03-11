@@ -43,7 +43,7 @@ export class UserService {
       user: unknown, 
       accessToken: string, 
       refreshToken: string 
-    }>(`/api/google-auth`, { idToken });
+    }>(`/api/users/google-auth`, { idToken });
   }
 
   register(user: UserForRegister): Observable<UserFromDB> {
