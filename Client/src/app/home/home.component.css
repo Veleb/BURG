@@ -194,6 +194,10 @@
     margin-top: -6rem;
   }
 
+  .cards-wrapper {
+    flex-wrap: wrap;
+  }
+
   .search-button {
     width: 100%;
   }
@@ -208,6 +212,10 @@
 @media (max-width: 480px) {
   .hero {
     height: 500px;
+  }
+
+  .cards-wrapper {
+    flex-wrap: wrap;
   }
 
   .hero-cta {

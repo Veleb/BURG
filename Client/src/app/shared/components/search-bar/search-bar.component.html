@@ -1,0 +1,40 @@
+<div class="search-container">
+  <div class="input-wrapper">
+    <i class="fa-solid fa-magnifying-glass icon"></i>
+    <input 
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchInput()"
+      (keydown.enter)="$event.preventDefault()"
+      (blur)="showDropdown = false"
+      (focus)="onSearchInput()"
+      placeholder="Search vehicles..."
+      class="search-input"
+    >
+  </div>
+
+  @if (showDropdown) {
+    <div class="suggestions-dropdown">
+      @if (suggestions.length) {
+        @for (vehicle of suggestions; track $index) {
+          <div 
+            (mousedown)="selectVehicle(vehicle)"
+            [class.active]="$index === activeIndex"
+            class="suggestion-item"
+          >
+            <div class="main-suggestion">
+              {{ vehicle.details.name }} {{ vehicle.details.model }}
+            </div>
+            <div class="ghost-suggestion">
+              {{ vehicle.details.year }} | {{ vehicle.details.category }} | ${{ vehicle.details.pricePerDay }}/day
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="no-suggestions">
+          No vehicles found for "{{ searchTerm }}"
+        </div>
+      }
+    </div>
+  }
+</div>

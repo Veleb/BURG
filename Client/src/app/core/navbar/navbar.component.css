@@ -9,6 +9,7 @@
   border-bottom: 2px solid #A5A5A5;
   padding: 0 25px 0 25px;
   width: 100%;
+  gap: 20px;
 }
 
 .navbar-transparent {
@@ -156,4 +157,36 @@
   font-weight: 700;
   font-size: 18px;
   padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .nav-wrapper {
+    flex-wrap: nowrap;
+    padding: 15px;
+  }
+
+  .search-container {
+    width: 50%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-wrapper {
+    flex-wrap: nowrap;
+    padding: 10px;
+  }
+
+  .hamburger-menu i {
+    font-size: 14px;
+  }
+
+  .dropdown-menu {
+    width: 100%;
+    right: -10px;
+  }
+
+  .search-container {
+    width: 50%;
+  }
 }

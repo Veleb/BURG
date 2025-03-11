@@ -1,15 +1,16 @@
-// navbar.component.ts
 import { Component, Input, HostListener, ElementRef, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { CurrencyComponent } from "../../currency/currency.component";
 import { trigger, transition, style, animate } from '@angular/animations';
+import { SearchBarComponent } from '../../shared/components/search-bar/search-bar.component';
+import { VehicleInterface } from '../../../types/vehicle-types';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, AsyncPipe, CurrencyComponent],
+  imports: [RouterLink, AsyncPipe, CurrencyComponent, SearchBarComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
   animations: [
@@ -31,7 +32,10 @@ export class NavbarComponent {
   isLoggedIn$: Observable<boolean>;
   isMenuOpen: boolean = false;
 
-  constructor(private userService: UserService) {
+  constructor(
+    private userService: UserService,
+    private router: Router,
+  ) {
     this.isLoggedIn$ = this.userService.isLogged$;
   }
 
@@ -44,5 +48,11 @@ export class NavbarComponent {
     if (!this.navMenu.nativeElement.contains(event.target)) {
       this.isMenuOpen = false;
     }
+  }
+
+  handleSelectedVehicle(vehicle: VehicleInterface): void {
+    this.router.navigate(['/catalog', vehicle._id]);
+    
+    
   }
 }
