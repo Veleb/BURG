@@ -50,7 +50,11 @@ const UserSchema = new Schema<UserInterface>({
     ref: "Vehicle",
     type: Types.ObjectId,
   }],
-  role: { type: String, enum: ["host", "admin", "user"], default: "user" },
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'host'],
+    default: 'user'
+  }
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, shareReplay, map, distinctUntilChanged } from 'rxjs/operators';
-import { UpdateUserCredentials, UserForLogin, UserForRegister, UserFromDB } from '../../types/user-types';
+import { UserForLogin, UserForRegister, UserFromDB } from '../../types/user-types';
 import { VehicleInterface } from '../../types/vehicle-types';
 
 @Injectable({ providedIn: 'root' })
@@ -11,15 +11,37 @@ export class UserService {
 
   public user$ = this.user$$.asObservable();
 
+  private csrfToken$$ = new BehaviorSubject<string | null>(null);
+
   constructor(private http: HttpClient) {}
+
+  private storeCsrfToken(token: string): void {
+    this.csrfToken$$.next(token);
+  }
+
+  getCsrfToken(): string | null {
+    return this.csrfToken$$.value;
+  }
+
+  private clearCsrfToken(): void {
+    this.csrfToken$$.next(null);
+  }
 
   getLikedVehicles(): Observable<VehicleInterface[]> {
     return this.http.get<VehicleInterface[]>(`/api/users/likes`);
   }
 
   getProfile(): Observable<UserFromDB | null> {
-    return this.http.get<UserFromDB>('/api/users/profile').pipe(
-      tap(user => this.user$$.next(user)),
+    return this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
+      tap(response => {
+        const csrfToken = response.headers.get('X-CSRF-Token');
+        const userData = response.body;
+      
+        if (csrfToken) this.storeCsrfToken(csrfToken);
+        if (userData) this.user$$.next(userData);
+
+      }),
+      map(response => response.body),
       catchError(err => {
         this.user$$.next(null);
         return of(null);
@@ -29,8 +51,15 @@ export class UserService {
   }
 
   login(user: UserForLogin): Observable<UserFromDB> {
-    return this.http.post<UserFromDB>('/api/users/login', user).pipe(
-      tap(userData => this.user$$.next(userData)),
+    return this.http.post<UserFromDB>('/api/users/login', user, { observe: 'response' }).pipe(
+      tap(response => {
+        const csrfToken = response.headers.get('X-CSRF-Token');
+        if (csrfToken) {
+          this.storeCsrfToken(csrfToken);
+        }
+        this.user$$.next(response.body);
+      }),
+      map(response => response.body as UserFromDB),
       catchError(err => {
         this.user$$.next(null);
         return throwError(() => err);
@@ -40,10 +69,19 @@ export class UserService {
 
   googleAuth(idToken: string) {
     return this.http.post<{ 
-      user: unknown, 
-      accessToken: string, 
+      user: UserFromDB,
+      accessToken: string,
       refreshToken: string 
-    }>(`/api/users/google-auth`, { idToken });
+    }>(`/api/users/google-auth`, { idToken }, { observe: 'response' }).pipe(
+      tap(response => {
+        const csrfToken = response.headers.get('X-CSRF-Token');
+        const userData = response.body?.user;
+        
+        if (csrfToken) this.storeCsrfToken(csrfToken);
+        if (userData) this.user$$.next(userData);
+      }),
+      map(response => response.body)
+    );
   }
 
   register(user: UserForRegister): Observable<UserFromDB> {
@@ -57,9 +95,15 @@ export class UserService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>('/api/users/logout', {}).pipe(
+    const csrfToken = this.getCsrfToken();
+    const headers = new HttpHeaders({
+      'x-csrf-token': csrfToken || ''
+    });
+
+    return this.http.post<void>('/api/users/logout', {}, { headers }).pipe(
       tap(() => {
         this.user$$.next(null);
+        this.clearCsrfToken();
       })
     );
   }

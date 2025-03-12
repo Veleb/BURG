@@ -9,9 +9,13 @@ export interface UserInterface {
   rents: RentInterface[];
   likes: string[] | VehicleInterface[];
   
-  isGoogleUser: Boolean;
+  isGoogleUser: boolean;
   tokenVersion: number;
-  role: { type: String, enum: ["user", "admin", "host"], default: "user" },
+  role: { 
+    type: string; 
+    enum: ["user", "admin", "host"]; 
+    default: "user" 
+  };
   
   _id: string;
   created_at: Date;

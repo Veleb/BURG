@@ -49,10 +49,10 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-
+  
   onSubmit(form: NgForm) {
     if (form.invalid) return;
-
+  
     this.userService.login(form.value).subscribe({
       next: (res) => {
         this.toastr.success('Login successful!', 'Success');

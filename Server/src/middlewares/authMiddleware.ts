@@ -4,11 +4,11 @@ import jwtp from '../libs/jwtp';
 import { authenticatedRequest, TokenPayload } from '../types/requests/authenticatedRequest';
 import UserModel from '../models/user';
 import { UserFromDB } from '../types/model-types/user-types';
+import setAuthTokens from '../utils/setAuthTokens';
+import tokenUtil from '../utils/tokenUtil';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
-const CSRF_TOKEN_SECRET = process.env.CSRF_TOKEN_SECRET as string;
-const PROD = process.env.PROD as string;
 
 const authMiddleware: RequestHandler = async (
   req: Request,
@@ -51,7 +51,7 @@ const authMiddleware: RequestHandler = async (
         };
 
         if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(customReq.method)) {
-          if (!csrfToken || !verifyCsrfToken(csrfToken as string, decoded._id)) {
+          if (!csrfToken || !tokenUtil.verifyCsrfToken(csrfToken as string, decoded._id)) {
             res.status(403).json({
               code: 'INVALID_CSRF',
               message: 'Invalid CSRF token'
@@ -61,7 +61,7 @@ const authMiddleware: RequestHandler = async (
         }
 
         if (customReq.method === 'GET' && customReq.user) {
-          const newCsrfToken = generateCsrfToken(customReq.user._id);
+          const newCsrfToken = tokenUtil.generateCsrfToken(customReq.user._id);
           res.header('X-CSRF-Token', await newCsrfToken); 
         }
 
@@ -90,23 +90,12 @@ const authMiddleware: RequestHandler = async (
       await user.save();
       await (user as Document).save();
 
-      const newAccessToken = await generateAccessToken(user._id, newTokenVersion);
-      const newRefreshToken = await generateRefreshToken(user._id, newTokenVersion);
-      const csrfToken = await generateCsrfToken(user._id);
+      const newAccessToken = await tokenUtil.generateAccessToken(user._id, newTokenVersion);
+      const newRefreshToken = await tokenUtil.generateRefreshToken(user._id, newTokenVersion);
+      const csrfToken = await tokenUtil.generateCsrfToken(user._id);
 
-      res.cookie('access_token', newAccessToken, {
-        httpOnly: true,
-        secure: PROD === 'true',
-        sameSite: 'strict',
-        maxAge: 15 * 60 * 1000
-      });
-
-      res.cookie('refresh_token', newRefreshToken, {
-        httpOnly: true,
-        secure: PROD === 'true',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
+      setAuthTokens(res, newAccessToken, newRefreshToken);
+      res.header('X-CSRF-Token', csrfToken); 
 
       customReq.user = {
         _id: user._id,
@@ -116,7 +105,6 @@ const authMiddleware: RequestHandler = async (
         isGoogleUser: user.isGoogleUser
       };
 
-      res.header('X-CSRF-Token', csrfToken);
       next();
       return; 
     }
@@ -137,39 +125,6 @@ const authMiddleware: RequestHandler = async (
       message: 'Authentication failed'
     });
     return 
-  }
-};
-
-const generateAccessToken = (userId: string, tokenVersion: number) => {
-  return jwtp.sign(
-    { _id: userId, tokenVersion },
-    ACCESS_TOKEN_SECRET!,
-    { expiresIn: '15m' }
-  );
-};
-
-const generateRefreshToken = (userId: string, tokenVersion: number) => {
-  return jwtp.sign(
-    { _id: userId, tokenVersion },
-    REFRESH_TOKEN_SECRET!,
-    { expiresIn: '7d' }
-  );
-};
-
-const generateCsrfToken = (userId: string) => {
-  return jwtp.sign(
-    { _id: userId },
-    CSRF_TOKEN_SECRET!,
-    { expiresIn: '15m' }
-  );
-};
-
-const verifyCsrfToken = async (token: string, userId: string) => {
-  try {
-    const decoded = await jwtp.verify(token, CSRF_TOKEN_SECRET!) as { _id: string };
-    return decoded._id === userId;
-  } catch {
-    return false;
   }
 };
 

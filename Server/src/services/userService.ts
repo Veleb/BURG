@@ -73,11 +73,11 @@ async function loginUser({ email, password }: userForLogin): Promise<payloadToke
 }
 
 async function registerUser(user: UserForAuth): Promise<payloadTokens> {
-  await checkIfUserExists(user);  // Check for existing user
+  await checkIfUserExists(user);  
   
-  const newUser = await createUser(user); // Create new user
+  const newUser = await createUser(user); 
   
-  return generateTokens(newUser); // Generate and return both tokens
+  return generateTokens(newUser); 
 }
 
 const logoutUser = async (userId: string, res: Response) => {
@@ -130,7 +130,11 @@ async function updateUser(userId: string, updatedData: Partial<UserForAuth>): Pr
   return user.toObject() as unknown as UserFromDB;
 }
 
-async function handleGoogleAuth(idToken: string) {
+async function handleGoogleAuth(idToken: string): Promise<{ 
+  user: UserFromDB, 
+  accessToken: string, 
+  refreshToken: string,
+}> {
   const ticket = await client.verifyIdToken({
     idToken,
     audience: GOOGLE_CLIENT_ID
@@ -165,7 +169,21 @@ async function handleGoogleAuth(idToken: string) {
   user.tokenVersion += 1;
   await user.save(); 
 
-  return generateTokens(user as unknown as UserFromDB);
+  const { accessToken, refreshToken } = await generateTokens(user as unknown as UserFromDB);
+
+  return {
+    user: {
+      _id: user._id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      isGoogleUser: user.isGoogleUser,
+      tokenVersion: user.tokenVersion,
+      password: null
+    } as unknown as UserFromDB,
+    accessToken,
+    refreshToken,
+  };
 }
 
 const UserService = {

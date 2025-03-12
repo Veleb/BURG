@@ -4,6 +4,7 @@ import { UserForAuth } from '../types/model-types/user-types';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
 import setAuthTokens from '../utils/setAuthTokens';
 import { OAuth2Client } from 'google-auth-library';
+import tokenUtil from '../utils/tokenUtil';
 
 const GOOGLECLIENTID = process.env.GOOGLE_CLIENT_ID as string;
 
@@ -87,10 +88,10 @@ userController.post('/register', async (req: Request, res: Response, next: NextF
 userController.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, password } = req.body; // get email and password from request body
-        
+       
         const { accessToken, refreshToken } = await userService.loginUser({ email, password }); 
         setAuthTokens(res, accessToken, refreshToken); // set auth cookies 
-        
+
         res.status(200).json({ message: 'Logged in successfully' });
         return;
     } catch (error) {
@@ -114,31 +115,31 @@ userController.post('/logout', async (req: Request, res: Response, next: NextFun
     }
   });
 
-userController.post('/google-auth', async (req: Request, res: Response, next: NextFunction) => {
+  userController.post('/google-auth', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { idToken } = req.body;
-
-    //   const ticket = await client.verifyIdToken({
-    //     idToken,
-    //     audience: GOOGLECLIENTID,
-    //   });
-
-    //   const payload = ticket.getPayload();
-
-      const { accessToken, refreshToken } = await userService.handleGoogleAuth(idToken);
+      const { 
+        user, 
+        accessToken, 
+        refreshToken 
+      } = await userService.handleGoogleAuth(idToken);
+      
+      const csrfToken = await tokenUtil.generateCsrfToken(user._id);
       
       setAuthTokens(res, accessToken, refreshToken);
       
-  
-    //   const user = await userService.getUserByEmail(payload?.email);
-      res.status(200).json({ 
-        message: 'Google authentication successful',
-        // user: {
-        //   _id: user._id,
-        //   email: user.email,
-        //   fullName: user.fullName
-        // }
-      });
+      res
+        .header('X-CSRF-Token', csrfToken)
+        .status(200)
+        .json({ 
+          message: 'Google authentication successful',
+          user: {
+            _id: user._id,
+            email: user.email,
+            fullName: user.fullName,
+            role: user.role
+          }
+        });
     } catch (err) {
       if (err instanceof Error && err.message === 'EXISTING_EMAIL_ACCOUNT') {
         res.status(409).json({
@@ -149,7 +150,7 @@ userController.post('/google-auth', async (req: Request, res: Response, next: Ne
       }
       next(err);
     }
-  });
+});
 
 userController.put('/update', async (req: Request, res: Response, next: NextFunction) => {
 
