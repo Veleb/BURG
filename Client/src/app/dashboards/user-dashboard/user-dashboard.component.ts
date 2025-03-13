@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
+import { UserService } from '../../user/user.service';
 import { UserFromDB } from '../../../types/user-types';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -11,12 +11,12 @@ import { EmailDirective } from '../../directives/email.directive';
 import { FullnameDirective } from '../../directives/fullname.directive';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-user-dashboard',
   imports: [ FormsModule, RentCardComponent, ProductCardComponent, EmailDirective, FullnameDirective ],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  templateUrl: './user-dashboard.component.html',
+  styleUrl: './user-dashboard.component.css'
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class UserDashboardComponent implements OnInit, OnDestroy {
   editMode = false;
   isUpdating = false;
   isLoading = true;

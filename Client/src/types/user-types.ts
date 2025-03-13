@@ -24,3 +24,10 @@ export interface UpdateUserCredentials {
   email?: string;
   phoneNumber?: string;
 }
+
+export interface UserForPartner {
+  fullName: string;
+  email: string;
+  phone: string;
+  vehicles: number;
+}

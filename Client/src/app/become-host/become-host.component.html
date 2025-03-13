@@ -1,11 +1,145 @@
-<div class="construction-container">
-  <div class="construction-content">
-      <div class="icon-container">
-          <i class="fas fa-tools construction-icon"></i>
-          <div class="gear gear1"><i class="fas fa-cog"></i></div>
-          <div class="gear gear2"><i class="fas fa-cog"></i></div>
-      </div>
-      <h1>Under Construction</h1>
-      <p>We're working hard to bring you something amazing!</p>
+<section class="partner-registration">
+  <div class="intro-section">
+    <h2>Join Our Partner Network</h2>
+    <p class="intro-text">
+      Expand your business reach and maximize your equipment's potential. Partner with us to access thousands of 
+      construction professionals looking to rent quality machinery. Enjoy competitive earnings, secure transactions, 
+      and full control over your listings.
+    </p>
   </div>
-</div>
+
+  <div class="form-toggle">
+    <button 
+      [class.active]="activeForm === 'company'"
+      (click)="activeForm = 'company'">
+      Company Registration
+    </button>
+    <button 
+      [class.active]="activeForm === 'individual'"
+      (click)="activeForm = 'individual'">
+      Individual Registration
+    </button>
+  </div>
+
+  <div class="form-section" [class.active]="activeForm === 'company'">
+    <form #companyForm="ngForm" (ngSubmit)="onSubmitCompany(companyForm)">
+      <div class="form-group">
+        <label for="companyName">Company Name</label>
+        <input
+          type="text"
+          id="companyName"
+          name="companyName"
+          [(ngModel)]="companyModel.companyName"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="companyEmail">Email</label>
+        <input
+          type="email"
+          id="companyEmail"
+          name="email"
+          [(ngModel)]="companyModel.companyEmail"
+          required
+          email>
+      </div>
+      <div class="form-group">
+        <label for="companyPhone">Phone</label>
+        <input
+          type="tel"
+          id="companyPhone"
+          name="phone"
+          [(ngModel)]="companyModel.companyPhoneNumber"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="companyAddress">Address</label>
+        <input
+          type="text"
+          id="companyAddress"
+          name="address"
+          [(ngModel)]="companyModel.companyLocation"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="companyVehicles">Number of Vehicles</label>
+        <input
+          type="number"
+          id="companyVehicles"
+          name="vehicles"
+          [(ngModel)]="companyModel.vehicles"
+          required
+          min="1">
+      </div>
+      <button type="submit" [disabled]="companyForm.invalid">
+        Submit Company Application
+      </button>
+    </form>
+  </div>
+
+  <div class="form-section" [class.active]="activeForm === 'individual'">
+    <form #individualForm="ngForm" (ngSubmit)="onSubmitIndividual(individualForm)">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input
+          type="text"
+          id="fullName"
+          name="fullName"
+          [(ngModel)]="individualModel.fullName"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="individualEmail">Email</label>
+        <input
+          type="email"
+          id="individualEmail"
+          name="email"
+          [(ngModel)]="individualModel.email"
+          required
+          email>
+      </div>
+      <div class="form-group">
+        <label for="individualPhone">Phone</label>
+        <input
+          type="tel"
+          id="individualPhone"
+          name="phone"
+          [(ngModel)]="individualModel.phone"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="individualVehicles">Number of Vehicles</label>
+        <input
+          type="number"
+          id="individualVehicles"
+          name="vehicles"
+          [(ngModel)]="individualModel.vehicles"
+          required
+          min="1">
+      </div>
+      <button type="submit" [disabled]="individualForm.invalid">
+        Submit Individual Application
+      </button>
+    </form>
+  </div>
+
+  <div class="partner-benefits">
+    <h3>Why Partner With Us?</h3>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <i class="fas fa-chart-line"></i>
+        <h4>Increased Earnings</h4>
+        <p>Access our large network of construction professionals and maximize your equipment utilization</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-shield-alt"></i>
+        <h4>Full Protection</h4>
+        <p>Comprehensive insurance and secure payment processing for every transaction</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-tools"></i>
+        <h4>Management Tools</h4>
+        <p>Real-time analytics, scheduling tools, and maintenance tracking</p>
+      </div>
+    </div>
+  </div>
+</section>

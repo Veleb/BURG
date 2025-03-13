@@ -27,8 +27,7 @@ const authMiddleware: RequestHandler = async (
       customReq.user = undefined;
       customReq.isAuthenticated = false;
 
-      next();
-      return;
+      return next();
     }
 
     if (accessToken) {
@@ -118,6 +117,8 @@ const authMiddleware: RequestHandler = async (
     return 
 
   } catch (error) {
+    console.log(error);
+    
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     res.status(401).json({

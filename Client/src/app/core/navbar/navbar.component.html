@@ -12,7 +12,7 @@
       <app-currency [color]="isTransparent ? 'white' : 'black'"/>
 
       @if (isLoggedIn$ | async) {
-        <i routerLink="/auth/profile" class="fa-solid fa-user desktop-user-icon"></i>
+        <i routerLink="/dashboard/desktop-user-icon" class="fa-solid fa-user desktop-user-icon"></i>
       } @else {
         <div routerLink="/auth/login" class="login-link">
           <h4>Sign In</h4>
