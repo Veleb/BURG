@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 export class CurrencyComponent {
   @Input() color: string = "black";
 
-  currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD'];
+  currencies = ['INR' ,'USD', 'EUR', 'GBP', 'JPY', 'CAD'];
   selectedCurrency = 'USD';
 
   constructor(private currencyService: CurrencyService) {

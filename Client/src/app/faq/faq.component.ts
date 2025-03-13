@@ -55,7 +55,7 @@ export class FaqComponent implements OnInit {
     { number: 15, question: 'Is it safe to rent vehicles on BURG?', answer: 'Yes! BURG verifies all vehicle listings and ensures transparency between renters and owners. Additionally, our in-app messaging and support services provide assistance in case of any issues.', active: false },
     { number: 16, question: 'How does BURG handle disputes?', answer: 'If you face any issues with a rental, you can report it through the app. Our support team will review the situation, mediate between the parties, and resolve disputes fairly.', active: false },
     { number: 17, question: 'Can I contact the vehicle owner before booking?', answer: 'Yes! BURG provides an in-app chat and call option to clarify details with the vehicle owner before booking.', active: false },
-    { number: 18, question: 'How do I contact BURG support?', answer: 'You can reach our support team through: In-app chat support, Email: support@burg.com, Phone: +91-XXXX-XXXXXX (Available 24/7).', active: false }
+    { number: 18, question: 'How do I contact BURG support?', answer: 'You can reach our support team through: In-app chat support, Email: burpleinfodesk@gmail.com, Phone: +971 52 198 5759 (Available 24/7).', active: false }
   ];
 
   additionalQuestions: FAQ[] = [

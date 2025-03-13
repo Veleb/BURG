@@ -65,10 +65,6 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
         case 401:
           title = 'Unauthorized';
           message = err.error?.message || 'You are not authorized. Please log in.';
-          router.navigate(['/auth/login']);
-          if (!router.url.startsWith('/login')) {
-            toastr.error(message, title);
-          }
           break;
         case 403:
           title = 'Forbidden';
