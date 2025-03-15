@@ -14,6 +14,8 @@ import { UserService } from '../../user/user.service';
 import { StripeService } from '../../services/stripe.service';
 import { RentInterface } from '../../../types/rent-types';
 import { FormsModule } from '@angular/forms';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout'
+import { ImageCarouselComponent } from '../../shared/components/image-carousel/image-carousel.component';
 
 @Component({
   selector: 'app-details',
@@ -23,7 +25,8 @@ import { FormsModule } from '@angular/forms';
     CurrencyConverterPipe,
     CurrencyPipe,
     LocationPickerComponent,
-    FormsModule
+    FormsModule,
+    ImageCarouselComponent
   ],
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css']
@@ -58,6 +61,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   
   private userId: string | null = null;
 
+  isMobile: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private vehicleService: VehicleService,
@@ -66,9 +71,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private stripeService: StripeService,
     private router: Router,
+    private breakpointObserver: BreakpointObserver,  
   ) {}
 
   ngOnInit(): void {
+    
     this.route.paramMap.pipe(
       takeUntil(this.destroy$),
       switchMap(params => {
@@ -101,6 +108,12 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
     this.userService.user$.subscribe(user => {
       this.userId = user?._id || null;
+    });
+
+    this.breakpointObserver.observe('(max-width: 1200px)')
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((state: BreakpointState) => {
+      this.isMobile = state.matches;
     });
   }
 

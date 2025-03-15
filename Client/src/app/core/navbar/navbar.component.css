@@ -43,6 +43,7 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
+  text-wrap: nowrap;
 }
 
 .login-link:hover, .logo-link:hover {
@@ -160,6 +161,13 @@
   font-weight: 700;
   font-size: 18px;
   padding: 20px;
+}
+
+  
+@media (max-width: 1200px) {
+  .search-container {
+    max-width: 75%;
+  }
 }
 
 @media (max-width: 768px) {

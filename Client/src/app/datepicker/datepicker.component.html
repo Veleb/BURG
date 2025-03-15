@@ -48,4 +48,22 @@
        </div>
     
     </div>
+} @else if (layoutType === 'default-wrap') {
+   <div class="datepicker-wrapper-wrap">
+      <div class="date-input-wrapper-wrap">
+        <div class="input-label-wrapper">
+          <label class="date-label" for="startDate">Pick Up</label>
+          <input id="startDate" type="text" class="date-input" placeholder="start date" #startDate>
+        </div>
+        <i class="fa-solid fa-calendar-days calendar-icon-left" (click)="openCalendar(startDate)"></i>
+      </div>
+    
+      <div class="date-input-wrapper-wrap">
+        <div class="input-label-wrapper">
+          <label class="date-label" for="endDate">Drop Off</label>
+          <input id="endDate" type="text" class="date-input" placeholder="end date" #endDate>
+        </div>
+        <i class="fa-solid fa-calendar-days calendar-icon-right" (click)="openCalendar(endDate)"></i>
+      </div>
+    </div>
 }

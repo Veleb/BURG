@@ -8,7 +8,7 @@
         and full control over your listings.
       </p>
     </div>
-
+<!-- 
   <div class="form-toggle">
     <button 
       [class.active]="activeForm === 'company'"
@@ -20,7 +20,7 @@
       (click)="activeForm = 'individual'">
       Individual Registration
     </button>
-  </div>
+  </div> -->
 
   <div class="form-section" [class.active]="activeForm === 'company'">
     <form #companyForm="ngForm" (ngSubmit)="onSubmitCompany(companyForm)">
@@ -62,7 +62,7 @@
           required>
       </div>
       <div class="form-group">
-        <label for="companyVehicles">Number of Vehicles</label>
+        <label for="companyVehicles">Number of Vehicles and Equipment</label>
         <input
           type="number"
           id="companyVehicles"
@@ -79,7 +79,7 @@
     </form>
   </div>
 
-  <div class="form-section" [class.active]="activeForm === 'individual'">
+  <!-- <div class="form-section" [class.active]="activeForm === 'individual'">
     <form #individualForm="ngForm" (ngSubmit)="onSubmitIndividual(individualForm)">
       <div class="form-group">
         <label for="fullName">Full Name</label>
@@ -110,7 +110,7 @@
           required>
       </div>
       <div class="form-group">
-        <label for="individualVehicles">Number of Vehicles</label>
+        <label for="individualVehicles">Number of Vehicles and Equipment</label>
         <input
           type="number"
           id="individualVehicles"
@@ -125,7 +125,7 @@
         </button>
       </div>
     </form>
-  </div>
+  </div> -->
 
   <div class="partner-benefits">
     <h3>Why Partner With Us?</h3>

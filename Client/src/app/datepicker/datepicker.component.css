@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .date-input-wrapper {
   display: flex;
   justify-content: center;
@@ -141,58 +142,70 @@
 }
 
 
-@media (max-width: 768px) { /* For tablets and smaller screens */
-  .datepicker-wrapper {
-    flex-wrap: wrap; /* Allow wrapping when not enough space */
-    gap: 10px;
-  }
+.datepicker-wrapper-wrap {
+  display: flex;
+  flex-wrap: wrap;   
+  gap: 10px;         
+  align-items: center;
+  justify-content: center;
+}
 
-  .date-input-wrapper {
-    flex-direction: column; /* Stacks the input fields */
-    width: 100%;
-    align-items: stretch; /* Make them take full width */
-  }
+.date-input-wrapper-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 300px; 
+  position: relative;
+}
 
-  .date-input {
-    min-width: 100%; /* Make input fill the available space */
+
+@media (max-width: 768px) {
+  .date-input, .date-input-column {
     font-size: 14px;
+    height: 35px;
+    min-width: 200px;
+  }
+
+  .date-label, .date-label-column {
+    font-size: 10px;
+  }
+
+  .calendar-icon-left, .calendar-icon-right,
+  .calendar-icon-left-column, .calendar-icon-right-column {
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .search-button {
-    width: 100%; /* Full width for the button */
+    width: 100%;
+    max-width: 300px;
+    height: 40px;
     font-size: 20px;
-  }
-
-  .calendar-icon-left, .calendar-icon-right {
-    position: absolute;
-    right: 10px;
-    top: 12px;
   }
 }
 
-@media (max-width: 480px) { /* For mobile screens */
-  .datepicker-wrapper {
-    flex-direction: column; /* Stack inputs vertically on mobile */
-    align-items: center;
+@media (max-width: 480px) {
+  .datepicker-wrapper,
+  .datepicker-wrapper-column {
+    width: 100%;
   }
-
-  .date-input-wrapper {
+  
+  .date-input-wrapper,
+  .date-input-wrapper-column {
+    width: 100%;
+  } 
+  
+  .dotted-hr {
+    margin: 10px auto;
     width: 90%;
   }
-
-  .date-input {
-    min-width: 100%;
-    font-size: 13px;
-  }
-
-  .search-button {
-    width: 100%; /* Button fills the screen */
-    font-size: 18px;
-  }
-
-  .calendar-icon-left, .calendar-icon-right {
-    position: absolute;
-    right: 10px;
-    top: 12px;
+  
+  .calendar-icon-left,
+  .calendar-icon-right,
+  .calendar-icon-left-column,
+  .calendar-icon-right-column {
+    right: 15px;
+    top: 50%;
   }
 }

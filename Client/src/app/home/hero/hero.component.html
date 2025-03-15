@@ -1,6 +1,6 @@
 <section class="hero">
   <div class="hero-overlay"></div>
-   <img loading="lazy" src="/images/hero-background.jpeg" alt="">
+   <img class="background-image" loading="lazy" src="/images/hero-background.jpeg" alt="">
    <div class="hero-cta">
     <h1>Find Your Perfect Commercial Vehicle</h1>
     <p>Rent reliable machinery with transparent pricing and instant booking</p>
@@ -8,13 +8,15 @@
 
     <div class="datepicker-section">
   
-      <app-datepicker layout="default" 
+      <app-datepicker 
+      layoutType="default-wrap" 
       [functionality]="['search', null]"
       (startDateChange)="onStartDateChange($event)" 
       (endDateChange)="onEndDateChange($event)"
       ></app-datepicker>
     
       <button (click)="onSearch()" class="search-button">Search</button>
+
     </div>    
 
   </div>

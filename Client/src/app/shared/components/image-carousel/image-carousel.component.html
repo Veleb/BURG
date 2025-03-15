@@ -15,4 +15,14 @@
     </button>
   </div>
 
+  <div class="dots-container">
+    @for (image of images; track $index) {
+      <span
+        class="dot"
+        [class.active]="currentIndex === $index"
+        (click)="goToSlide($index)"
+      ></span>
+    }
+  </div>
+
 </div>

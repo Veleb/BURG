@@ -34,4 +34,7 @@ export class ImageCarouselComponent {
     return this.images[this.currentIndex];
   }
 
+  goToSlide(index: number) {
+    this.currentIndex = index;
+  }
 }

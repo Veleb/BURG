@@ -189,7 +189,6 @@
   }
 
   .datepicker-section {
-    flex-direction: column;
     width: 90%;
     margin-top: -6rem;
   }
