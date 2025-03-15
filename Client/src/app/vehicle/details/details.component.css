@@ -366,3 +366,59 @@
   color: #666;
 }
 
+.specs-wrapper {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+
+  h3 {
+    margin-bottom: 15px;
+    color: #2d3436;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.specs-table {
+  max-width: 50%;
+  border-collapse: collapse;
+
+  tr {
+    border-bottom: 1px solid #f0f0f0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .icon-cell {
+    width: 30px;
+    padding: 8px 0;
+    color: #636e72;
+    
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .spec-label {
+    padding: 8px 0;
+    color: #666;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .spec-value {
+    padding: 8px 0;
+    color: #2d3436;
+    font-weight: 400;
+    text-align: right;
+    width: 100%;
+    
+    &[colspan="2"] {
+      text-align: left;
+      padding-left: 10px;
+    }
+  }
+}

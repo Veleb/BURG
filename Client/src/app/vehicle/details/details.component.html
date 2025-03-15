@@ -1,6 +1,6 @@
 <div class="details-wrapper">
+
   <div class="images-wrapper">
-    <!-- Displaying images -->
     @for (image of vehicle?.details?.images?.slice(0, 3); track $index) {
       <img 
         class="small-image" 
@@ -21,10 +21,8 @@
     }
   </div>
 
-  <!-- Main Vehicle Image -->
   <img loading="lazy" class="vehicle-image" [src]="currentImage || vehicle?.details?.images?.[0]" alt="Vehicle Image">
 
-  <!-- Gallery Modal -->
   @if (galleryOpen) {
     <div class="gallery-modal">
       <div class="gallery-content">
@@ -36,7 +34,6 @@
     </div>
   }
 
-  <!-- Vehicle Details -->
   <div class="vehicle-details-wrapper">
     <div class="basic-details-wrapper">
       <div class="basic-details">
@@ -49,7 +46,6 @@
       </div>
     </div>
 
-    <!-- Company Details -->
     <div class="company-details-wrapper">
       <div class="company-basic-details">
         <div class="company-details">
@@ -59,7 +55,6 @@
       </div>
     </div>
 
-    <!-- Checkout Section -->
     <div class="checkout-wrapper">
       <div class="first-row">
         <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
@@ -77,7 +72,6 @@
           (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
         ></app-datepicker>
 
-        <!-- Location Picker -->
         <div class="location-picker-wrapper">
           @if (locationCheckbox.checked) {
             <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
@@ -95,10 +89,8 @@
         </div>
       </div>
 
-      <!-- Rent Button -->
       <button class="cta-button" (click)="rentVehicle()">Rent Now</button>
 
-      <!-- Price Breakdown -->
       @if (rentalHours) {
         <div class="price-breakdown-wrapper">
           <h4>Price breakdown:</h4>
@@ -122,4 +114,49 @@
       }
     </div>
   </div>
+  
 </div>
+
+
+<div class="specs-wrapper">
+  <h3>Key specifications of {{ vehicle?.details?.model }}</h3>
+  
+      <table class="specs-table">
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-battery-full"></i></td>
+          <td class="spec-label">Battery Capacity:</td>
+          <!-- <td class="spec-value">{{ vehicle?.details?.batteryCapacity || '120 Ah' }}</td> -->
+        </tr>
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-bolt"></i></td>
+          <td class="spec-label">Power:</td>
+          <!-- <td class="spec-value">{{ vehicle?.details?.power || '450 HP' }}</td> -->
+        </tr>
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-gears"></i></td>
+          <td class="spec-label">Engine:</td>
+          <!-- <td class="spec-value">{{ vehicle?.details?.engine || '800cc' }}</td> -->
+        </tr>
+        <tr>
+          <!-- <td colspan="2" class="spec-value">{{ vehicle?.details?.seats || '4' }} Seats</td> -->
+        </tr>
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-tire"></i></td>
+          <td class="spec-label">Number of tires:</td>
+          <!-- <td class="spec-value">{{ vehicle?.details?.tires || '6' }}</td> -->
+        </tr>
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-weight-hanging"></i></td>
+          <td class="spec-label">GVW</td>
+          <!-- <td class="spec-value">{{ vehicle?.details?.gvw || '5000kg' }}</td> -->
+        </tr>
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-car"></i></td>
+          <td colspan="2" class="spec-value">Chassis type with cabin</td>
+        </tr>
+        <tr>
+          <td class="icon-cell"><i class="fa-solid fa-gas-pump"></i></td>
+          <!-- <td colspan="2" class="spec-value">{{ vehicle?.details?.fuelEfficiency || '18 Km/L' }}</td> -->
+        </tr>
+      </table>
+    </div>

@@ -1,12 +1,13 @@
 <section class="partner-registration">
-  <div class="intro-section">
-    <h2>Join Our Partner Network</h2>
-    <p class="intro-text">
-      Expand your business reach and maximize your equipment's potential. Partner with us to access thousands of 
-      construction professionals looking to rent quality machinery. Enjoy competitive earnings, secure transactions, 
-      and full control over your listings.
-    </p>
-  </div>
+  <div class="container">
+    <div class="intro-section">
+      <h2>Join Our Partner Network</h2>
+      <p class="intro-text">
+        Expand your business reach and maximize your equipment's potential. Partner with us to access thousands of 
+        construction professionals looking to rent quality machinery. Enjoy competitive earnings, secure transactions, 
+        and full control over your listings.
+      </p>
+    </div>
 
   <div class="form-toggle">
     <button 
@@ -70,9 +71,11 @@
           required
           min="1">
       </div>
-      <button type="submit" [disabled]="companyForm.invalid">
-        Submit Company Application
-      </button>
+      <div class="button-container">
+        <button type="submit" [disabled]="companyForm.invalid">
+          Submit Company Application
+        </button>
+      </div>
     </form>
   </div>
 
@@ -116,9 +119,11 @@
           required
           min="1">
       </div>
-      <button type="submit" [disabled]="individualForm.invalid">
-        Submit Individual Application
-      </button>
+      <div class="button-container">
+        <button type="submit" [disabled]="individualForm.invalid">
+          Submit Individual Application
+        </button>
+      </div>
     </form>
   </div>
 
@@ -142,4 +147,5 @@
       </div>
     </div>
   </div>
+</div>
 </section>
