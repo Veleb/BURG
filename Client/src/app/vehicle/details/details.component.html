@@ -41,22 +41,25 @@
   }
 
   <div class="vehicle-details-wrapper">
-    <div class="basic-details-wrapper">
-      <div class="basic-details">
-        <h2 class="vehicle-name"> {{ vehicle?.details?.name }} </h2>
-        <div class="vehicle-characteristics">
-          <h6 class="vehicle-characteristic">Manual</h6>
-          <h6 class="vehicle-characteristic">Petrol</h6>
-          <h6 class="vehicle-characteristic">{{ vehicle?.details?.capacity }}</h6>
+
+    <div class="main-details-wrapper">
+      <div class="basic-details-wrapper">
+        <div class="basic-details">
+          <h2 class="vehicle-name"> {{ vehicle?.details?.name }} </h2>
+          <div class="vehicle-characteristics">
+            <h6 class="vehicle-characteristic">Manual</h6>
+            <h6 class="vehicle-characteristic">Petrol</h6>
+            <h6 class="vehicle-characteristic">{{ vehicle?.details?.capacity }}</h6>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="company-details-wrapper">
-      <div class="company-basic-details">
-        <div class="company-details">
-          <div class="company-profile-picture"></div>
-          <h4 class="company-name">{{ vehicle?.company?.companyName }}</h4>
+  
+      <div class="company-details-wrapper">
+        <div class="company-basic-details">
+          <div class="company-details">
+            <div class="company-profile-picture"></div>
+            <h4 class="company-name">{{ vehicle?.company?.companyName }}</h4>
+          </div>
         </div>
       </div>
     </div>
@@ -129,9 +132,9 @@
   
   <div class="specs-grid">
     <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
-      <div class="spec-label">Fuel Type:</div>
-      <div class="spec-value">{{ vehicle?.details?.fuelType || "Petrol"}}</div>
+      <div class="icon-cell"><i class="fa-solid fa-car"></i></div>
+      <div class="spec-label">Engine:</div>
+      <div class="spec-value">{{ vehicle?.details?.engine }}</div>
     </div>
 
     <div class="spec-row">
@@ -139,49 +142,42 @@
       <div class="spec-label">Capacity:</div>
       <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
     </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gear"></i></div>
-      <div class="spec-label">Size:</div>
-      <div class="spec-value">{{ vehicle?.details?.size }}</div>
-    </div>
-    
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
-      <div class="spec-label">Fuel Type:</div>
-      <div class="spec-value">{{ vehicle?.details?.fuelType || "Petrol"}}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-person"></i></div>
-      <div class="spec-label">Capacity:</div>
-      <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gear"></i></div>
-      <div class="spec-label">Size:</div>
-      <div class="spec-value">{{ vehicle?.details?.size }}</div>
-    </div>
-    
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
-      <div class="spec-label">Fuel Type:</div>
-      <div class="spec-value">{{ vehicle?.details?.fuelType || "Petrol"}}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-person"></i></div>
-      <div class="spec-label">Capacity:</div>
-      <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gear"></i></div>
-      <div class="spec-label">Size:</div>
-      <div class="spec-value">{{ vehicle?.details?.size }}</div>
-    </div>
-    
-
   </div>
+
+  <div class="spec-row">
+    <div class="icon-cell"><i class="fa-solid fa-car-battery"></i></div>
+    <div class="spec-label">Power:</div>
+    <div class="spec-value">{{ vehicle?.details?.power }}</div>
+  </div>
+
+  <div class="spec-row">
+    <div class="icon-cell"><i class="fa-solid fa-truck"></i></div>
+    <div class="spec-label">GVW (Gross Vehicle Weight):</div>
+    <div class="spec-value">{{ vehicle?.details?.gvw }} kg</div>
+  </div>
+
+  <div class="spec-row">
+    <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
+    <div class="spec-label">Fuel Tank Capacity:</div>
+    <div class="spec-value">{{ vehicle?.details?.fuelTank }} liters</div>
+  </div>
+
+  <div class="spec-row">
+    <div class="icon-cell"><i class="fa-solid fa-tire"></i></div>
+    <div class="spec-label">Tyres:</div>
+    <div class="spec-value">{{ vehicle?.details?.tyres }}</div>
+  </div>
+
+  <div class="spec-row">
+    <div class="icon-cell"><i class="fa-solid fa-road"></i></div>
+    <div class="spec-label">Mileage:</div>
+    <div class="spec-value">{{ vehicle?.details?.mileage }} KM/L</div>
+  </div>
+
+  <div class="spec-row">
+    <div class="icon-cell"><i class="fa-solid fa-car-side"></i></div>
+    <div class="spec-label">Chassis Type:</div>
+    <div class="spec-value">{{ vehicle?.details?.chassisType }}</div>
+  </div>
+
 </div>

@@ -5,10 +5,10 @@ export enum Size {
 }
 
 export enum Category {
-  Cars = 'cars',
-  Trucks = 'trucks',
-  HeavyMachinery = 'heavy machinery',
-  CommercialCars = 'commercial cars',
-  CommercialEquipment = 'commercial equipment',
-  Other = 'other',
+  Trucks = "trucks",
+  LowDuty = "low duty",
+  HeavyDuty = "heavy duty",
+  Cars = "cars",
+  Travel = "travel",
+  Busses = "busses",
 }

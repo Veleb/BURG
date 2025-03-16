@@ -1,11 +1,13 @@
 import { VehicleInterface } from "./vehicle-types";
 
 export interface CompanyInterface {
-  name: string;
-  location: string;
-  websiteURL?: string;
   companyPhoneNumber: string;
+  companyName: string;
+  companyEmail: string;
+  companyLocation?: string;
+  numberOfVehicles: number;
+  status: 'pending' | 'confirmed' | 'canceled';
   carsAvailable: VehicleInterface[];
-  logo: string;
+  
   _id: string;
 }

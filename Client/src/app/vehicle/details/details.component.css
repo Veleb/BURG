@@ -104,6 +104,13 @@
   gap: 20px;
 }
 
+.main-details-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
 .basic-details-wrapper {
   display: flex;
   justify-content: space-between;
@@ -469,6 +476,12 @@
 }
 
 @media (max-width: 768px) {
+  .main-details-wrapper {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .vehicle-image {
     min-height: 300px;
   }
@@ -507,13 +520,15 @@
 }
 
 @media (max-width: 480px) {
-  .vehicle-characteristics {
-    flex-direction: column;
-    align-items: flex-start;
+
+  .main-details-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 
-  .vehicle-characteristic:not(:last-child)::after {
-    content: none;
+  .basic-details-wrapper {
+    min-width: min-content;
   }
 
   .location-picker-wrapper-different {
@@ -534,4 +549,3 @@
   }
 
 }
-
