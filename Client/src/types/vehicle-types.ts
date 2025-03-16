@@ -1,5 +1,5 @@
 import { CompanyInterface } from "./company-types";
-import { Category, Size } from "./enums";
+import { Size } from "./enums";
 import { RentInterface } from "./rent-types";
 
 export interface VehicleInterface {
@@ -26,7 +26,7 @@ interface VehicleDetails {
   tyres: number;
   mileage: number;
   chassisType: string;
-  category: Category;
+  category: string;
   capacity: number;
   pricePerDay: number;
   pricePerKm: number;
