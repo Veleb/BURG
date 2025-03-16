@@ -1,4 +1,3 @@
-/* Partner Registration Styles */
 .partner-registration {
   background: #FFFDFD;
   padding: 4rem 2rem;
@@ -62,7 +61,6 @@
 }
 
 .form-section {
-  display: none;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -82,6 +80,10 @@
 
 .form-group {
   margin-bottom: 1.75rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 
   label {
     display: block;
@@ -110,6 +112,10 @@
       color: #999;
     }
   }
+}
+
+.phone-input {
+  text-indent: 28px;
 }
 
 button[type="submit"] {

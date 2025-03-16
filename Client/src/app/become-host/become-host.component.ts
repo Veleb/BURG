@@ -1,54 +1,63 @@
-import { Component } from '@angular/core';
-import { CompanyForPartner } from '../../types/company-types';
-import { UserForPartner } from '../../types/user-types';
-import { FormsModule } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+import { PartnerService } from '../services/partner.service';
+import { ToastrService } from 'ngx-toastr';
+import { EmailDirective } from '../directives/email.directive';
+import { isPlatformBrowser } from '@angular/common';
+import intlTelInput from 'intl-tel-input';
+import { LocationPickerComponent } from '../shared/components/location-picker/location-picker.component';
 
 @Component({
   selector: 'app-become-host',
-  imports: [ FormsModule ],
+  imports: [ FormsModule, EmailDirective, LocationPickerComponent ],
   templateUrl: './become-host.component.html',
   styleUrl: './become-host.component.css'
 })
-export class BecomeHostComponent {
+export class BecomeHostComponent implements AfterViewInit {
 
-  activeForm: 'company' | 'individual' = 'company';
+  iti: any;  
+  @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef;
+  location: string | undefined = undefined;
 
-  companyModel: CompanyForPartner = {
-    companyName: '',
-    companyEmail: '',
-    companyPhoneNumber: '',
-    companyLocation: '',
-    vehicles: 0
-  };
+  constructor(
+    private partnerService: PartnerService,
+    private toastr: ToastrService,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) {}
 
-  individualModel: UserForPartner = {
-    fullName: '',
-    email: '',
-    phone: '',
-    vehicles: 0
-  };
-
-  submittedCompany = false;
-  submittedIndividual = false;
-
-  onSubmitCompany(form: any): void {
-    this.submittedCompany = true;
-    if (form.valid) {
-      console.log('Company Registration Data:', this.companyModel);
-      // TODO: Call your backend service to process company registration
-    } else {
-      console.warn('Company form is invalid.');
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.iti = intlTelInput(this.phoneInput.nativeElement, {
+        initialCountry: 'us',
+        nationalMode: false,
+        autoPlaceholder: 'aggressive',
+        formatOnDisplay: true,
+        utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
+        preferredCountries: ['us', 'gb', 'ca'],
+      });
     }
   }
 
-  // Submit handler for Individual form
-  onSubmitIndividual(form: any): void {
-    this.submittedIndividual = true;
-    if (form.valid) {
-      console.log('Individual Registration Data:', this.individualModel);
-      // TODO: Call your backend service to process individual registration
+  onLocationSelected(location: string) {
+    this.location = location;
+  }
+
+  onSubmitCompany(companyForm: NgForm): void {
+    if (companyForm.valid) {
+      const newCompanyData = { ...companyForm.value, companyLocation: this.location };
+
+      this.partnerService.createCompany(newCompanyData).subscribe({
+        next: () => {
+          this.toastr.success(`Sent partner application`, `Success`);
+          companyForm.reset();
+        },
+        error: () => {
+          this.toastr.error(`Error occurred while sending partner application`, `Error Occurred`)
+        }
+      })
     } else {
-      console.warn('Individual form is invalid.');
+      this.toastr.error(`Form is invalid`, `Error Occurred`);
     }
   }
+
 }

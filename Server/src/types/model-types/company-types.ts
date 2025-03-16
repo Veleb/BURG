@@ -1,13 +1,14 @@
+import { UserInterface } from "./user-types";
 import { VehicleInterface } from "./vehicle-types";
 
 export interface CompanyInterface {
-  companyPhoneNumber: string;
-  companyName: string;
-  companyEmail: string;
-  companyLocation?: string;
+  _id?: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  location: string;
   numberOfVehicles: number;
+  carsAvailable?: VehicleInterface[];
+  owner: string | UserInterface;
   status: 'pending' | 'confirmed' | 'canceled';
-  carsAvailable: VehicleInterface[];
-  
-  _id: string;
 }

@@ -27,7 +27,7 @@
 
 .location-icon {
   position: absolute;
-  left: 16px;
+  left: 14px;
   bottom: 13px;
 }
 
@@ -85,4 +85,96 @@
 
 .close-map-icon {
   color: white;
+}
+
+.simple-location-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.simple-location-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-left: 2.5rem;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.simple-location-input:focus {
+  border-color: #E4B15A;
+  box-shadow: 0 0 0 3px rgba(228, 177, 90, 0.2);
+  outline: none;
+}
+
+.simple-location-input::placeholder {
+  color: #999;
+}
+
+.simple-location-icon {
+  position: absolute;
+  left: 1rem;
+  top: 60%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 1rem;
+}
+
+.simple-suggestions-list {
+  /* position: absolute; */
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  margin-top: 0.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  list-style: none;
+  padding: 0;
+}
+
+.suggestion-item {
+  padding: 0.75rem 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.suggestion-item:hover {
+  background-color: #f8f8f8;
+  color: #2D2D2D;
+}
+
+.suggestion-item:active {
+  background-color: #E4B15A;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .simple-location-input {
+    padding-left: 2.2rem;
+  }
+  .simple-location-icon {
+    left: 0.8rem;
+  }
+  .simple-suggestions-list {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .simple-location-input {
+    font-size: 0.95rem;
+  }
 }

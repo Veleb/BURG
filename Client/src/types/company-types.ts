@@ -1,20 +1,10 @@
-import { VehicleInterface } from "./vehicle-types";
-
 export interface CompanyInterface {
-  _id: string;
-  companyName: string;
-  companyEmail: string;
-  carsAvailable: VehicleInterface[];
-  companyLocation: string;
-  websiteURL?: string;
-  companyPhoneNumber?: string;
-}
-
-export interface CompanyForPartner {
-  companyName: string;
-  companyEmail: string;
-  companyPhoneNumber: string;
-  companyLocation: string;
+  _id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
   vehicles: number;
-  websiteURL?: string;
+  owner: string;
+  status: 'pending' | 'confirmed' | 'canceled';
 }

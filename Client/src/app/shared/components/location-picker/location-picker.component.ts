@@ -1,4 +1,4 @@
-import { Component, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, EventEmitter, Output, Input } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,8 @@ import { catchError, Subscription, of } from 'rxjs';
 export class LocationPickerComponent implements OnDestroy {
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
   @Output() locationSelected = new EventEmitter<string>();
+
+  @Input('layoutType') layoutType: string = 'default';
 
   selectedLocation: { lat: number; lng: number } | null = null;
   searchQuery: string = '';

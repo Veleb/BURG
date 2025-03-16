@@ -58,7 +58,7 @@
         <div class="company-basic-details">
           <div class="company-details">
             <div class="company-profile-picture"></div>
-            <h4 class="company-name">{{ vehicle?.company?.companyName }}</h4>
+            <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
           </div>
         </div>
       </div>
@@ -86,8 +86,8 @@
             <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
           } @else {
             <div class="location-picker-wrapper-different">
-              <app-location-picker id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
-              <app-location-picker id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
+              <app-location-picker layoutType="default" id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
+              <app-location-picker layoutType="default" id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
             </div>        
           }
 
