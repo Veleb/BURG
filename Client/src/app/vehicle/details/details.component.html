@@ -131,6 +131,7 @@
   <h3 class="specs-heading">Key specifications of {{ vehicle?.details?.model }}:</h3>
   
   <div class="specs-grid">
+
     <div class="spec-row">
       <div class="icon-cell"><i class="fa-solid fa-car"></i></div>
       <div class="spec-label">Engine:</div>
@@ -142,7 +143,6 @@
       <div class="spec-label">Capacity:</div>
       <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
     </div>
-  </div>
 
   <div class="spec-row">
     <div class="icon-cell"><i class="fa-solid fa-car-battery"></i></div>
@@ -163,7 +163,7 @@
   </div>
 
   <div class="spec-row">
-    <div class="icon-cell"><i class="fa-solid fa-tire"></i></div>
+    <div class="icon-cell"><i class="fa-solid fa-circle-dot"></i></div>
     <div class="spec-label">Tyres:</div>
     <div class="spec-value">{{ vehicle?.details?.tyres }}</div>
   </div>
@@ -180,4 +180,5 @@
     <div class="spec-value">{{ vehicle?.details?.chassisType }}</div>
   </div>
 
+  </div>
 </div>
