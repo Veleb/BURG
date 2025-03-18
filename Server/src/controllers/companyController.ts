@@ -36,6 +36,8 @@ companyController.get('/pending', async (req: Request, res: Response, next: Next
   }
 });
 
+// MAKE THIS SO WHEN A COMPANY IS CREATED IT GOES TO THE USER AS WELL
+
 companyController.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const customReq = req as authenticatedRequest;
 

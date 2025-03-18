@@ -166,7 +166,9 @@
 }
 
 .company-basic-details {
+  width: 100%;
   display: flex;
+  justify-content: space-between;
   gap: 16px;
 }
 
@@ -202,18 +204,58 @@
 }
 
 .contact-wrapper {
+  position: relative;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 4px;
-}
-
-.contact-wrapper:hover, .small-image:hover {
+  gap: 8px;
   cursor: pointer;
+  user-select: none;
+  font-size: 16px;
 }
 
 .contact-wrapper i {
-  font-size: 8px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.tel-link {
+  text-decoration: none;
+  color: #110808;
+}
+
+.contact-dropdown-wrapper {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: max-content;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-item i {
+  color: green;
+}
+
+.caret-icon {
+  font-size: 12px;
   position: relative;
   bottom: 4px;
 }
@@ -523,7 +565,6 @@
 
   .main-details-wrapper {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
   }
 

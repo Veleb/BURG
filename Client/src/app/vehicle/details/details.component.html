@@ -56,10 +56,36 @@
   
       <div class="company-details-wrapper">
         <div class="company-basic-details">
+
           <div class="company-details">
             <div class="company-profile-picture"></div>
             <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
           </div>
+
+          <div (click)="toggleContactDropdown()" class="contact-wrapper">
+            <h3>Contact</h3>
+            <i [class]="isContactDropdownOpen ? 'fa-solid fa-sort-up caret-icon' : 'fa-solid fa-sort-down caret-icon' "></i>
+
+            @if (isContactDropdownOpen) {
+              <div class="contact-dropdown-wrapper">
+                <a class="tel-link" href="tel:+971521985759">
+                  <div class="contact-item">
+                    <h3>+971 52 198 5759 - Akash Rajaraman</h3>
+                    <i class="fa-solid fa-phone"></i>
+                  </div>
+                </a>
+                <a class="tel-link" href="tel:+918099853142">
+                  <div class="contact-item">
+                    <h3>+91 809 985 3142 - Alankar Bezbaruah</h3>
+                    <i class="fa-solid fa-phone"></i>
+                  </div>
+                </a>
+              </div>
+            }
+          </div>
+
+          
+
         </div>
       </div>
     </div>

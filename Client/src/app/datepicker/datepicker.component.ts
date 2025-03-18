@@ -115,7 +115,13 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
       ...commonConfig,
       onChange: (selectedDates, dateStr, instance) => {
         if (selectedDates[0]) {
+
+          const maxEndDate = new Date(selectedDates[0]);
+          maxEndDate.setDate(maxEndDate.getDate() + 15);
+          
           this.endDateInstance?.set('minDate', selectedDates[0]);
+          this.endDateInstance?.set('maxDate', maxEndDate);
+
         }
         this.startDateChange.emit(selectedDates[0] || null);
         this.dateSelected.emit({ 
@@ -143,34 +149,27 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
   }
 
   search(): void {
-
     if (!this.startDateInstance || !this.endDateInstance) {
       this.toastr.error('Date pickers are not initialized.');
       return;
     }
-
+  
     const startDateTime = this.startDateInstance?.selectedDates[0];
     const endDateTime = this.endDateInstance?.selectedDates[0];
-
+  
     if (!startDateTime || !endDateTime) {
       this.toastr.error('Please select both start and end dates.');
       return;
     }
-
-    const currentDate = new Date();
-    if (startDateTime < currentDate) {
-      this.toastr.error('Start date cannot be in the past.');
+  
+    const differenceInTime = endDateTime.getTime() - startDateTime.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+  
+    if (differenceInDays > 15) {
+      this.toastr.error('The maximum rental period is 15 days.');
       return;
     }
-    if (endDateTime < currentDate) {
-      this.toastr.error('End date cannot be in the past.');
-      return;
-    }
-    if (startDateTime >= endDateTime) {
-      this.toastr.error('Start date must be before end date.');
-      return;
-    }
-
+  
     this.vehicleService.updateAvailableVehicles(startDateTime, endDateTime);
   }
 }
