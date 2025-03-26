@@ -117,8 +117,6 @@ const authMiddleware: RequestHandler = async (
     return 
 
   } catch (error) {
-    console.log(error);
-    
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     res.status(401).json({
