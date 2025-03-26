@@ -3,13 +3,10 @@ import userService from '../services/userService';
 import { UserForAuth } from '../types/model-types/user-types';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
 import setAuthTokens from '../utils/setAuthTokens';
-import { OAuth2Client } from 'google-auth-library';
 import tokenUtil from '../utils/tokenUtil';
 
-const GOOGLECLIENTID = process.env.GOOGLE_CLIENT_ID as string;
 
 const userController = Router();
-const client = new OAuth2Client(GOOGLECLIENTID);
 
 userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -55,22 +52,47 @@ userController.get('/likes', async (req: Request, res: Response, next: NextFunct
     }
 })
 
-userController.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const id = req.params.id;
-        const user = await userService.getUserById(id); // fetch user by id
+userController.get('/companies', async (req: Request, res: Response, next: NextFunction) => {
 
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
+    const customReq = req as authenticatedRequest;
+    const userId: string | undefined = customReq.user?._id;
+
+    try {
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized!" })
             return;
         }
 
-        res.status(200).json(user);
+        const companies = await userService.getUserCompanies(userId);
+
+        res.status(200).json(companies);
         return;
-    } catch (error) {
-        next(error);
+
+    } catch (err) {
+        next(err)
     }
-});
+})
+
+userController.get('/rents', async (req: Request, res: Response, next: NextFunction) => {
+
+    const customReq = req as authenticatedRequest;
+    const userId: string | undefined = customReq.user?._id;
+
+    try {
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized!" })
+            return;
+        }
+
+        const rents = await userService.getUserRents(userId);
+
+        res.status(200).json(rents);
+        return;
+
+    } catch (err) {
+        next(err)
+    }
+})
 
 userController.post('/register', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -115,7 +137,7 @@ userController.post('/logout', async (req: Request, res: Response, next: NextFun
     }
   });
 
-  userController.post('/google-auth', async (req: Request, res: Response, next: NextFunction) => {
+userController.post('/google-auth', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { idToken } = req.body;
       const { 
@@ -169,6 +191,23 @@ userController.put('/update', async (req: Request, res: Response, next: NextFunc
         const updatedUser = await userService.updateUser(userId, updatedData);
 
         res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+    } catch (error) {
+        next(error);
+    }
+});
+
+userController.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = req.params.id;
+        const user = await userService.getUserById(id); // fetch user by id
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.status(200).json(user);
+        return;
     } catch (error) {
         next(error);
     }

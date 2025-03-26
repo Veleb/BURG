@@ -54,7 +54,11 @@ const UserSchema = new Schema<UserInterface>({
     type: String,
     enum: ['user', 'admin', 'host'],
     default: 'user'
-  }
+  },
+  companies: [{
+    ref: "Company",
+    type: Types.ObjectId,
+  }]
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });

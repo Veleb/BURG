@@ -1,6 +1,40 @@
 <div class="rent-card-wrapper">
-  <p class="start-date"> Start: {{ rent?.start | date }} </p>
-  <p class="end-date">End {{ rent?.end | date }} </p>
-  <p class="status">Status: {{ rent?.status }} </p>
-  <h3 class="vehicle-name" routerLink="/catalog/{{ vehicle?._id }}">Vehicle: {{ vehicle?.details?.name }} </h3>
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+  @if (!error) {
+    <div class="rent-content">
+
+      @if (rent.start && rent.end) {
+        <p class="dates">
+          {{ rent.start | date }} - {{ rent.end | date }}
+        </p>
+      }
+
+      @if (rent.status) {
+        <div class="status-badge" [class]="rent.status">
+          <h3>Rent status</h3>
+          <h4>{{ rent.status }}</h4>
+        </div>
+      }
+
+      @if (rent.total) {
+        <div class="status-badge" [class]="rent.total">
+          <h3>Rent total</h3>
+          <h4>{{ rent.total | currencyConverter | currency }}</h4>
+        </div>
+      }
+      
+      @if (vehicle) {
+        <h3 class="vehicle-name" routerLink="/catalog/{{ vehicle._id }}">
+          {{ vehicle.details.name }}
+        </h3>
+      } 
+      
+      @if (rent.status !== 'canceled') {
+        <button class="cancel-btn" (click)="onCancel()">Cancel Rent</button>
+      }
+
+    </div>
+  }
 </div>

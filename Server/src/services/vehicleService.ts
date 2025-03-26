@@ -1,3 +1,4 @@
+import CompanyModel from "../models/company";
 import RentModel from "../models/rent";
 import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle"
@@ -14,6 +15,19 @@ async function getAllVehicles(): Promise<VehicleInterface[]> {
 
   return vehicles;
 }
+
+async function getCompanyVehicles(companyId: string): Promise<VehicleInterface[]> {
+  const company = await CompanyModel.findById(companyId)
+    .populate('carsAvailable') 
+    .lean();
+
+  if (!company || !Array.isArray(company.carsAvailable)) {
+    throw new Error("No vehicles found for this company.");
+  }
+
+  return company.carsAvailable;
+}
+
 
 async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
   const vehicle = await VehicleModel.findById(vehicleId)
@@ -107,13 +121,39 @@ async function removeLikeVehicle(vehicleId: string, userId: string) {
 }
 
 
+async function deleteVehicleById(vehicleId: string): Promise<VehicleInterface | null> {
+  const vehicle = await VehicleModel.findById(vehicleId);
+  if (!vehicle) {
+    throw new Error("Vehicle not found");
+  }
+
+  await UserModel.updateMany(
+    { likes: vehicleId },
+    { $pull: { likes: vehicleId } }
+  );
+
+  if (vehicle.company) {
+    await CompanyModel.findByIdAndUpdate(
+      vehicle.company,
+      { $pull: { carsAvailable: vehicleId } },
+      { new: true }
+    );
+  }
+
+  await RentModel.deleteMany({ vehicle: vehicleId });
+
+  const deletedVehicle = await VehicleModel.findByIdAndDelete(vehicleId);
+  return deletedVehicle;
+}
 
 const vehicleService = {
   getAllVehicles,
+  getCompanyVehicles,
   getVehicleById,
   checkAvailability,
   likeVehicle,
   removeLikeVehicle,
+  deleteVehicleById,
 
 }
 

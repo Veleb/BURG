@@ -5,6 +5,7 @@ import { Instance } from 'flatpickr/dist/types/instance';
 import { VehicleService } from '../vehicle/vehicle.service';
 import { ToastrService } from 'ngx-toastr';
 import { DateOption } from 'flatpickr/dist/types/options';
+import { RentService } from '../rents/rent.service';
 
 @Component({
     selector: 'app-datepicker',
@@ -34,8 +35,9 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
 
   constructor(
     private vehicleService: VehicleService,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    private rentService: RentService,
     private toastr: ToastrService,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -65,7 +67,7 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
       minDate: new Date(),
       onOpen: (selectedDates: Date[], dateStr: string, instance: Instance) => {
         if (this.vehicleId) {
-          this.vehicleService.getUnavailableDates(this.vehicleId).subscribe({
+          this.rentService.getUnavailableDates(this.vehicleId).subscribe({
             next: (unavailableDates) => {
               
               const disableFunction = (date: Date) => {

@@ -131,7 +131,7 @@
           <h4>Price breakdown:</h4>
           <div class="price-breakdown">
             <p class="price-factor">Rent fee x {{ rentalHours.toFixed(2) }} hours</p>
-            <p>{{ totalPriceBeforeTax !== null ? (totalPriceBeforeTax | currencyConverter | currency: selectedCurrency) : '' }}</p>
+            <p>{{ totalPriceBeforeTax !== undefined ? (totalPriceBeforeTax | currencyConverter | currency: selectedCurrency) : '' }}</p>
           </div>
 
           <div class="price-breakdown">
@@ -143,7 +143,7 @@
 
           <div class="price-breakdown">
             <h3 class="total-price">Total</h3>
-            <p>{{ totalPrice !== null ? (totalPrice | currencyConverter | currency: selectedCurrency) : '0' }}</p>
+            <p>{{ totalPrice !== undefined ? (totalPrice | currencyConverter | currency: selectedCurrency) : '0' }}</p>
           </div>
         </div>
       }

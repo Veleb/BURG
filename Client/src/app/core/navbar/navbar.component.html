@@ -11,8 +11,15 @@
     <div class="nav-menu" #navMenu>
       <app-currency [color]="isTransparent ? 'white' : 'black'"/>
 
-      @if (isLoggedIn$ | async) {
-        <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
+      @if (isLoggedIn$ | async; as isLoggedIn) {
+        @if (user$ | async; as user) {
+          @if (user.role === 'host') {
+            <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
+            <i [routerLink]="['/dashboard/host/home']" [queryParams]="{ companyId: user.companies[0] }" class="fa-solid fa-handshake"></i>
+          } @else {
+            <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
+          }
+        }
       } @else {
         <div routerLink="/auth/login" class="login-link">
           <h4>Sign In</h4>

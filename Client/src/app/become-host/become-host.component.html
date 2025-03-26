@@ -4,7 +4,7 @@
       <h2>Become a host for BURG</h2>
       <p class="intro-text">
         Expand your business reach and maximize your equipment's potential.
-        Partner with us to access thousands of construction professionals
+        Become a host to access thousands of construction professionals
         looking to rent quality machinery. Enjoy competitive earnings, secure
         transactions, and full control over your listings.
       </p>
@@ -70,8 +70,45 @@
             ngModel
             required
             min="1"
+            placeholder="45"
           />
         </div>
+
+        <div class="form-group">
+          <label for="stateRegistration">State Registration</label>
+          <input
+            type="text"
+            id="stateRegistration"
+            name="stateRegistration" 
+            ngModel
+            required
+            placeholder="Enter your official state registration"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="companyType">Company Type</label>
+          <select id="companyType" name="companyType" ngModel required>
+            <option value="" disabled selected>Select a company type</option>
+            <option value="Private Limited Company (PLC)">Private Limited Company (PLC)</option>
+            <option value="Public Limited Company (Ltd.)">Public Limited Company (Ltd.)</option>
+            <option value="One Person Company (OPC)">One Person Company (OPC)</option>
+            <option value="Limited Liability Partnership (LLP)">Limited Liability Partnership (LLP)</option>
+            <option value="Partnership Firm">Partnership Firm</option>
+            <option value="Sole Proprietorship">Sole Proprietorship</option>
+            <option value="Section 8 Company (Non-Profit Organization - NGO)">Section 8 Company (Non-Profit Organization - NGO)</option>
+            <option value="Producer Company">Producer Company</option>
+            <option value="Nidhi Company">Nidhi Company</option>
+            <option value="Indian Subsidiary of a Foreign Company">Indian Subsidiary of a Foreign Company</option>
+            <option value="Small Company (as per Companies Act, 2013)">Small Company (as per Companies Act, 2013)</option>
+            <option value="Startup Registration (under DPIIT recognition)">Startup Registration (under DPIIT recognition)</option>
+            <option value="Micro, Small, and Medium Enterprises (MSME) Registration">Micro, Small, and Medium Enterprises (MSME) Registration</option>
+            <option value="Trust Registration">Trust Registration</option>
+            <option value="Society Registration">Society Registration</option>
+            <option value="Cooperative Society">Cooperative Society</option>
+          </select>
+        </div>
+
         <div class="button-container">
           <button type="submit" [disabled]="companyForm.invalid">
             Submit Company Application
@@ -81,7 +118,7 @@
     </div>
 
     <div class="partner-benefits">
-      <h3>Why Partner With Us?</h3>
+      <h3>Why Should You Become A Host?</h3>
       <div class="benefits-grid">
         <div class="benefit-card">
           <i class="fas fa-chart-line"></i>

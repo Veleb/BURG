@@ -1,56 +1,42 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RentInterface } from '../../../types/rent-types';
 import { VehicleInterface } from '../../../types/vehicle-types';
-import { VehicleService } from '../../vehicle/vehicle.service';
-import { RentService } from '../rent.service';
-import { switchMap } from 'rxjs';
 import { DatePipe } from '../../shared/pipes/date.pipe';
 import { RouterLink } from '@angular/router';
+import { RentService } from '../rent.service';
+import { ToastrService } from 'ngx-toastr';
+import { CurrencyPipe } from '@angular/common';
+import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
 
 @Component({
-    selector: 'app-rent-card',
-    imports: [DatePipe, RouterLink],
-    templateUrl: './rent-card.component.html',
-    styleUrl: './rent-card.component.css'
+  selector: 'app-rent-card',
+  standalone: true,
+  imports: [DatePipe, RouterLink, CurrencyPipe, CurrencyConverterPipe],
+  templateUrl: './rent-card.component.html',
+  styleUrls: ['./rent-card.component.css']
 })
-export class RentCardComponent implements OnInit {
-  @Input() rentId!: string;
-
-  constructor( private vehicleService: VehicleService, private rentService: RentService) {}
+export class RentCardComponent {
+  @Input() rent!: RentInterface;
 
   vehicle: VehicleInterface | null = null;
-  rent: RentInterface | null = null;
+  error: string | null = null;
 
-  dateRange: number | null = null;
+  constructor(
+    private rentService: RentService,
+    private toastr: ToastrService,
+  ) {}
 
-  ngOnInit(): void {
-    this.rentService.getRentById(this.rentId).pipe(
-      switchMap(rent => {
-        if (!rent) {
-          throw new Error('Rent not found');
+  onCancel(): void {
+    if (confirm(`Are you sure you want to cancel this rent?`)) {
+      this.rentService.cancelRent(this.rent._id !== undefined ? this.rent._id : '').subscribe({
+        next: () => {
+          this.rent.status = 'canceled';
+          this.toastr.success(`Successfully canceled rent!`, `Success`);
+        },
+        error: () => {
+          this.toastr.error(`Error occurred while canceling rent!`, `Error Occurred`);
         }
-        
-        this.rent = rent;
-      
-        return this.vehicleService.getVehicleById(rent.vehicle);
       })
-    ).subscribe({
-      next: (vehicle) => {
-        this.vehicle = vehicle;
-      }
-    });
-
-
+    }
   }
-
-  // private calculateDateRange(rent: RentInterface): void {
-
-  //   if (this.rent!.start && this.rent!.end) {
-  //     this.dateRange = this.rent!.end.getTime() - this.rent!.start.getTime();
-  //   } else {
-  //     console.warn('Invalid dates for rent:', this.rent);
-  //   }
-
-  // }
-
 }

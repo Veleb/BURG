@@ -6,7 +6,7 @@ import { CompanyInterface } from '../../types/company-types';
 @Injectable({
   providedIn: 'root'
 })
-export class PartnerService {
+export class HostService {
 
   constructor(
     private http: HttpClient,
@@ -14,6 +14,10 @@ export class PartnerService {
 
   createCompany(companyData: CompanyInterface): Observable<CompanyInterface> {
     return this.http.post<CompanyInterface>(`/api/companies`, companyData);
+  }
+
+  getCompanyById(companyId: string): Observable<CompanyInterface> {
+    return this.http.get<CompanyInterface>(`/api/companies/${companyId}`);
   }
 
 }

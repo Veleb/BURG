@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { PartnerService } from '../services/partner.service';
+import { HostService } from '../services/host.service';
 import { ToastrService } from 'ngx-toastr';
 import { EmailDirective } from '../directives/email.directive';
 import { isPlatformBrowser } from '@angular/common';
@@ -20,7 +20,7 @@ export class BecomeHostComponent implements AfterViewInit {
   location: string | undefined = undefined;
 
   constructor(
-    private partnerService: PartnerService,
+    private hostService: HostService,
     private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: object,
   ) {}
@@ -46,13 +46,13 @@ export class BecomeHostComponent implements AfterViewInit {
     if (companyForm.valid) {
       const newCompanyData = { ...companyForm.value, companyLocation: this.location };
 
-      this.partnerService.createCompany(newCompanyData).subscribe({
+      this.hostService.createCompany(newCompanyData).subscribe({
         next: () => {
-          this.toastr.success(`Sent partner application`, `Success`);
+          this.toastr.success(`Sent host application`, `Success`);
           companyForm.reset();
         },
         error: () => {
-          this.toastr.error(`Error occurred while sending partner application`, `Error Occurred`)
+          this.toastr.error(`Error occurred while sending host application`, `Error Occurred`)
         }
       })
     } else {

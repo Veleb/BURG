@@ -32,7 +32,8 @@
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
               ],
               "scripts": [
-                "node_modules/leaflet/dist/leaflet.js"
+                "node_modules/leaflet/dist/leaflet.js",
+                "node_modules/chart.js/dist/chart.umd.js"
               ],
               "server": "src/main.server.ts",
               "prerender": true,
@@ -144,7 +145,8 @@
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
               ],
               "scripts": [
-                "node_modules/leaflet/dist/leaflet.js"
+                "node_modules/leaflet/dist/leaflet.js",
+                "node_modules/chart.js/dist/chart.umd.js"
               ]
             }
           }

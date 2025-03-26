@@ -1,9 +1,13 @@
+import { CompanyInterface } from "./company-types";
+
 export interface UserFromDB {
   _id: string;
   fullName: string,
   email: string;
   phoneNumber?: string;
   rents: string[];
+  companies: CompanyInterface[] | string[] ;
+  role: "user" | "host" | "admin";
   created_at: Date;
   updated_at: Date;
 }

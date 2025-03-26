@@ -4,6 +4,8 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, shareReplay, map, distinctUntilChanged } from 'rxjs/operators';
 import { UserForLogin, UserForRegister, UserFromDB } from '../../types/user-types';
 import { VehicleInterface } from '../../types/vehicle-types';
+import { CompanyInterface } from '../../types/company-types';
+import { RentInterface } from '../../types/rent-types';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -29,6 +31,14 @@ export class UserService {
 
   getLikedVehicles(): Observable<VehicleInterface[]> {
     return this.http.get<VehicleInterface[]>(`/api/users/likes`);
+  }
+
+  getCompanies(): Observable<CompanyInterface[]> {
+    return this.http.get<CompanyInterface[]>(`/api/users/companies`);
+  }
+
+  getRents(): Observable<RentInterface[]> {
+    return this.http.get<RentInterface[]>(`/api/users/rents`);
   }
 
   getProfile(): Observable<UserFromDB | null> {

@@ -1,4 +1,4 @@
-import { Component, Input, HostListener, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, HostListener, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user/user.service';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { CurrencyComponent } from "../../currency/currency.component";
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SearchBarComponent } from '../../shared/components/search-bar/search-bar.component';
 import { VehicleInterface } from '../../../types/vehicle-types';
+import { UserFromDB } from '../../../types/user-types';
 
 @Component({
   selector: 'app-navbar',
@@ -30,6 +31,7 @@ export class NavbarComponent {
   @Input() isTransparent: boolean = false;
   @ViewChild('navMenu') navMenu!: ElementRef;
   isLoggedIn$: Observable<boolean>;
+  user$: Observable<UserFromDB | null>;
   isMenuOpen: boolean = false;
 
   constructor(
@@ -37,8 +39,9 @@ export class NavbarComponent {
     private router: Router,
   ) {
     this.isLoggedIn$ = this.userService.isLogged$;
+    this.user$ = this.userService.user$;
   }
-
+  
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
@@ -52,7 +55,6 @@ export class NavbarComponent {
 
   handleSelectedVehicle(vehicle: VehicleInterface): void {
     this.router.navigate(['/catalog', vehicle._id]);
-    
-    
   }
+  
 }

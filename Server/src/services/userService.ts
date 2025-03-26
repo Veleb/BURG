@@ -1,12 +1,14 @@
 import UserModel from "../models/user";
 import bcrypt from 'bcrypt';
 import { payloadInterface, payloadTokens } from "../types/jwtp/payloads";
-import { RegularUser, UserForAuth, userForLogin, UserFromDB } from "../types/model-types/user-types";
+import { RegularUser, UserForAuth, userForLogin, UserFromDB, UserInterface } from "../types/model-types/user-types";
 import checkIfUserExists from "../utils/checkIfUserExists";
 import jwtp from "../libs/jwtp";
 import { Response } from "express";
 import { VehicleInterface } from "../types/model-types/vehicle-types";
 import { OAuth2Client } from 'google-auth-library';
+import { CompanyInterface } from "../types/model-types/company-types";
+import { RentInterface } from "../types/model-types/rent-types";
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
@@ -112,6 +114,19 @@ async function getUserLikedVehicles(userId: string): Promise<VehicleInterface[]>
   return user?.likes || [];
 }
 
+async function getUserCompanies(userId: string): Promise<CompanyInterface[]> {
+  const user = await UserModel.findById(userId).populate<{ companies: CompanyInterface[] }>('companies').lean();
+   
+  return user?.companies || [];
+}
+
+async function getUserRents(userId: string): Promise<RentInterface[]> {
+  const user = await UserModel.findById(userId).populate<{ rents: RentInterface[] }>('rents').lean();
+   
+  return user?.rents || [];
+}
+
+
 async function updateUser(userId: string, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error('User not found');
@@ -186,6 +201,17 @@ async function handleGoogleAuth(idToken: string): Promise<{
   };
 }
 
+async function promoteUserStatus(userId: string, userStatus: "user" | "host"): Promise<UserInterface> {
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    userId,
+    { role: userStatus },
+    { new: true }
+  );
+  if (!updatedUser) throw new Error("User not found");
+
+  return updatedUser;
+}
+
 const UserService = {
   loginUser,
   registerUser,
@@ -193,10 +219,13 @@ const UserService = {
   getUserById,
   getUserByEmail,
   getUserLikedVehicles,
+  getUserCompanies,
+  getUserRents,
   createUser,
   generateTokens,
   updateUser,
-  handleGoogleAuth
+  handleGoogleAuth,
+  promoteUserStatus,
   
 }
 

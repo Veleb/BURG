@@ -58,6 +58,23 @@ rentController.post('/', async (req: Request, res: Response, next: NextFunction)
   }
 });
 
+rentController.get('/company/:companyId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const companyId: string = req.params.companyId;
+
+    if (!companyId) {
+      res.status(400).json({ message: 'Company ID is required.' });
+      return;
+    }
+
+    const rents = await rentService.getRentsByCompanyId(companyId);
+
+    res.status(200).json(rents);
+  } catch (error) {
+    next(error);
+  }
+});
+
 rentController.get('/:rentId', async (req: Request, res: Response, next: NextFunction) => {
   
   try {

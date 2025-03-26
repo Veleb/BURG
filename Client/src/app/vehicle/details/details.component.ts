@@ -16,6 +16,7 @@ import { RentInterface } from '../../../types/rent-types';
 import { FormsModule } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout'
 import { ImageCarouselComponent } from '../../shared/components/image-carousel/image-carousel.component';
+import { RentService } from '../../rents/rent.service';
 
 @Component({
   selector: 'app-details',
@@ -40,10 +41,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   isPricePerDay: boolean = true;
   kilometers?: number;
-  rentalHours: number | null = null;
+  rentalHours: number | undefined = undefined;
 
-  totalPrice: number | null = null;
-  totalPriceBeforeTax: number | null = null;
+  totalPrice: number | undefined = undefined;
+  totalPriceBeforeTax: number | undefined = undefined;
 
   selectedCurrency: string = "USD";
 
@@ -69,6 +70,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private currencyService: CurrencyService,
     private userService: UserService,
+    private rentService: RentService,
     private stripeService: StripeService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,  
@@ -155,8 +157,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
       const timeDiff = endDate.getTime() - startDate.getTime();
       if (timeDiff <= 0) {
         this.toastr.warning("End date must be after start date!", "Warning");
-        this.rentalHours = null;
-        this.totalPrice = null;
+        this.rentalHours = undefined;
+        this.totalPrice = undefined;
         return;
       }
       this.rentalHours = timeDiff / (1000 * 60 * 60);
@@ -183,8 +185,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   calculatePrice(): void {
-    if (!this.vehicle || this.rentalHours === null) {
-      this.totalPrice = null;
+    if (!this.vehicle || this.rentalHours === undefined) {
+      this.totalPrice = undefined;
       return;
     }
     if (this.isPricePerDay) {
@@ -223,12 +225,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
       dropoffLocation: this.dropoffLocation,
       user: null,
       status: "pending",
+      total: this.totalPrice as number
     };
 
     const rentalType = this.isPricePerDay ? 'perDay' : 'perKm';
     const kmDriven = this.isPricePerDay ? undefined : this.kilometers;
 
-    this.vehicleService.rentVehicle(rentData)
+    this.rentService.rentVehicle(rentData)
       .pipe(
         switchMap(rent => 
           this.stripeService.createCheckoutSession(rent._id!, rentalType, kmDriven)

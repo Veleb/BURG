@@ -13,11 +13,7 @@ export interface UserInterface {
   
   isGoogleUser: boolean;
   tokenVersion: number;
-  role: { 
-    type: string; 
-    enum: ["user", "admin", "host"]; 
-    default: "user" 
-  };
+  role: "user" | "admin" | "host";
   
   _id: string;
   created_at: Date;

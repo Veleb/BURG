@@ -2,6 +2,8 @@ import { NextFunction, Request, Response, Router } from 'express';
 import companyService from '../services/companyService';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
 import { CompanyInterface } from '../types/model-types/company-types';
+import { UserInterface } from '../types/model-types/user-types';
+import UserService from '../services/userService';
 
 const companyController = Router();
 
@@ -36,8 +38,6 @@ companyController.get('/pending', async (req: Request, res: Response, next: Next
   }
 });
 
-// MAKE THIS SO WHEN A COMPANY IS CREATED IT GOES TO THE USER AS WELL
-
 companyController.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const customReq = req as authenticatedRequest;
 
@@ -53,13 +53,16 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
       email: req.body.companyEmail,
       phoneNumber: req.body.companyPhone,
       location: req.body.companyLocation,
-      numberOfVehicles: req.body.companyVehicles
+      numberOfVehicles: req.body.companyVehicles,
+      companyType: req.body.companyType,
+      stateRegistration: req.body.stateRegistration,
     };
 
     const dataWithOwner: CompanyInterface = { 
       ...companyData,
       owner: userId, 
       status: "pending" as "pending" | "confirmed" | "canceled",
+      totalEarnings: 0,
     };
 
     const newCompany = await companyService.createCompany(dataWithOwner);
@@ -74,12 +77,20 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
 companyController.put('/confirm/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const companyId = req.params.id;
+
+    if (!companyId) {
+      res.status(400).json({ message: "Company ID must be provided!" });
+      return;
+    }
+
     const updatedCompany = await companyService.updateCompanyStatus(companyId, 'confirmed');
 
     if (!updatedCompany) {
       res.status(404).json({ message: 'Company not found!' });
       return;
     }
+
+    await UserService.promoteUserStatus((updatedCompany.owner as UserInterface)._id, 'host');
 
     res.status(200).json(updatedCompany);
   } catch (err) {
@@ -97,11 +108,24 @@ companyController.put('/cancel/:id', async (req: Request, res: Response, next: N
       return;
     }
 
+    await UserService.promoteUserStatus((updatedCompany.owner as UserInterface)._id, 'user');
+
     res.status(200).json(updatedCompany);
   } catch (err) {
     next(err);
   }
 });
 
+companyController.get('/:companyId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const companyId = req.params.companyId;
+
+    const company = await companyService.getCompanyById(companyId);
+
+    res.status(200).json(company);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default companyController;

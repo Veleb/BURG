@@ -1,13 +1,14 @@
 <div class="sort-dropdown-wrapper">
-
-  <h4 class="sort-by-heading">Sort by</h4>
-
-    <select class="filter-select" (change)="onSortChange($event)">
-      <option class="filter-option" value="Most popular">Most Popular</option>
-      <option class="filter-option" value="Most expensive">Most Expensive</option>
-      <option class="filter-option" value="Least expensive">Least Expensive</option>
-      <option class="filter-option" value="Year new-old">Newest-oldest</option>
-      <option class="filter-option" value="Year old-new">Oldest-newest</option>
-    </select>  
-
+  @if (mode === 'dashboard') {
+    <h4 class="sort-by-heading">Sort by</h4>
+  }
+  <select class="filter-select" (change)="onSortChange($event)">
+    @if (mode === 'catalog') {
+      <option value="Most popular">Most Popular</option>
+    }
+    <option value="Most expensive">Most Expensive</option>
+    <option value="Least expensive">Least Expensive</option>
+    <option value="Year new-old">Newest-oldest</option>
+    <option value="Year old-new">Oldest-newest</option>
+  </select>  
 </div>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-sort-dropdown',
@@ -7,6 +7,7 @@ import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular
   styleUrl: './sort-dropdown.component.css'
 })
 export class SortDropdownComponent {
+  @Input() mode: 'catalog' | 'dashboard' = 'catalog';
   @Output() sortChanged = new EventEmitter<string>();
 
   @ViewChild('dropdown') dropdown!: ElementRef<HTMLSelectElement>;

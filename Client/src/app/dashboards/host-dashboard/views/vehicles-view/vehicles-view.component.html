@@ -1,0 +1,67 @@
+<div class="vehicles-view">
+  <div class="header">
+    <h2 class="title">Manage Vehicles</h2>
+    <button 
+      [routerLink]="['/host/add-vehicle']" 
+      [queryParams]="{ companyId: currentCompanyId }"
+      class="add-btn"
+    >
+      <i class="fas fa-plus"></i>
+      <span class="btn-text">Add Vehicle</span>
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span class="loading-text">Loading vehicles...</span>
+    </div>
+  }
+
+  @if (error && !loading) {
+    <div class="error-state" role="alert">
+      <div class="error-message">{{ error }}</div>
+      <button class="retry-btn" (click)="loadVehicles()">
+        <i class="fas fa-redo"></i>
+        Retry
+      </button>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="vehicle-container">
+      <div class="vehicle-grid">
+        @for (vehicle of vehicles; track vehicle._id) {
+          <div class="vehicle-card-wrapper">
+            <app-product-card [vehicle]="vehicle" class="vehicle-card">
+              <div class="actions">
+                <button 
+                  (click)="editVehicle(vehicle._id)" 
+                  class="edit-btn"
+                  aria-label="Edit vehicle"
+                >
+                  <i class="fas fa-edit"></i>
+                  <span class="action-text">Edit</span>
+                </button>
+                <button 
+                  (click)="deleteVehicle(vehicle._id)" 
+                  class="delete-btn"
+                  aria-label="Delete vehicle"
+                >
+                  <i class="fas fa-trash"></i>
+                  <span class="action-text">Delete</span>
+                </button>
+              </div>
+            </app-product-card>
+          </div>
+        } @empty {
+          <div class="empty-state" aria-live="polite">
+            <i class="fas fa-car-side empty-icon"></i>
+            <h3 class="empty-title">No Vehicles Found</h3>
+            <p class="empty-message">Start by adding your first vehicle</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

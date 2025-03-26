@@ -46,10 +46,10 @@
   <div class="rents-wrapper">
     <h2>Rent History</h2>
     @if (!isLoading) {
-      @if (user?.rents?.length) {
+      @if (userRents.length) {
         <div class="rent-list">
-          @for (rent of user?.rents; track $index) {
-            <app-rent-card [rentId]="rent"/>
+          @for (rent of userRents; track rent._id) {
+            <app-rent-card [rent]="rent"/>
           }
         </div>
       } @else {

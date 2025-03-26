@@ -1,48 +1,56 @@
-import CompanyModel from "../models/company";
-import { CompanyInterface } from "../types/model-types/company-types";
+  import CompanyModel from "../models/company";
+  import UserModel from "../models/user";
+  import { CompanyInterface } from "../types/model-types/company-types";
 
-const getAllCompanies = async () => {
-  return await CompanyModel.find();
-};
+  const getAllCompanies = async () => {
+    return await CompanyModel.find();
+  };
 
-const getCompanyById = async (id: string) => {
-  return await CompanyModel.findById(id);
-};
+  const getCompanyById = async (id: string) => {
+    return await CompanyModel.findById(id).populate('owner').lean();
+  };
 
-const createCompany = async (data: Omit<CompanyInterface, '_id'>) => {
-  try {
-    const company = await CompanyModel.create(data);
-    return company;
-  } catch (err) {
-    throw new Error('Error creating company');
-  }
-};
+  const createCompany = async (data: Omit<CompanyInterface, '_id'>) => {
+    try {
+      const company = await CompanyModel.create(data);
 
-const updateCompanyStatus = async (id: string, status: 'pending' | 'confirmed' | 'canceled') => {
-  try {
-    const updatedCompany = await CompanyModel.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+      await UserModel.findByIdAndUpdate(
+        data.owner, 
+        { $push: { companies: company._id } },
+        { new: true }
+      );
 
-    return updatedCompany;
-  } catch (err) {
-    throw new Error('Error updating company status');
-  }
-};
+      return company;
+    } catch (err) {
+      throw new Error('Error creating company');
+    }
+  };
 
-const getPendingCompanies = async () => {
-  return await CompanyModel.find({ status: 'pending' });
-};
+  const updateCompanyStatus = async (id: string, status: 'pending' | 'confirmed' | 'canceled') => {
+    try {
+      const updatedCompany = await CompanyModel.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true }
+      );
 
-const companyService = {
-  getCompanyById,
-  createCompany,
-  getAllCompanies,
-  updateCompanyStatus,
-  getPendingCompanies,
-  
-};
+      return updatedCompany;
+    } catch (err) {
+      throw new Error('Error updating company status');
+    }
+  };
 
-export default companyService;
+  const getPendingCompanies = async () => {
+    return await CompanyModel.find({ status: 'pending' });
+  };
+
+  const companyService = {
+    getCompanyById,
+    createCompany,
+    getAllCompanies,
+    updateCompanyStatus,
+    getPendingCompanies,
+    
+  };
+
+  export default companyService;

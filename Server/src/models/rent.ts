@@ -40,7 +40,12 @@ const RentSchema = new Schema<RentInterface>({
   status: {
     type: String,
     required: true
-  }
+  },
+
+  total: {
+    type: Number,
+    required: true,
+  },
 
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

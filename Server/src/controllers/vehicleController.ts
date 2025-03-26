@@ -19,6 +19,25 @@ vehicleController.get('', async (req: Request, res: Response, next: NextFunction
   }
 })
 
+vehicleController.get('/company/:companyId', async (req: Request, res: Response, next: NextFunction) => {
+  const companyId = req.params.companyId;
+  
+  try {
+    const vehicles: VehicleInterface[] = await vehicleService.getCompanyVehicles(companyId);
+
+    if (!vehicles || vehicles.length === 0) {
+      res.status(404).json({ message: 'No vehicles found for this company.' });
+      return;
+    }
+
+    res.status(200).json(vehicles);
+    return;
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 vehicleController.get('/:vehicleId', async (req: Request, res: Response, next: NextFunction) => {
   const vehicleId: string = req.params.vehicleId;
 
@@ -147,5 +166,35 @@ vehicleController.put('/unlike/:vehicleId', async (req: Request, res: Response, 
     next(err);
   }
 });
+
+vehicleController.delete('/:vehicleId', async (req: Request, res: Response, next: NextFunction) => {
+  const vehicleId: string = req.params.vehicleId;
+
+  if (!vehicleId) {
+    res.status(400).json({ message: 'Vehicle ID is required' });
+    return;
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
+    res.status(400).json({ message: 'Invalid vehicle ID format' });
+    return; 
+  }
+
+  try {
+    const vehicle: VehicleInterface | null = await vehicleService.deleteVehicleById(vehicleId);
+
+    if (!vehicle) {
+      res.status(400).json({ message: 'Vehicle not found' });
+      return; 
+    }
+
+    res.status(200).json(vehicle);
+    return;
+
+  } catch (err) {
+    next(err);
+  }
+})
+
 
 export default vehicleController;

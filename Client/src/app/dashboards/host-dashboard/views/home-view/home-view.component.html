@@ -1,0 +1,39 @@
+<div class="home-view">
+  <h2>Company Dashboard</h2>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Total Earnings</h3>
+      <p>{{ company?.totalEarnings ?? 0 | currencyConverter | currency }}</p>
+    </div>
+    
+    <div class="stat-card">
+      <h3>Total Vehicles</h3>
+      <p>{{ company?.carsAvailable?.length || 0 }}</p>
+    </div>
+    
+    <div class="stat-card">
+      <h3>Active Rents</h3>
+      <p>{{ activeRents.length }}</p>
+    </div>
+  </div>
+  
+  <div class="chart-container">
+    <!-- <canvas #chartCanvas></canvas> -->
+  </div>
+
+  <div class="rents-section">
+    <h3>Active Rents</h3>
+    @if (activeRents.length) {
+      <div class="rents-grid">
+        @for (rent of activeRents; track rent._id) {
+          <app-rent-card [rent]="rent" class="rent-card"></app-rent-card>
+        }
+      </div>
+    } @else {
+      <div class="no-rents">
+        No active rentals currently
+      </div>
+    }
+  </div>
+</div>

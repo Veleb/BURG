@@ -1,0 +1,43 @@
+<div class="rents-view">
+  <div class="header">
+    <h2>Manage Rents</h2>
+    <app-datepicker 
+        layoutType="default-wrap" 
+        [functionality]="['search', null]"
+        (startDateChange)="onStartDateChange($event)" 
+        (endDateChange)="onEndDateChange($event)"
+    />
+    <select (change)="onSortChange($event)" class="rent-select">
+      <option class="rent-option" value="price">Price</option>
+      <option class="rent-option" value="startDate">Start Date</option>
+      <option class="rent-option" value="endDate">End Date</option>
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      Loading rents...
+    </div>
+  }
+
+  @if (error) {
+    <div class="error-state">
+      {{ error }}
+      <button class="retry-btn" (click)="loadRents()">Retry</button>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="rent-list">
+      @for (rent of filteredRents; track rent._id) {
+        <app-rent-card [rent]="rent"></app-rent-card>
+      } @empty {
+        <div class="empty-state">
+          <i class="fas fa-calendar-times"></i>
+          No rents found for the selected criteria
+        </div>
+      }
+    </div>
+  }
+</div>

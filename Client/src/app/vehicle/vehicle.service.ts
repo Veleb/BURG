@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
 import { FilterState, VehicleInterface } from '../../types/vehicle-types';
-import { RentInterface } from '../../types/rent-types';
 
 @Injectable({
   providedIn: 'root',
@@ -111,10 +110,18 @@ export class VehicleService {
     );
   }
 
+  getCompanyVehicles(companyId: string): Observable<VehicleInterface[]> {
+    return this.http.get<VehicleInterface[]>(`/api/vehicles/company/${companyId}`);
+  }
+
   getVehicleById(vehicleId: string): Observable<VehicleInterface> {
     return this.http.get<VehicleInterface>(`/api/vehicles/${vehicleId}`);
   }
 
+  deleteVehicle(vehicleId: string): Observable<{message: string}> {
+    return this.http.delete<{message: string}>(`/api/vehicles/${vehicleId}`)
+  }
+  
   checkAvailability(vehicleId: string, startDate: Date, endDate: Date): Observable<boolean> {
     return this.http.post<boolean>(`/api/vehicles/available`, {
       start: startDate.toISOString(),
@@ -164,14 +171,6 @@ export class VehicleService {
         console.error('Error updating available vehicles', err);
       }
     });
-  }
-
-  rentVehicle(rentData: RentInterface): Observable<RentInterface> {
-    return this.http.post<RentInterface>(`/api/rents`, rentData);
-  }
-
-  getUnavailableDates(vehicleId: string): Observable<RentInterface[]> {
-    return this.http.get<RentInterface[]>(`/api/rents/${vehicleId}/unavailable-dates`);
   }
 
   likeVehicle(vehicleId: string | undefined): Observable<{ message: string, likes?: VehicleInterface['likes'] }> {

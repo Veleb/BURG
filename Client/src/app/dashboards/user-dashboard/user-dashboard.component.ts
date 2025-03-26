@@ -3,12 +3,14 @@ import { UserService } from '../../user/user.service';
 import { UserFromDB } from '../../../types/user-types';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { catchError, forkJoin, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RentCardComponent } from '../../rents/rent-card/rent-card.component';
 import { ProductCardComponent } from '../../vehicle/product-card/product-card.component';
 import { EmailDirective } from '../../directives/email.directive';
 import { FullnameDirective } from '../../directives/fullname.directive';
+import { VehicleInterface } from '../../../types/vehicle-types';
+import { RentInterface } from '../../../types/rent-types';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -22,7 +24,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   isLoading = true;
   user: UserFromDB | null = null;
   editModel: Partial<UserFromDB> = {};
-  likedVehicles: any[] = [];
+  likedVehicles: VehicleInterface[] = [];
+  userRents: RentInterface[] = [];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -41,19 +44,29 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       switchMap(user => {
         this.user = user;
         this.editModel = { ...user };
-        return this.userService.getLikedVehicles().pipe(
-          catchError(error => {
-            this.toastr.error('Failed to load saved vehicles', 'Error');
-            return of([]);
-          })
-        );
+        
+        return forkJoin([
+          this.userService.getLikedVehicles().pipe(
+            catchError(error => {
+              this.toastr.error('Failed to load saved vehicles', 'Error');
+              return of([]);
+            })
+          ),
+          this.userService.getRents().pipe(
+            catchError(error => {
+              this.toastr.error('Failed to load rent history', 'Error');
+              return of([]);
+            })
+          )
+        ]);
       }),
       catchError(error => {
         this.toastr.error('Failed to load profile data', 'Error');
         return of([]);
       })
-    ).subscribe(vehicles => {
+    ).subscribe(([vehicles, rents]) => {
       this.likedVehicles = vehicles;
+      this.userRents = rents; 
       this.isLoading = false;
     });
   }

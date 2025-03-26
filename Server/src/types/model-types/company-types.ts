@@ -11,4 +11,7 @@ export interface CompanyInterface {
   carsAvailable?: VehicleInterface[];
   owner: string | UserInterface;
   status: 'pending' | 'confirmed' | 'canceled';
+  totalEarnings: number;
+  companyType: string;
+  stateRegistration: string;
 }

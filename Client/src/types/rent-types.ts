@@ -7,4 +7,15 @@ export interface RentInterface {
   pickupLocation: string;
   dropoffLocation: string;
   status: 'pending' | 'confirmed' | 'canceled';
+  total: number,
+}
+
+export interface FilterState {
+  status: string;
+  sort: {
+    key: 'price' | 'startDate' | 'endDate' | 'none';
+    direction: 'asc' | 'desc';
+  };
+  startDate: Date | null;
+  endDate: Date | null;
 }

@@ -19,7 +19,6 @@ export class HeroComponent {
   ) {}
 
   onStartDateChange(newStartDate: Date | null): void {
-    console.log(`start` + newStartDate);
     this.startDate = newStartDate;
   }
   

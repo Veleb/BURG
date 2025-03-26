@@ -1,32 +1,59 @@
+import CompanyModel from "../models/company";
 import RentModel from "../models/rent";
 import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle";
+import { CompanyInterface } from "../types/model-types/company-types";
 import { RentInterface } from "../types/model-types/rent-types";
 
 async function createRent(rentData: RentInterface): Promise<RentInterface> {
   try {
-
     const rent = await RentModel.create(rentData);
 
-    if (rent.user) { 
-      await UserModel.findByIdAndUpdate(
-        rent.user, 
-        { $push: { rents: rent._id } }, 
+    await Promise.all([
+      rent.user && UserModel.findByIdAndUpdate(rent.user, { $push: { rents: rent._id } }, { new: true }),
+      rent.vehicle && VehicleModel.findByIdAndUpdate(rent.vehicle, { $push: { reserved: rent._id } }, { new: true })
+    ]);
+
+    const vehicle = await VehicleModel.findById(rent.vehicle).populate("company");
+
+    if (vehicle?.company) {
+      await CompanyModel.findByIdAndUpdate(
+        (vehicle.company as CompanyInterface)._id,
+        { $inc: { totalEarnings: rent.total * 0.90 } },
         { new: true }
       );
     }
 
-    if (rent.vehicle) {
-      await VehicleModel.findByIdAndUpdate(
-        rent.vehicle,
-        { $push: { reserved: rent._id } }, 
-        { new: true }
-      )
-    }
-
     return rent.toObject();
   } catch (err) {
-    throw new Error(`Error creating a rent!`);
+    throw new Error(err instanceof Error ? err.message : `Error creating a rent`);
+  }
+}
+
+async function getRentsByCompanyId(companyId: string): Promise<RentInterface[]> {
+  try {
+    const company = await CompanyModel.findById(companyId).select('carsAvailable');
+    if (!company) throw new Error('Company not found');
+
+    const rents = await RentModel.find({
+      vehicle: { $in: company.carsAvailable }
+    })
+    .populate({
+      path: 'user',
+      select: '-password',
+    })
+    .populate({
+      path: 'vehicle',
+      populate: {
+        path: 'company',
+        model: 'Company'
+      }
+    })
+    .lean();
+
+    return rents ?? [];
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : 'Error fetching rents by company ID');
   }
 }
 
@@ -71,8 +98,22 @@ async function changeRentStatus(rentId: string, status: string) {
       rentId,
       { $set: { status: status } },
       { new: true }
-    ).lean();
+    )
+    .populate('vehicle')
+    .populate('vehicle.company')
+    .lean()
 
+    if (!rent) {
+      throw new Error("Rent not found.");
+    }
+
+    if (status === 'canceled' && rent.vehicle?.company) {
+      await CompanyModel.findByIdAndUpdate(
+        (rent.vehicle.company as CompanyInterface)._id,
+        { $inc: { totalEarnings: -(rent?.total ?? 0) * 0.90 } },
+        { new: true }
+      )
+    }
 
     return rent;
 
@@ -86,6 +127,7 @@ async function changeRentStatus(rentId: string, status: string) {
 const rentService = {
   createRent,
   getRentById,
+  getRentsByCompanyId,
   getUnavailableDates,
   changeRentStatus,
 

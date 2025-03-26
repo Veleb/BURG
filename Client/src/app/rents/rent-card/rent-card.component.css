@@ -1,0 +1,47 @@
+.rent-card-wrapper {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  
+  &.active {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+  
+  &.completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  &.cancelled {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+.cancel-btn {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.loading, .error {
+  padding: 1rem;
+  text-align: center;
+}
+
+.error {
+  color: #c62828;
+}

@@ -10,6 +10,7 @@ export interface RentInterface {
   dropoffLocation: string;
   user: UserFromDB;
   status: 'pending' | 'confirmed' | 'canceled';
+  total: number;
 }
 
 export type RentInterfaceWithoutUser = Omit<RentInterface, 'user'>;
