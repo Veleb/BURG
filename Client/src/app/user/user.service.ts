@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, shareReplay, map, distinctUntilChanged } from 'rxjs/operators';
@@ -6,16 +6,18 @@ import { UserForLogin, UserForRegister, UserFromDB } from '../../types/user-type
 import { VehicleInterface } from '../../types/vehicle-types';
 import { CompanyInterface } from '../../types/company-types';
 import { RentInterface } from '../../types/rent-types';
+import { isPlatformBrowser } from '@angular/common';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'root' }) 
 export class UserService {
-  private user$$ = new BehaviorSubject<UserFromDB | null>(null);
+  private http = inject(HttpClient);
 
+  private user$$ = new BehaviorSubject<UserFromDB | null>(null);
   public user$ = this.user$$.asObservable();
 
   private csrfToken$$ = new BehaviorSubject<string | null>(null);
 
-  constructor(private http: HttpClient) {}
+  platformId = inject(PLATFORM_ID);
 
   private storeCsrfToken(token: string): void {
     this.csrfToken$$.next(token);
@@ -42,6 +44,11 @@ export class UserService {
   }
 
   getProfile(): Observable<UserFromDB | null> {
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return of(null); 
+    }
+
     return this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
       tap(response => {
         const csrfToken = response.headers.get('X-CSRF-Token');
