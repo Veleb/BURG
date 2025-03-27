@@ -1,156 +1,156 @@
-  {
-    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-    "version": 1,
-    "newProjectRoot": "projects",
-    "projects": {
-      "client": {
-        "projectType": "application",
-        "schematics": {},
-        "root": "",
-        "sourceRoot": "src",
-        "prefix": "app",
-        "architect": {
-          "build": {
-            "builder": "@angular-devkit/build-angular:application",
-            "options": {
-              "outputPath": "dist/client",
-              "index": "src/index.html",
-              "browser": "src/main.ts",
-              "polyfills": [
-                "zone.js"
-              ],
-              "tsConfig": "tsconfig.app.json",
-              "assets": [
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "client": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/client",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              
+              "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            ],
+            "scripts": [
+              "node_modules/leaflet/dist/leaflet.js",
+              "node_modules/chart.js/dist/chart.umd.js"
+            ],
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "server.ts"
+            },
+            "allowedCommonJsDependencies": [
+              "intl-tel-input",
+              "moment",
+              "leaflet"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
                 {
-                  "glob": "**/*",
-                  "input": "public"
+                  "type": "initial",
+                  "maximumWarning": "1.1MB",
+                  "maximumError": "1.1MB"
+                },
+                {
+                  "type": "bundle",
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "3MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "30kb",
+                  "maximumError": "40kb"
                 }
               ],
-              "styles": [
-                "src/styles.scss",
-                
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-              ],
-              "scripts": [
-                "node_modules/leaflet/dist/leaflet.js",
-                "node_modules/chart.js/dist/chart.umd.js"
-              ],
-              "server": "src/main.server.ts",
-              "prerender": true,
-              "ssr": {
-                "entry": "server.ts"
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
+                },
+                "fonts": true
               },
-              "allowedCommonJsDependencies": [
-                "intl-tel-input",
-                "moment",
-                "leaflet"
+              "aot": true,
+              "extractLicenses": true,
+              "sourceMap": {
+                "scripts": true,
+                "styles": true,
+                "hidden": true,
+                "vendor": true
+              },
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
               ]
             },
-            "configurations": {
-              "production": {
-                "budgets": [
-                  {
-                    "type": "initial",
-                    "maximumWarning": "1.1MB",
-                    "maximumError": "1.1MB"
-                  },
-                  {
-                    "type": "bundle",
-                    "maximumWarning": "1.5MB",
-                    "maximumError": "3MB"
-                  },
-                  {
-                    "type": "anyComponentStyle",
-                    "maximumWarning": "30kb",
-                    "maximumError": "40kb"
-                  }
-                ],
-                "optimization": {
-                  "scripts": true,
-                  "styles": {
-                    "minify": true,
-                    "inlineCritical": true
-                  },
-                  "fonts": true
+            "development": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
                 },
-                "aot": true,
-                "extractLicenses": true,
-                "sourceMap": {
-                  "scripts": true,
-                  "styles": true,
-                  "hidden": true,
-                  "vendor": true
-                },
-                "outputHashing": "all",
-                "fileReplacements": [
-                  {
-                    "replace": "src/environments/environment.ts",
-                    "with": "src/environments/environment.prod.ts"
-                  }
-                ]
+                "fonts": true
               },
-              "development": {
-                "optimization": {
-                  "scripts": true,
-                  "styles": {
-                    "minify": true,
-                    "inlineCritical": true
-                  },
-                  "fonts": true
-                },
-                "aot": true,
-                "extractLicenses": false,
-                "sourceMap": false,
-                "fileReplacements": [
-                  {
-                    "replace": "src/environments/environment.ts",
-                    "with": "src/environments/environment.development.ts"
-                  }
-                ]
-              }
-            },
-            "defaultConfiguration": "production"
-          },
-          "serve": {
-            "builder": "@angular-devkit/build-angular:dev-server",
-            "configurations": {
-              "production": {
-                "buildTarget": "client:build:production"
-              },
-              "development": {
-                "buildTarget": "client:build:development"
-              }
-            },
-            "defaultConfiguration": "development"
-          },
-          "extract-i18n": {
-            "builder": "@angular-devkit/build-angular:extract-i18n"
-          },
-          "test": {
-            "builder": "@angular-devkit/build-angular:karma",
-            "options": {
-              "polyfills": [
-                "zone.js",
-                "zone.js/testing"
-              ],
-              "tsConfig": "tsconfig.spec.json",
-              "assets": [
+              "aot": true,
+              "extractLicenses": false,
+              "sourceMap": false,
+              "fileReplacements": [
                 {
-                  "glob": "**/*",
-                  "input": "public"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
                 }
-              ],
-              "styles": [
-                "src/styles.scss",
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-              ],
-              "scripts": [
-                "node_modules/leaflet/dist/leaflet.js",
-                "node_modules/chart.js/dist/chart.umd.js"
               ]
             }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "client:build:production"
+            },
+            "development": {
+              "buildTarget": "client:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            ],
+            "scripts": [
+              "node_modules/leaflet/dist/leaflet.js",
+              "node_modules/chart.js/dist/chart.umd.js"
+            ]
           }
         }
       }
     }
   }
+}

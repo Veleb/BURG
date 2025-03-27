@@ -5,19 +5,27 @@ import { HostDashboardComponent } from "./host-dashboard/host-dashboard.componen
 import { hostGuard } from "../guards/host.guard";
 import { adminGuard } from "../guards/admin.guard";
 import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
-import { HomeViewComponent } from "./host-dashboard/views/home-view/home-view.component";
-import { VehiclesViewComponent } from "./host-dashboard/views/vehicles-view/vehicles-view.component";
-import { RentsViewComponent } from "./host-dashboard/views/rents-view/rents-view.component";
+import { DashboardHomeViewComponent } from "../shared/components/dashboard/views/dashboard-home-view/dashboard-home-view.component";
+import { DashboardVehiclesViewComponent } from "../shared/components/dashboard/views/dashboard-vehicles-view/dashboard-vehicles-view.component";
+import { DashboardRentsViewComponent } from "../shared/components/dashboard/views/dashboard-rents-view/dashboard-rents-view.component";
 
 export const DASHBOARD_ROUTES: Routes = [
   { path: "user", component: UserDashboardComponent, canActivate: [ authGuard ] },
   { path: "host", component: HostDashboardComponent, canActivate: [ hostGuard ],
     children: [
-      { path: 'home', component: HomeViewComponent },
-      { path: 'vehicles', component: VehiclesViewComponent },
-      { path: 'rents', component: RentsViewComponent },
+      { path: 'home', component: DashboardHomeViewComponent },
+      { path: 'vehicles', component: DashboardVehiclesViewComponent },
+      { path: 'rents', component: DashboardRentsViewComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
-  { path: "admin", component: AdminDashboardComponent, canActivate: [ adminGuard ] },
+  { path: "admin", component: AdminDashboardComponent, canActivate: [ adminGuard ],
+    children: [
+      { path: 'home', component: DashboardHomeViewComponent },
+      { path: 'vehicles', component: DashboardVehiclesViewComponent },
+      { path: 'rents', component: DashboardRentsViewComponent },
+      // { path: 'users', component: RentsViewComponent },
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
+    ]
+   },
 ];

@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout'
 import { ImageCarouselComponent } from '../../shared/components/image-carousel/image-carousel.component';
 import { RentService } from '../../rents/rent.service';
+import { UserFromDB } from '../../../types/user-types';
 
 @Component({
   selector: 'app-details',
@@ -60,7 +61,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   startDate: Date | null = null;
   endDate: Date | null = null;
   
-  private userId: string | null = null;
+  user: UserFromDB | null = null;
 
   isMobile: boolean = false;
 
@@ -109,7 +110,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     });
 
     this.userService.user$.subscribe(user => {
-      this.userId = user?._id || null;
+      this.user = user || null;
     });
 
     this.breakpointObserver.observe('(max-width: 1200px)')
@@ -212,7 +213,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.toastr.error('Vehicle not found.');
       return;
     }
-    if (!this.userId) {
+    if (!this.user) {
       this.toastr.error('Please log in to rent a vehicle.');
       return;
     }
@@ -241,6 +242,44 @@ export class DetailsComponent implements OnInit, OnDestroy {
         next: (session) => this.stripeService.redirectToCheckout(session.sessionId),
         error: () => this.toastr.error('Error initiating payment'),
       });
+  }
+
+  rentVehicleWithoutPaying(): void {
+
+    if (!this.startDate || !this.endDate) {
+      this.toastr.error('Please select start and end dates.');
+      return;
+    }
+    if (!this.pickupLocation || !this.dropoffLocation) {
+      this.toastr.error('Please select a location.');
+      return;
+    }
+    if (!this.vehicleId) {
+      this.toastr.error('Vehicle not found.');
+      return;
+    }
+    if (!this.user) {
+      this.toastr.error('Please log in to rent a vehicle.');
+      return;
+    }
+
+    const rentData: RentInterface = {
+      start: this.startDate,
+      end: this.endDate,
+      vehicle: this.vehicleId, 
+      pickupLocation: this.pickupLocation,
+      dropoffLocation: this.dropoffLocation,
+      user: null,
+      status: "pending",
+      total: this.totalPrice as number
+    };
+
+    this.rentService.rentVehicle(rentData).subscribe({
+      next: () => {
+        this.toastr.success(`Successfully created rent without paying!`, `Success`)
+      },
+      error: () => this.toastr.error('Error creating rent'),
+    });
   }
 
   ngOnDestroy(): void {

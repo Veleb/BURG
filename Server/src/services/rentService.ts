@@ -5,6 +5,29 @@ import VehicleModel from "../models/vehicle";
 import { CompanyInterface } from "../types/model-types/company-types";
 import { RentInterface } from "../types/model-types/rent-types";
 
+async function getAllRents(): Promise<RentInterface[]> {
+  try {
+
+    const rents = await RentModel.find()
+    .populate({
+      path: 'user',
+      select: '-password',
+    })
+    .populate({
+      path: 'vehicle',
+      populate: {
+        path: 'company',
+        model: 'Company'
+      }
+    })
+    .lean();
+
+    return rents ?? [];
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : 'Error fetching rents by company ID');
+  }
+}
+
 async function createRent(rentData: RentInterface): Promise<RentInterface> {
   try {
     const rent = await RentModel.create(rentData);
@@ -125,6 +148,7 @@ async function changeRentStatus(rentId: string, status: string) {
 }
 
 const rentService = {
+  getAllRents,
   createRent,
   getRentById,
   getRentsByCompanyId,

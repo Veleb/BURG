@@ -1,15 +1,15 @@
 <div class="home-view">
-  <h2>Company Dashboard</h2>
+  <h2>{{ user?.role === 'admin' ? "Admin" : "Company" }} Dashboard</h2>
   
   <div class="stats-grid">
     <div class="stat-card">
       <h3>Total Earnings</h3>
-      <p>{{ company?.totalEarnings ?? 0 | currencyConverter | currency }}</p>
+      <p>{{ (user?.role === 'admin' ? totalEarnings : company?.totalEarnings) || 0 | currencyConverter | currency }}</p>
     </div>
     
     <div class="stat-card">
       <h3>Total Vehicles</h3>
-      <p>{{ company?.carsAvailable?.length || 0 }}</p>
+      <p>{{ user?.role === 'admin' ? totalVehicles : company?.carsAvailable?.length || 0 }}</p>
     </div>
     
     <div class="stat-card">
@@ -17,9 +17,9 @@
       <p>{{ activeRents.length }}</p>
     </div>
   </div>
-  
+
   <div class="chart-container">
-    <!-- <canvas #chartCanvas></canvas> -->
+    <!-- Add chart implementation here -->
   </div>
 
   <div class="rents-section">

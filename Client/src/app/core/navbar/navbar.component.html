@@ -16,6 +16,9 @@
           @if (user.role === 'host') {
             <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
             <i [routerLink]="['/dashboard/host/home']" [queryParams]="{ companyId: user.companies[0] }" class="fa-solid fa-handshake"></i>
+          } @else if (user.role === 'admin'){
+            <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
+            <i [routerLink]="['/dashboard/admin/home']" [queryParams]="{ companyId: user.companies[0] }" class="fa-solid fa-handshake"></i>
           } @else {
             <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
           }

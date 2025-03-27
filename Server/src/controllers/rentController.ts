@@ -7,6 +7,17 @@ import vehicleService from "../services/vehicleService";
 
 const rentController = Router();
 
+rentController.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+    const rents = await rentService.getAllRents();
+
+    res.status(200).json(rents);
+  } catch (error) {
+    next(error);
+  }
+});
+
 rentController.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const customReq = req as authenticatedRequest;
 

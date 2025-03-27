@@ -125,6 +125,10 @@
       </div>
 
       <button class="cta-button" (click)="rentVehicle()">Rent Now</button>
+      
+      @if (user?.role === 'admin') {
+        <button class="cta-button" (click)="rentVehicleWithoutPaying()">Rent Without Paying</button>
+      }
 
       @if (rentalHours) {
         <div class="price-breakdown-wrapper">

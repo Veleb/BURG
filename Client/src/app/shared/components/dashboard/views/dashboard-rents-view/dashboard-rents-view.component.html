@@ -24,7 +24,17 @@
   @if (error) {
     <div class="error-state">
       {{ error }}
-      <button class="retry-btn" (click)="loadRents()">Retry</button>
+      @if (user?.role === 'host') {
+        <button class="retry-btn" (click)="loadCompanyRents()">
+          <i class="fas fa-redo"></i>
+          Retry
+        </button>
+      } @else {
+        <button class="retry-btn" (click)="loadAllRents()">
+          <i class="fas fa-redo"></i>
+          Retry
+        </button>
+      }
     </div>
   }
 

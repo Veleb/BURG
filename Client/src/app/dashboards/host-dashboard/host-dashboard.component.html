@@ -1,42 +1,6 @@
 <div class="dashboard-container">
-  <nav [class.collapsed]="isCollapsed" class="sidebar">
-    <div class="sidebar-header">
-      
-      @if (isCollapsed) {
-        <button (click)="toggleSidebar()" class="toggle-btn">
-          <i class="fa-solid fa-chevron-left chevron-icon"></i>
-        </button>
-      } @else {
-        <button (click)="toggleSidebar()" class="toggle-btn">
-          <i class="fa-solid fa-chevron-right close-sidebar-icon chevron-icon" [class.rotate]="isCollapsed"></i>
-        </button>
-      }
 
-      @if (companies.length > 1) {
-      <select class="company-select" [(ngModel)]="selectedCompany" (change)="onCompanyChange()">
-        @for (company of companies; track company._id) {
-        <option [value]="company._id">{{ company.name }}</option>
-        }
-      </select>
-      }
-    </div>
-    
-    <ul class="nav-list">
-      <li [routerLink]="['/dashboard/host/home']" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-        <i class="fas fa-home"></i>
-        <span class="nav-text">Home</span>
-      </li>
-      <li [routerLink]="['/dashboard/host/vehicles']" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-        <i class="fas fa-car"></i>
-        <span class="nav-text">Vehicles</span>
-      </li>
-      <li [routerLink]="['/dashboard/host/rents']" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-        <i class="fas fa-list"></i>
-        <span class="nav-text">Rents</span>
-      </li>
-    </ul>
-    
-  </nav>
+  <app-dashboard-sidebar/>
 
   <main class="main-content">
     <router-outlet></router-outlet>
