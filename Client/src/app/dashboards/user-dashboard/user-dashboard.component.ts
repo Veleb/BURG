@@ -16,7 +16,7 @@ import intlTelInput from 'intl-tel-input';
 
 @Component({
   selector: 'app-user-dashboard',
-  imports: [ FormsModule, RentCardComponent, ProductCardComponent, EmailDirective, FullnameDirective ],
+  imports: [ FormsModule, ProductCardComponent, EmailDirective, FullnameDirective ],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
