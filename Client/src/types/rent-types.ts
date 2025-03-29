@@ -1,8 +1,10 @@
+import { VehicleInterface } from "./vehicle-types";
+
 export interface RentInterface {
   _id?: string;
   start: Date;
   end: Date;
-  vehicle: string;
+  vehicle: string | VehicleInterface;
   user: string | null;    
   pickupLocation: string;
   dropoffLocation: string;

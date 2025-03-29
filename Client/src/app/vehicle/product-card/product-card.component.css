@@ -84,7 +84,7 @@
 .arrows-wrapper {
   position: absolute;
   width: 100%;
-  top: 140px;
+  top: 50%;
   display: flex;
   align-items: center;
   justify-content: space-between;

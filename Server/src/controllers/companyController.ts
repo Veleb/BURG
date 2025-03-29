@@ -53,7 +53,6 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
       email: req.body.companyEmail,
       phoneNumber: req.body.companyPhone,
       location: req.body.companyLocation,
-      numberOfVehicles: req.body.companyVehicles,
       companyType: req.body.companyType,
       stateRegistration: req.body.stateRegistration,
     };

@@ -1,5 +1,5 @@
 import { inject, PLATFORM_ID } from '@angular/core';
-import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { UserService } from '../user/user.service';
 import { map, catchError, of, switchMap, take } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';

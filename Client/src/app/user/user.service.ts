@@ -10,6 +10,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' }) 
 export class UserService {
+
   private http = inject(HttpClient);
 
   private user$$ = new BehaviorSubject<UserFromDB | null>(null);
@@ -17,7 +18,10 @@ export class UserService {
 
   private csrfToken$$ = new BehaviorSubject<string | null>(null);
 
+  private isAuthenticating = false;
   platformId = inject(PLATFORM_ID);
+
+  // CSRF token functions
 
   private storeCsrfToken(token: string): void {
     this.csrfToken$$.next(token);
@@ -26,10 +30,12 @@ export class UserService {
   getCsrfToken(): string | null {
     return this.csrfToken$$.value;
   }
-
+  
   private clearCsrfToken(): void {
     this.csrfToken$$.next(null);
   }
+
+  // Main functions
 
   getLikedVehicles(): Observable<VehicleInterface[]> {
     return this.http.get<VehicleInterface[]>(`/api/users/likes`);
@@ -45,22 +51,28 @@ export class UserService {
 
   getProfile(): Observable<UserFromDB | null> {
 
+    if (this.user$$.value && !this.isAuthenticating) {
+      return of(this.user$$.value);
+    }
+
     if (!isPlatformBrowser(this.platformId)) {
-      return of(null); 
+      return of(null);  // return null if the client hasn't loaded (for deploying purposes mainly)
     }
 
     return this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
       tap(response => {
+        this.isAuthenticating = false;
         const csrfToken = response.headers.get('X-CSRF-Token');
         const userData = response.body;
       
-        if (csrfToken) this.storeCsrfToken(csrfToken);
-        if (userData) this.user$$.next(userData);
+        if (csrfToken) this.storeCsrfToken(csrfToken); // store the fetched csrf token
+        if (userData) this.user$$.next(userData); // set the fetched user to the user subject
 
       }),
       map(response => response.body),
       catchError(err => {
-        this.user$$.next(null);
+        this.isAuthenticating = false;
+        this.user$$.next(null); // if there is some error set the user subject to null  
         return of(null);
       }),
       shareReplay(1)
@@ -70,15 +82,18 @@ export class UserService {
   login(user: UserForLogin): Observable<UserFromDB> {
     return this.http.post<UserFromDB>('/api/users/login', user, { observe: 'response' }).pipe(
       tap(response => {
+
         const csrfToken = response.headers.get('X-CSRF-Token');
+
         if (csrfToken) {
-          this.storeCsrfToken(csrfToken);
+          this.storeCsrfToken(csrfToken); // store the csrf token
         }
-        this.user$$.next(response.body);
+
+        this.user$$.next(response.body); // set the fetched user to the user subject
       }),
       map(response => response.body as UserFromDB),
       catchError(err => {
-        this.user$$.next(null);
+        this.user$$.next(null); // once again set the user subject to null if there is an error
         return throwError(() => err);
       })
     );
@@ -96,20 +111,30 @@ export class UserService {
         
         if (csrfToken) this.storeCsrfToken(csrfToken);
         if (userData) this.user$$.next(userData);
-      }),
-      map(response => response.body)
-    );
-  }
 
-  register(user: UserForRegister): Observable<UserFromDB> {
-    return this.http.post<UserFromDB>('/api/users/register', user).pipe(
-      tap(userData => this.user$$.next(userData)),
+      }),
+      map(response => response.body),
       catchError(err => {
         this.user$$.next(null);
         return throwError(() => err);
       })
     );
   }
+
+  register(user: UserForRegister): Observable<UserFromDB> {
+  return this.http.post<UserFromDB>('/api/users/register', user, { observe: 'response' }).pipe(
+    tap(response => {
+      const csrfToken = response.headers.get('X-CSRF-Token');
+      if (csrfToken) this.storeCsrfToken(csrfToken);
+      if (response.body) this.user$$.next(response.body);
+    }),
+    map(response => response.body as UserFromDB),
+    catchError(err => {
+      this.user$$.next(null);
+      return throwError(() => err);
+    })
+  );
+}
 
   logout(): Observable<void> {
     const csrfToken = this.getCsrfToken();
@@ -121,6 +146,11 @@ export class UserService {
       tap(() => {
         this.user$$.next(null);
         this.clearCsrfToken();
+      }),
+      catchError(err => {
+        this.user$$.next(null);
+        this.clearCsrfToken();
+        return throwError(() => err);
       })
     );
   }
@@ -136,14 +166,37 @@ export class UserService {
     return this.user$$.value !== null;
   }
 
+  clearUser() {
+    this.user$$.next(null);
+  }
+
   ensureAuthChecked(): Observable<boolean> {
     return this.getProfile().pipe(
-     map(() => true),
-     catchError(() => of(false))
+      map(user => !!user),
+      catchError(() => of(false))
     );
   }
 
-  updateProfile(updatedData: Partial<UserFromDB>) {
-    return this.http.put<UserFromDB>('/api/users/update', updatedData);
-}
+  updateProfile(updatedData: Partial<UserFromDB>): Observable<{ message: string, user: UserFromDB}> {
+    return this.http.put<{ message: string, user: UserFromDB}>('/api/users/update', updatedData).pipe(
+      tap(updatedUser => {
+        this.user$$.next(updatedUser.user)
+      }), 
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
+
+  deleteProfile(): Observable<{message: string}> {
+    return this.http.delete<{ message: string}>('/api/users/delete').pipe(
+      tap(res => {
+        this.user$$.next(null)
+      }), 
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
+
 }

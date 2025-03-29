@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { UserService } from '../../user/user.service';
 import { UserFromDB } from '../../../types/user-types';
 import { Router } from '@angular/router';
@@ -11,6 +11,8 @@ import { EmailDirective } from '../../directives/email.directive';
 import { FullnameDirective } from '../../directives/fullname.directive';
 import { VehicleInterface } from '../../../types/vehicle-types';
 import { RentInterface } from '../../../types/rent-types';
+import { isPlatformBrowser } from '@angular/common';
+import intlTelInput from 'intl-tel-input';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -18,24 +20,47 @@ import { RentInterface } from '../../../types/rent-types';
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
-export class UserDashboardComponent implements OnInit, OnDestroy {
+export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestroy {
+
+  private userService = inject(UserService);
+  private router = inject(Router);
+  private toastr = inject(ToastrService);
+  private destroy$ = new Subject<void>();
+  private platformId = inject(PLATFORM_ID)
+
+  @ViewChild('phoneInput', { static: false }) phoneInput!: ElementRef;
+  iti: intlTelInput.Plugin | undefined = undefined;  
+
   editMode = false;
   isUpdating = false;
   isLoading = true;
+
   user: UserFromDB | null = null;
+  userRents: RentInterface[] = [];
+  rentVehicles: VehicleInterface[] = [];
   editModel: Partial<UserFromDB> = {};
   likedVehicles: VehicleInterface[] = [];
-  userRents: RentInterface[] = [];
-  private destroy$ = new Subject<void>();
-
-  constructor(
-    private userService: UserService,
-    private router: Router,
-    private toastr: ToastrService
-  ) {}
 
   ngOnInit(): void {
     this.loadUserData();
+  }
+
+  ngAfterViewChecked(): void {
+    if (isPlatformBrowser(this.platformId) && this.phoneInput && !this.iti) {
+      this.iti = intlTelInput(this.phoneInput.nativeElement, {
+        initialCountry: 'us',
+        nationalMode: false,
+        autoPlaceholder: 'aggressive',
+        formatOnDisplay: true,
+        utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
+        preferredCountries: ['us', 'gb', 'ca'],
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadUserData(): void {
@@ -48,13 +73,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
         return forkJoin([
           this.userService.getLikedVehicles().pipe(
             catchError(error => {
-              this.toastr.error('Failed to load saved vehicles', 'Error');
               return of([]);
             })
           ),
           this.userService.getRents().pipe(
             catchError(error => {
-              this.toastr.error('Failed to load rent history', 'Error');
               return of([]);
             })
           )
@@ -66,7 +89,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       })
     ).subscribe(([vehicles, rents]) => {
       this.likedVehicles = vehicles;
-      this.userRents = rents; 
+      this.userRents = rents;
+      this.rentVehicles = rents.map(rent => rent.vehicle as VehicleInterface);
       this.isLoading = false;
     });
   }
@@ -89,6 +113,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
     this.isUpdating = true;
 
+    const phoneNumber = this.iti?.getNumber();
+    this.editModel.phoneNumber = phoneNumber;
+
     this.userService.updateProfile(this.editModel).pipe(
         takeUntil(this.destroy$),
         catchError(error => {
@@ -96,11 +123,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
             this.isUpdating = false;
             return of(null);
         })
-    ).subscribe(updatedUser => {
-        if (updatedUser) {
-            this.user = updatedUser;
+    ).subscribe(response => {
+        if (response) {
+            this.user = response.user;
             this.editMode = false;
-            this.toastr.success('Profile updated successfully');
+            this.toastr.success('Profile updated successfully', `Success`);
         }
         this.isUpdating = false;
     });
@@ -124,8 +151,15 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  deleteProfile(): void {
+    this.userService.deleteProfile().subscribe({
+      next: () => {
+        this.toastr.success('Successfully deleted profile!', 'Success');
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        this.toastr.error('Profile deletion failed. Please try again.', 'Error Occurred');
+      }
+    });
   }
 }

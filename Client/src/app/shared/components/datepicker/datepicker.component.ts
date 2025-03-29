@@ -2,10 +2,10 @@ import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject, I
 import { isPlatformBrowser } from '@angular/common';
 import flatpickr from "flatpickr";
 import { Instance } from 'flatpickr/dist/types/instance';
-import { VehicleService } from '../vehicle/vehicle.service';
+import { VehicleService } from '../../../vehicle/vehicle.service';
 import { ToastrService } from 'ngx-toastr';
 import { DateOption } from 'flatpickr/dist/types/options';
-import { RentService } from '../rents/rent.service';
+import { RentService } from '../../../rents/rent.service';
 
 @Component({
     selector: 'app-datepicker',

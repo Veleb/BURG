@@ -7,9 +7,10 @@
 
 .vehicle-image {
   min-width: 680px;
-  min-height: 670px;
+  min-height: 610px;
   border-radius: 2px;
-  object-fit: contain;
+  object-fit: cover;
+  aspect-ratio: 16/9;
 }
 
 .details-wrapper {
@@ -420,7 +421,7 @@
   padding: 15px;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  min-width: 65%;
+  max-width: 64%;
 }
 
 .specs-heading {
@@ -483,8 +484,12 @@
 @media (max-width: 1200px) {
 
   .vehicle-details-wrapper {
-    min-width: 100%;
+    width: 90%;
   }
+
+  .datepicker-wrapper {
+    width: auto;
+  }  
 
   .details-wrapper {
     flex-direction: column;
@@ -514,6 +519,10 @@
 
   .price-breakdown-wrapper {
     width: 100%;
+  }
+  
+  .specs-wrapper {
+    max-width: 100%;
   }
 }
 
@@ -559,6 +568,10 @@
     bottom: unset;
     margin-top: 10px;
   }
+
+  .specs-wrapper {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -574,6 +587,7 @@
 
   .location-picker-wrapper-different {
     flex-direction: column;
+    min-width: unset;
   }
 
   .half-width-input {
@@ -583,10 +597,18 @@
   .datepicker-wrapper {
     height: auto;   
     padding-bottom: 15px;
+    width: 80vw;
   }
 
   .specs-grid {
     grid-template-columns: 1fr;
   }
 
+  .specs-wrapper {
+    max-width: 100%;
+  }
+  
+  .location-checkbox-label {
+    font-size: 12px;
+  }
 }

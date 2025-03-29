@@ -9,6 +9,9 @@ import { VehicleInterface } from "../types/model-types/vehicle-types";
 import { OAuth2Client } from 'google-auth-library';
 import { CompanyInterface } from "../types/model-types/company-types";
 import { RentInterface } from "../types/model-types/rent-types";
+import RentModel from "../models/rent";
+import VehicleModel from "../models/vehicle";
+import CompanyModel from "../models/company";
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
@@ -121,7 +124,15 @@ async function getUserCompanies(userId: string): Promise<CompanyInterface[]> {
 }
 
 async function getUserRents(userId: string): Promise<RentInterface[]> {
-  const user = await UserModel.findById(userId).populate<{ rents: RentInterface[] }>('rents').lean();
+  const user = await UserModel.findById(userId)
+    .populate({
+      path: 'rents',
+      populate: {
+        path: 'vehicle'
+      }
+    })
+    .lean();
+
    
   return user?.rents || [];
 }
@@ -136,13 +147,33 @@ async function updateUser(userId: string, updatedData: Partial<UserForAuth>): Pr
   if (updatedData.phoneNumber) user.phoneNumber = updatedData.phoneNumber;
 
   if (!user.isGoogleUser && updatedData.password) {
-    user.password = await bcrypt.hash(updatedData.password, 10);
+    user.password = updatedData.password;
   } else if (user.isGoogleUser && updatedData.password) {
-    throw new Error("Google users cannot set passwords");
+    throw new Error('Google users cannot set passwords');
   }
 
-  await UserModel.findByIdAndUpdate(user._id, { tokenVersion: user.tokenVersion });
+  await user.save();
+
   return user.toObject() as unknown as UserFromDB;
+}
+
+async function deleteUser(userId: string): Promise<void> {
+  const user = await UserModel.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  await RentModel.deleteMany({ _id: { $in: user.rents } });
+
+  await VehicleModel.updateMany(
+    { _id: { $in: user.likes } },
+    { $pull: { likes: user._id } }
+  );
+
+  await CompanyModel.updateMany(
+    { _id: { $in: user.companies } },
+    { $pull: { employees: user._id } } 
+  );
+
+  await UserModel.findByIdAndDelete(userId);
 }
 
 async function handleGoogleAuth(idToken: string): Promise<{ 
@@ -224,6 +255,7 @@ const UserService = {
   createUser,
   generateTokens,
   updateUser,
+  deleteUser,
   handleGoogleAuth,
   promoteUserStatus,
   

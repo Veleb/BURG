@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
-import { DatepickerComponent } from "../../datepicker/datepicker.component";
+import { DatepickerComponent } from "../../shared/components/datepicker/datepicker.component";
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { environment } from '../../../environments/environment';
 import { UppercasePipe } from '../../shared/pipes/uppercase.pipe';

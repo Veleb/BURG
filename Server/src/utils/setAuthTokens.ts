@@ -11,7 +11,7 @@ const setAuthTokens = (res: Response, accessToken: string, refreshToken: string)
     secure,          
     sameSite,        
     domain: isProd ? process.env.COOKIE_DOMAIN : undefined,
-    maxAge: 30 * 60 * 1000,
+    maxAge: 15 * 60 * 1000,
   });
 
   res.cookie('refresh_token', refreshToken, {

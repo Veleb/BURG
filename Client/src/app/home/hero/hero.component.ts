@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { DatepickerComponent } from '../../datepicker/datepicker.component';
+import { DatepickerComponent } from '../../shared/components/datepicker/datepicker.component';
 
 @Component({
     selector: 'app-hero',

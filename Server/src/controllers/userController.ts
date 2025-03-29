@@ -196,6 +196,26 @@ userController.put('/update', async (req: Request, res: Response, next: NextFunc
     }
 });
 
+userController.delete('/delete', async (req: Request, res: Response, next: NextFunction) => {
+
+    const customReq = req as authenticatedRequest
+    
+    try {
+        const userId: string | undefined = customReq.user?._id;
+
+        if (!userId) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        await userService.deleteUser(userId);
+
+        res.status(200).json({ message: 'User deleted successfully'});
+    } catch (error) {
+        next(error);
+    }
+});
+
 userController.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;

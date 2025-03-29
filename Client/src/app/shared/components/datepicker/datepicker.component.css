@@ -43,6 +43,7 @@
   top: 2px;
   left: 12px;
   color: #1E1E1E;
+  z-index: 1;
 }
 
 .search-button {
@@ -53,6 +54,14 @@
   height: 45px;
   font-size: 24px;
   font-weight: 700;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .calendar-icon-left {
@@ -158,12 +167,17 @@
   position: relative;
 }
 
+@media (max-width: 1200px) {
+  .date-input {
+    width: 40vw;
+  }
+}
 
 @media (max-width: 768px) {
-  .date-input, .date-input-column {
-    font-size: 14px;
-    height: 35px;
-    min-width: 200px;
+
+  .date-input {
+    width: 40vw;
+    font-size: 16px;
   }
 
   .date-label, .date-label-column {
@@ -186,7 +200,11 @@
 }
 
 @media (max-width: 480px) {
-  .datepicker-wrapper,
+
+  .date-input {
+    min-width: 25vw;
+  }
+
   .datepicker-wrapper-column {
     width: 100%;
   }

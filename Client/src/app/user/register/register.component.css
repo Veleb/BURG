@@ -107,6 +107,10 @@
   transform: scale(1.02);
 }
 
+.phone-input {
+  min-width: 100%;
+}
+
 .sign-up-wrapper {
   display: flex;
   justify-content: center;

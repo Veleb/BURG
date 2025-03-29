@@ -86,7 +86,7 @@ const authMiddleware: RequestHandler = async (
       }
 
       const newTokenVersion = user.tokenVersion + 1;
-      await user.save();
+      user.tokenVersion = newTokenVersion
       await (user as Document).save();
 
       const newAccessToken = await tokenUtil.generateAccessToken(user._id, newTokenVersion);

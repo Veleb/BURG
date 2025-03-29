@@ -2,9 +2,9 @@ import { HttpInterceptorFn, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from './user/user.service'
+import { UserService } from '../user/user.service'
 
 const API = '/api';
 

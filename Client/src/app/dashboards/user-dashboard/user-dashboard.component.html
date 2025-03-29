@@ -1,75 +1,137 @@
-<div class="profile-container">
-  <div class="profile-header">
-    <h1>{{ editMode ? 'Edit Profile' : user?.fullName }}</h1>
-    @if (!editMode) {
-      <button class="btn-edit" (click)="toggleEditMode()">Edit</button>
-    }
-  </div>
+<div class="dashboard-container">
+  <section class="user-section">
+    <div class="user-header">
+      <div class="user-welcome-wrapper">
+        <h2 class="welcome-text">Hi, {{ user?.fullName }}!</h2>
+        <p class="user-email">{{ user?.email }}</p>
+      </div>
+      @if (!editMode) {
+        <button (click)="toggleEditMode()" class="edit-profile-button">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+      }
+    </div>
 
-  @if (editMode) {
-    <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" class="edit-form">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" name="fullName" [(ngModel)]="editModel.fullName" required #fullName="ngModel" appFullname>
-        @if (fullName.invalid && fullName.touched) {
-          <div class="error-message">Name is required</div>
+    
+    @if (editMode) {
+      <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" class="edit-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input
+            type="text"
+            name="fullName"
+            [(ngModel)]="editModel.fullName"
+            required
+            #fullName="ngModel"
+            appFullname
+          />
+    
+        @if (fullName.touched && fullName.errors) {
+        <ul class="errors">
+          @if (fullName?.errors?.['required']) {
+          <li class="error-msg">Full name is required!</li>
+          } @if (fullName?.errors?.['minlength']) {
+          <li class="error-msg">Full name must be at least 3 characters long!</li>
+          } @if (fullName?.errors?.['maxlength']) {
+          <li class="error-msg">Full name must shorter than 100 characters!</li>
+          } @if (fullName?.errors?.['fullNameInvalid']) {
+          <li class="error-msg">
+            Full name must include first and last name with valid characters.
+          </li>
+          }
+        </ul>
         }
       </div>
-
+    
       <div class="form-group">
         <label>Email</label>
-        <input type="email" name="email" [(ngModel)]="editModel.email" required email #email="ngModel" appEmail>
-        @if (email.invalid && email.touched) {
-          <div class="error-message">
-            @if (email.errors?.['required']) { Email is required }
-            @if (email.errors?.['email']) { Invalid email format }
-          </div>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="editModel.email"
+          required
+          email
+          #email="ngModel"
+          appEmail
+        />
+    
+        @if (email.touched && email.errors) {
+        <ul class="errors">
+          @if (email?.errors?.['required']) {
+          <li class="error-msg">Email is required!</li>
+          } @if (email?.errors?.['minlength']) {
+          <li class="error-msg">Email must be at least 6 characters long!</li>
+          } @if (email?.errors?.['maxlength']) {
+          <li class="error-msg">Email must shorter than 254 characters!</li>
+          } @if (email?.errors?.['emailInvalid']) {
+          <li class="error-msg">Invalid email format</li>
+          }
+        </ul>
         }
       </div>
-
+    
       <div class="form-group">
-        <label>Phone</label>
-        <input type="tel" name="phone" [(ngModel)]="editModel.phoneNumber" pattern="[0-9]{10}">
+        <label>Phone Number</label>
+    
+        <input
+          class="form-input phone-input"
+          type="tel"
+          id="phoneNumber"
+          name="phoneNumber"
+          #phoneInput
+          ngModel
+          placeholder=""
+        />
       </div>
-
+    
       <div class="form-buttons">
-        <button type="button" class="btn-cancel" (click)="toggleEditMode()">Cancel</button>
-        <button type="submit" class="btn-save" [disabled]="editForm.invalid || isUpdating">Save</button>
+        <button type="button" class="btn-cancel" (click)="toggleEditMode()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn-save"
+          [disabled]="editForm.invalid || isUpdating"
+        >
+          Save
+        </button>
       </div>
     </form>
-  }
+    } 
 
-  @if (isLoading) {
-    <div class="loading">Loading...</div>
-  }
-
-  <div class="rents-wrapper">
-    <h2>Rent History</h2>
-    @if (!isLoading) {
-      @if (userRents.length) {
-        <div class="rent-list">
-          @for (rent of userRents; track rent._id) {
-            <app-rent-card [rent]="rent"/>
-          }
+    @if (isLoading) {
+      <div class="loading">Loading...</div>
+    }
+      
+    @if (!editMode) {
+      <div class="user-info-grid">
+        <div class="info-column">
+          <div class="info-item">
+            <span class="info-label">Name:</span
+            ><span class="info-value">{{ user?.fullName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email:</span
+            ><span class="info-value">{{ user?.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone Number</span><span class="info-value">{{user?.phoneNumber || "No phone number provided"}}</span>
+          </div>
         </div>
-      } @else {
-        <p class="empty-state">No rent history</p>
-      }
-    }
-  </div>
-
-  <div class="liked-vehicles-wrapper">
-    <h2>Saved Vehicles</h2>
-    @if (likedVehicles.length) {
-      <div class="vehicle-grid">
-        @for (vehicle of likedVehicles; track $index) {
-          <app-product-card [vehicle]="vehicle"/>
-        }
       </div>
-    } @else {
-      <p class="empty-state">No saved vehicles</p>
+      <div class="action-buttons">
+        <button class="logout-btn" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>Log Out</button
+        ><button class="delete-btn" (click)="deleteProfile()">
+          <i class="fas fa-trash"></i>Delete profile
+        </button>
+      </div>
     }
-  </div>
 
-  <button class="btn-logout" (click)="confirmLogout()">Logout</button>
+  </section>
+  <section class="products-section">
+    @for (vehicle of rentVehicles; track vehicle._id; let i = $index){
+      <app-product-card [vehicle]="vehicle" class="product-card"></app-product-card>
+  }
+  </section>
 </div>

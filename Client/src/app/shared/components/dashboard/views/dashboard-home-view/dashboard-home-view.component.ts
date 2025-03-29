@@ -22,6 +22,7 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private hostService = inject(HostService);
   private rentService = inject(RentService);
+  private vehicleService = inject(VehicleService);
   private userService = inject(UserService);
 
   private destroy$ = new Subject<void>();
@@ -38,6 +39,7 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.rentService.getAll();
+    this.vehicleService.getAll()
 
     this.userService.user$.pipe(
       takeUntil(this.destroy$)
@@ -54,16 +56,17 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   private loadAdminData(): void {
     combineLatest([
       this.hostService.getCompanies(),
-      this.rentService.rents$
+      this.rentService.rents$,
+      this.vehicleService.vehicles$
     ]).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: ([companies, rents]) => {
+      next: ([companies, rents, vehicles]) => {
         this.allCompanies = companies;
         this.activeRents = rents;
         
         this.totalEarnings = rents.reduce((sum, rent) => sum + (rent.total || 0), 0);
-        this.totalVehicles = companies.reduce((sum, company) => sum + (company.carsAvailable?.length || 0), 0);
+        this.totalVehicles = vehicles.length
         
         this.loading = false;
       },

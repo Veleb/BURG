@@ -7,7 +7,6 @@ export interface CompanyInterface {
   email: string;
   phoneNumber: string;
   location: string;
-  numberOfVehicles: number;
   carsAvailable?: VehicleInterface[];
   owner: string | UserInterface;
   status: 'pending' | 'confirmed' | 'canceled';

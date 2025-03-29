@@ -11,23 +11,27 @@
     <div class="nav-menu" #navMenu>
       <app-currency [color]="isTransparent ? 'white' : 'black'"/>
 
-      @if (isLoggedIn$ | async; as isLoggedIn) {
-        @if (user$ | async; as user) {
-          @if (user.role === 'host') {
+      @if (vm$ | async; as vm) {
+        @if (vm.isLoggedIn && vm.user) {
+          @if (vm.user.role === 'host') {
             <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
-            <i [routerLink]="['/dashboard/host/home']" [queryParams]="{ companyId: user.companies[0] }" class="fa-solid fa-handshake"></i>
-          } @else if (user.role === 'admin'){
+            <i [routerLink]="['/dashboard/host/home']" 
+               [queryParams]="{ companyId: vm.user.companies[0] }" 
+               class="fa-solid fa-handshake"></i>
+          } @else if (vm.user.role === 'admin') {
             <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
-            <i [routerLink]="['/dashboard/admin/home']" [queryParams]="{ companyId: user.companies[0] }" class="fa-solid fa-handshake"></i>
+            <i [routerLink]="['/dashboard/admin/home']" 
+               [queryParams]="{ companyId: vm.user.companies[0] }" 
+               class="fa-solid fa-handshake"></i>
           } @else {
             <i routerLink="/dashboard/user" class="fa-solid fa-user desktop-user-icon"></i>
           }
+        } @else {
+          <div routerLink="/auth/login" class="login-link">
+            <h4>Sign In</h4>
+            <i class="fa-solid fa-angle-right"></i>
+          </div>
         }
-      } @else {
-        <div routerLink="/auth/login" class="login-link">
-          <h4>Sign In</h4>
-          <i class="fa-solid fa-angle-right"></i>
-        </div>
       }
 
       <div class="hamburger-menu" (click)="toggleMenu()">
@@ -68,7 +72,6 @@
           </div>
         </div>
       }
-
     </div>
   </div>
 </nav>

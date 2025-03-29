@@ -22,7 +22,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
 
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef;
   @ViewChild('googleRegisterButtonContainer', { static: true }) googleRegisterButtonContainer!: ElementRef;
-  iti: any;  
+  iti: intlTelInput.Plugin | undefined = undefined;  
 
   constructor(
     private userService: UserService,
@@ -78,9 +78,9 @@ export class RegisterComponent implements AfterViewInit, OnInit {
 
     const formData = form.value;
 
-    const phoneNumber = this.iti.getNumber(); 
+    const phoneNumber = this.iti ? this.iti.getNumber() : null; 
     
-    if (phoneNumber && !this.iti.isValidNumber()) {
+    if (phoneNumber && this.iti && !this.iti.isValidNumber()) {
       this.toastr.error('Phone number is invalid!', 'Error occurred!');
       return;
     }

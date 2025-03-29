@@ -29,6 +29,7 @@
 
 .cards-wrapper {
   display: flex;
+  gap: 10px;
 }
 
 .category-card {

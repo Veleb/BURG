@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
-import { DatepickerComponent } from "../../datepicker/datepicker.component";
+import { DatepickerComponent } from "../../shared/components/datepicker/datepicker.component";
 import { SliderComponent } from '../../shared/components/slider/slider.component';
 import { ToastrService } from 'ngx-toastr';
 import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
@@ -276,6 +276,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
     this.rentService.rentVehicle(rentData).subscribe({
       next: () => {
+        this.router.navigate((['catalog']))
         this.toastr.success(`Successfully created rent without paying!`, `Success`)
       },
       error: () => this.toastr.error('Error creating rent'),

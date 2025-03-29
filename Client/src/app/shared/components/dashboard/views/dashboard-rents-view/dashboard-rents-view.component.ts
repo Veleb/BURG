@@ -5,7 +5,7 @@ import { RentInterface } from '../../../../../../types/rent-types';
 import { RentService } from '../../../../../rents/rent.service';
 import { UserService } from '../../../../../user/user.service';
 import { UserFromDB } from '../../../../../../types/user-types';
-import { DatepickerComponent } from '../../../../../datepicker/datepicker.component';
+import { DatepickerComponent } from '../../../datepicker/datepicker.component';
 import { RentCardComponent } from '../../../../../rents/rent-card/rent-card.component';
 
 @Component({

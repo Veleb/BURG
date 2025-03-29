@@ -13,13 +13,14 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  return userService.user$.pipe(
-    map((user) => {
+  return userService.getProfile().pipe(
+    map(user => {
       if (user) return true;
-      return router.createUrlTree(['/login']);
+      return router.createUrlTree(['/home']);
     }),
     catchError(() => {
-      return of(router.createUrlTree(['/login']));
+      userService.clearUser();
+      return of(router.createUrlTree(['/home']));
     })
   );
 };

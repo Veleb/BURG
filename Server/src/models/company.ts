@@ -7,7 +7,6 @@ const CompanySchema = new Schema<CompanyInterface>({
   email: { type: String, required: true, unique: true, match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
   phoneNumber: { type: String, required: true },
   location: { type: String },
-  numberOfVehicles: { type: Number, required: true },
   companyType: { type: String, required: true },
   stateRegistration: { type: String, required: true },
   
