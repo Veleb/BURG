@@ -1,6 +1,7 @@
-  import CompanyModel from "../models/company";
+  import { Types } from "mongoose";
+import CompanyModel from "../models/company";
   import UserModel from "../models/user";
-  import { CompanyInterface } from "../types/model-types/company-types";
+  import { CompanyForCreate, CompanyInterface } from "../types/model-types/company-types";
 
   const getAllCompanies = async () => {
     return await CompanyModel.find();
@@ -10,15 +11,19 @@
     return await CompanyModel.findById(id).populate('owner').lean();
   };
 
-  const createCompany = async (data: Omit<CompanyInterface, '_id'>) => {
+  const createCompany = async (data: CompanyForCreate) => {
     try {
       const company = await CompanyModel.create(data);
 
-      await UserModel.findByIdAndUpdate(
-        data.owner, 
-        { $push: { companies: company._id } },
-        { new: true }
-      );
+      if (company) {
+        await UserModel.findByIdAndUpdate(
+          data.owner, 
+          { $push: { companies: company._id } },
+          { new: true }
+        );
+      } else {
+        throw new Error('Company not found');
+      }
 
       return company;
     } catch (err) {
@@ -50,7 +55,6 @@
     getAllCompanies,
     updateCompanyStatus,
     getPendingCompanies,
-    
   };
 
   export default companyService;

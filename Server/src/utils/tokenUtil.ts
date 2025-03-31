@@ -1,10 +1,11 @@
+import { Types } from "mongoose";
 import jwtp from "../libs/jwtp";
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 const CSRF_TOKEN_SECRET = process.env.CSRF_TOKEN_SECRET as string;
 
-const generateAccessToken = (userId: string, tokenVersion: number) => {
+const generateAccessToken = (userId: Types.ObjectId, tokenVersion: number) => {
   return jwtp.sign(
     { _id: userId, tokenVersion },
     ACCESS_TOKEN_SECRET!,
@@ -12,7 +13,7 @@ const generateAccessToken = (userId: string, tokenVersion: number) => {
   );
 };
 
-const generateRefreshToken = (userId: string, tokenVersion: number) => {
+const generateRefreshToken = (userId: Types.ObjectId, tokenVersion: number) => {
   return jwtp.sign(
     { _id: userId, tokenVersion },
     REFRESH_TOKEN_SECRET!,
@@ -20,7 +21,7 @@ const generateRefreshToken = (userId: string, tokenVersion: number) => {
   );
 };
 
-const generateCsrfToken = (userId: string) => {
+const generateCsrfToken = (userId: Types.ObjectId) => {
   return jwtp.sign(
     { _id: userId },
     CSRF_TOKEN_SECRET!,
@@ -28,10 +29,10 @@ const generateCsrfToken = (userId: string) => {
   );
 };
 
-const verifyCsrfToken = async (token: string, userId: string) => {
+const verifyCsrfToken = async (token: string, userId: Types.ObjectId) => {
   try {
     const decoded = await jwtp.verify(token, CSRF_TOKEN_SECRET!) as { _id: string };
-    return decoded._id === userId;
+    return decoded._id === userId.toString();
   } catch {
     return false;
   }

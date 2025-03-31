@@ -4,13 +4,14 @@ import { UserForAuth } from '../types/model-types/user-types';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
 import setAuthTokens from '../utils/setAuthTokens';
 import tokenUtil from '../utils/tokenUtil';
+import { Types } from 'mongoose';
 
 
 const userController = Router();
 
 userController.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId: string | undefined = (req as authenticatedRequest).user?._id;
+        const userId: Types.ObjectId | undefined = (req as authenticatedRequest).user?._id;
         
         if (!userId) {
             res.status(401).json({ message: 'Unauthorized' });
@@ -34,7 +35,7 @@ userController.get('/profile', async (req: Request, res: Response, next: NextFun
 userController.get('/likes', async (req: Request, res: Response, next: NextFunction) => {
 
     const customReq = req as authenticatedRequest;
-    const userId: string | undefined = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
         if (!userId) {
@@ -55,7 +56,7 @@ userController.get('/likes', async (req: Request, res: Response, next: NextFunct
 userController.get('/companies', async (req: Request, res: Response, next: NextFunction) => {
 
     const customReq = req as authenticatedRequest;
-    const userId: string | undefined = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
         if (!userId) {
@@ -76,7 +77,7 @@ userController.get('/companies', async (req: Request, res: Response, next: NextF
 userController.get('/rents', async (req: Request, res: Response, next: NextFunction) => {
 
     const customReq = req as authenticatedRequest;
-    const userId: string | undefined = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
         if (!userId) {
@@ -179,7 +180,7 @@ userController.put('/update', async (req: Request, res: Response, next: NextFunc
     const customReq = req as authenticatedRequest
     
     try {
-        const userId: string | undefined = customReq.user?._id;
+        const userId: Types.ObjectId | undefined = customReq.user?._id;
 
         if (!userId) {
             res.status(401).json({ message: 'Unauthorized' });
@@ -201,7 +202,7 @@ userController.delete('/delete', async (req: Request, res: Response, next: NextF
     const customReq = req as authenticatedRequest
     
     try {
-        const userId: string | undefined = customReq.user?._id;
+        const userId: Types.ObjectId | undefined = customReq.user?._id;
 
         if (!userId) {
             res.status(401).json({ message: 'Unauthorized' });
@@ -216,10 +217,16 @@ userController.delete('/delete', async (req: Request, res: Response, next: NextF
     }
 });
 
-userController.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+userController.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const id = req.params.id;
-        const user = await userService.getUserById(id); // fetch user by id
+        const userId: Types.ObjectId | undefined = new Types.ObjectId(req.params.id);
+
+        if (!userId) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        const user = await userService.getUserById(userId); // fetch user by id
 
         if (!user) {
             res.status(404).json({ message: 'User not found' });

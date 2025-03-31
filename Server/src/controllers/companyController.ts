@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import companyService from '../services/companyService';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
-import { CompanyInterface } from '../types/model-types/company-types';
+import { CompanyForCreate, CompanyInterface } from '../types/model-types/company-types';
 import { UserInterface } from '../types/model-types/user-types';
 import UserService from '../services/userService';
+import { Types } from 'mongoose';
 
 const companyController = Router();
 
@@ -42,7 +43,8 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
   const customReq = req as authenticatedRequest;
 
   try {
-    const userId = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
+    
     if (!userId) {
       res.status(401).json({ message: 'Authentication required' });
       return; 
@@ -57,7 +59,7 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
       stateRegistration: req.body.stateRegistration,
     };
 
-    const dataWithOwner: CompanyInterface = { 
+    const dataWithOwner: CompanyForCreate = { 
       ...companyData,
       owner: userId, 
       status: "pending" as "pending" | "confirmed" | "canceled",
@@ -75,14 +77,14 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
 
 companyController.put('/confirm/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.params.id;
+    const companyId: string | undefined = req.params.id;
 
     if (!companyId) {
       res.status(400).json({ message: "Company ID must be provided!" });
       return;
     }
 
-    const updatedCompany = await companyService.updateCompanyStatus(companyId, 'confirmed');
+    const updatedCompany: CompanyInterface | null = await companyService.updateCompanyStatus(companyId, 'confirmed');
 
     if (!updatedCompany) {
       res.status(404).json({ message: 'Company not found!' });

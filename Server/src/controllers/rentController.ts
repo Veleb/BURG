@@ -4,6 +4,7 @@ import UserService from "../services/userService";
 import rentService from "../services/rentService";
 import { RentInterface } from "../types/model-types/rent-types";
 import vehicleService from "../services/vehicleService";
+import { Types } from "mongoose";
 
 const rentController = Router();
 
@@ -22,7 +23,7 @@ rentController.post('/', async (req: Request, res: Response, next: NextFunction)
   const customReq = req as authenticatedRequest;
 
   try {
-    const userId: string | undefined = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized' });

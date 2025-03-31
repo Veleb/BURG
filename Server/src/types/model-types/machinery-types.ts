@@ -1,15 +1,16 @@
+import { Types } from "mongoose";
 import { CompanyInterface } from "./company-types";
 import { Category, Size } from "./enums";
 import { RentInterface } from "./rent-types";
 
 export interface MachineryInterface {
 
-    _id: string;
-    company: CompanyInterface | string;
-    reserved: string[] | RentInterface[];
+    _id: Types.ObjectId;
+    company: CompanyInterface | Types.ObjectId;
+    reserved: Types.ObjectId[] | RentInterface[];
     available: boolean;
     details: MachineryDetails;
-    likes: string[];
+    likes: Types.ObjectId[];
     created_at: Date;
     updated_at: Date;
 

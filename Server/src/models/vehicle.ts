@@ -19,9 +19,10 @@ const VehicleSchema = new Schema<VehicleInterface>({
     model: { type: String, required: true },
     size: { type: String, enum: Object.values(Size) },
     images: { type: [String], default: [] },
+    vehicleRegistration: { type: [String], default: [] },
     category: { type: String, enum: Object.values(Category) },
     pricePerDay: { type: Number, required: true, min: 0 },
-    pricePerKm: { type: Number, min: 0 },
+    pricePerKm: { type: Number, required: true, min: 0 },
     year: { type: Number, min: 1886 },
     engine: { type: String },
     power: { type: String },
@@ -31,6 +32,7 @@ const VehicleSchema = new Schema<VehicleInterface>({
     mileage: { type: Number, min: 0 },
     chassisType: { type: String },
     capacity: { type: Number, min: 0 },
+    identificationNumber: { type: String, required: true ,unique: true }
   },
 
   available: { type: Boolean, required: true, default: true },

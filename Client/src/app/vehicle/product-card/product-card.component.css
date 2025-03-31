@@ -173,9 +173,10 @@
 .rating {
   display: flex;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   color: #110808;
   padding: 4px;
+  height: min-content;
 }
 
 .rating h5 {

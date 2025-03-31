@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
-import { FilterState, VehicleInterface } from '../../types/vehicle-types';
+import { FilterState, VehicleForCreate, VehicleInterface } from '../../types/vehicle-types';
 
 @Injectable({
   providedIn: 'root',
@@ -110,16 +110,24 @@ export class VehicleService {
     );
   }
 
-  getCompanyVehicles(companyId: string): Observable<VehicleInterface[]> {
-    return this.http.get<VehicleInterface[]>(`/api/vehicles/company/${companyId}`);
-  }
-
   getVehicleById(vehicleId: string): Observable<VehicleInterface> {
     return this.http.get<VehicleInterface>(`/api/vehicles/${vehicleId}`);
   }
 
+  createVehicle(vehicleData: VehicleForCreate): Observable<VehicleInterface> {
+    return this.http.post<VehicleInterface>(`/api/vehicles`, vehicleData);
+  }
+
+  updateVehicle(vehicleId: string, vehicleData: VehicleForCreate): Observable<VehicleInterface> {
+    return this.http.put<VehicleInterface>(`/api/vehicles`, { vehicleData, vehicleId});
+  }
+
   deleteVehicle(vehicleId: string): Observable<{message: string}> {
     return this.http.delete<{message: string}>(`/api/vehicles/${vehicleId}`)
+  }
+
+  getCompanyVehicles(companyId: string): Observable<VehicleInterface[]> {
+    return this.http.get<VehicleInterface[]>(`/api/vehicles/company/${companyId}`);
   }
   
   checkAvailability(vehicleId: string, startDate: Date, endDate: Date): Observable<boolean> {

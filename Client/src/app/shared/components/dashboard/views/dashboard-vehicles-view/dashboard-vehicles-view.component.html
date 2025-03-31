@@ -3,9 +3,9 @@
     <h2 class="title">Manage Vehicles</h2>
 
     <button 
-      [routerLink]="[`/${user?.role === 'host' ? 'host' : 'admin'}/add-vehicle`]" 
-      [queryParams]="{ companyId: currentCompanyId }"
-      class="add-btn"
+    [routerLink]="[user?.role === 'host' ? '/dashboard/host/add-vehicle' : '/dashboard/admin/add-vehicle']" 
+    [queryParams]="{ companyId: currentCompanyId }"
+    class="add-btn"
     >
     
       <i class="fas fa-plus"></i>

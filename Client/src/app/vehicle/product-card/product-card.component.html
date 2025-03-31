@@ -52,10 +52,13 @@
     </div>
 
     <div class="rating">
-      <i class="fa-solid fa-star star"></i>
-      <h5>4.6</h5>
+      <!-- <i class="fa-solid fa-star star"></i> -->
+      <!-- <h5>4.6</h5> -->
       <!-- <h5>{{ vehicle?.rating }}</h5> -->
+      <i class="fa-solid fa-thumbs-up"></i>
+      <h5>{{ vehicle?.likes?.length }}</h5>
     </div>
+
   </div>
 
   <hr class="dotted-hr" />
@@ -68,10 +71,10 @@
       <h6 class="vehicle-characteristic">{{ vehicle?.details?.capacity }}</h6>
   </div>
 
-    <div class="distance">
+    <!-- <div class="distance">
       <h6 class="distance-km">15km away</h6>
-      <!-- <h6 class="distance-country">{{ vehicle?.location?.city }}, {{ vehicle?.location?.country }}</h6> -->
-    </div>
+      <h6 class="distance-country">{{ vehicle?.location?.city }}, {{ vehicle?.location?.country }}</h6>
+    </div> -->
 
   </div>
 </article>

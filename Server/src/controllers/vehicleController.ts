@@ -1,8 +1,10 @@
 import { Router, Request, Response, NextFunction } from "express";
 import vehicleService from "../services/vehicleService";
-import { VehicleInterface } from "../types/model-types/vehicle-types";
+import { VehicleForCreate, VehicleInterface } from "../types/model-types/vehicle-types";
 import { authenticatedRequest } from "../types/requests/authenticatedRequest";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
+import { CompanyInterface } from "../types/model-types/company-types";
+import companyService from "../services/companyService";
 
 const vehicleController = Router();
 
@@ -107,7 +109,7 @@ vehicleController.post('/like/:vehicleId', async (req: Request, res: Response, n
       return;
     }
 
-    const userId: string | undefined = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
     
     if (!userId) {
       res.status(401).json({ message: 'Please log in to continue!' });
@@ -143,7 +145,7 @@ vehicleController.put('/unlike/:vehicleId', async (req: Request, res: Response, 
       return;
     }
 
-    const userId: string | undefined = customReq.user?._id;
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized.' });
@@ -166,6 +168,138 @@ vehicleController.put('/unlike/:vehicleId', async (req: Request, res: Response, 
     next(err);
   }
 });
+
+vehicleController.post('/', async (req: Request, res: Response, next: NextFunction) => {
+  const modifiedReq = req as authenticatedRequest;
+  
+  const userId: Types.ObjectId | undefined = modifiedReq.user?._id;
+
+  if (!userId) {
+    res.status(400).json({ message: 'User ID is required' });
+    return;
+  }
+
+  try {
+
+    const vehicleData = req.body;
+
+    const company: CompanyInterface | null = await companyService.getCompanyById(vehicleData.vehicleCompany);
+
+    if (company?.owner._id.toString() !== userId.toString()) {
+      res.status(403).json({ message: 'Unauthorized company access' });
+      return;
+    }
+
+    const vehicleDataWithOwner : VehicleForCreate = {
+      details: {
+        name: vehicleData.vehicleName,
+        model: vehicleData.vehicleModel,
+        size: vehicleData.vehicleSize,
+        category: vehicleData.vehicleCategory,
+        pricePerDay: vehicleData.vehiclePricePerDay,
+        pricePerKm: vehicleData.vehiclePricePerKm,
+        year: vehicleData.vehicleYear,
+        engine: vehicleData.vehicleEngine,
+        power: vehicleData.vehiclePower,
+        gvw: vehicleData.vehicleGvw,
+        fuelTank: vehicleData.vehicleFuelTank,
+        tyres: vehicleData.vehicleTyres,
+        mileage: vehicleData.vehicleMileage,
+        chassisType: vehicleData.vehicleChassisType,
+        capacity: vehicleData.vehicleCapacity,
+        identificationNumber: vehicleData.vehicleidentificationNumber,
+        images: vehicleData.vehicleImages,
+        vehicleRegistration: vehicleData.vehicleRegistration,
+      },
+      company: vehicleData.vehicleCompany,
+      reserved: [],
+      likes: [],
+      available: true
+    }
+
+    const vehicle: VehicleInterface | null = await vehicleService.createVehicle(vehicleDataWithOwner);
+
+    if (!vehicle) {
+      res.status(400).json({ message: 'Error creating vehicle' });
+      return; 
+    }
+
+    res.status(201).json(vehicle);
+    return;
+
+  } catch (err) {
+    next(err);
+  }
+})
+
+vehicleController.put('/', async (req: Request, res: Response, next: NextFunction) => {
+  const modifiedReq = req as authenticatedRequest;
+  
+  const userId: Types.ObjectId | undefined = modifiedReq.user?._id;
+
+  if (!userId) {
+    res.status(400).json({ message: 'User ID is required' });
+    return;
+  }
+
+  try {
+
+    const vehicleData = req.body.vehicleData;
+    const vehicleId: Types.ObjectId | null = req.body.vehicleId;
+
+    if (!vehicleId) {
+      res.status(400).json({ message: 'Vehicle ID is required' });
+      return;
+    }
+
+    const company: CompanyInterface | null = await companyService.getCompanyById(vehicleData.vehicleCompany);
+
+    if (company?.owner._id.toString() !== userId.toString()) {
+      res.status(403).json({ message: 'Unauthorized company access' });
+      return;
+    }
+
+    const vehicleDataWithOwner: VehicleForCreate = {
+      details: {
+        name: vehicleData.vehicleName,
+        model: vehicleData.vehicleModel,
+        size: vehicleData.vehicleSize,
+        category: vehicleData.vehicleCategory,
+        pricePerDay: vehicleData.vehiclePricePerDay,
+        pricePerKm: vehicleData.vehiclePricePerKm,
+        year: vehicleData.vehicleYear,
+        engine: vehicleData.vehicleEngine,
+        power: vehicleData.vehiclePower,
+        gvw: vehicleData.vehicleGvw,
+        fuelTank: vehicleData.vehicleFuelTank,
+        tyres: vehicleData.vehicleTyres,
+        mileage: vehicleData.vehicleMileage,
+        chassisType: vehicleData.vehicleChassisType,
+        capacity: vehicleData.vehicleCapacity,
+        identificationNumber: vehicleData.vehicleidentificationNumber,
+        images: vehicleData.vehicleImages,
+        vehicleRegistration: vehicleData.vehicleRegistration,
+      },
+      company: vehicleData.vehicleCompany,
+      reserved: [],
+      likes: [],
+      available: true
+    }
+
+    const vehicle: VehicleInterface | null = await vehicleService.updateVehicle(vehicleId, vehicleDataWithOwner);
+
+    if (!vehicle) {
+      res.status(400).json({ message: 'Error creating vehicle' });
+      return; 
+    }
+
+    res.status(201).json(vehicle);
+    return;
+
+  } catch (err) {
+    next(err);
+  }
+})
 
 vehicleController.delete('/:vehicleId', async (req: Request, res: Response, next: NextFunction) => {
   const vehicleId: string = req.params.vehicleId;

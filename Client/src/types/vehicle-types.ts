@@ -1,5 +1,5 @@
 import { CompanyInterface } from "./company-types";
-import { Size } from "./enums";
+import { CategoryEnum, Size } from "./enums";
 import { RentInterface } from "./rent-types";
 
 export interface VehicleInterface {
@@ -26,12 +26,36 @@ interface VehicleDetails {
   tyres: number;
   mileage: number;
   chassisType: string;
-  category: string;
+  category: CategoryEnum;
   capacity: number;
   pricePerDay: number;
+  identificationNumber: string
   pricePerKm: number;
   images: string[];
+  vehicleRegistration: string[];
 }
+
+export interface VehicleForCreate {
+  vehicleName: string;
+  vehicleModel: string;
+  vehicleYear: number;
+  vehicleSize: Size;
+  vehicleEngine: string;
+  vehiclePower: string;
+  vehicleGvw: number;
+  vehicleFuelTank: number;
+  vehicleTyres: number;
+  vehicleMileage: number;
+  vehicleChassisType: string;
+  vehicleCategory: CategoryEnum;
+  vehicleCapacity: number;
+  vehicleidn: string;
+  vehiclePricePerDay: number;
+  vehiclePricePerKm: number;
+  vehicleImages: string[];
+  vehicleRegistration: string[];
+  vehicleCompany: string,
+};
 
 export interface FilterState {
   categories: string[];

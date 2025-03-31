@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { CompanyInterface } from "./company-types";
 import { RentInterface } from "./rent-types";
 import { VehicleInterface } from "./vehicle-types";
@@ -8,14 +9,14 @@ export interface UserInterface {
   phoneNumber?: string;
   password: string | null;
   rents: RentInterface[];
-  likes: string[] | VehicleInterface[];
+  likes: Types.ObjectId[] | VehicleInterface[];
   companies?: CompanyInterface[];
   
   isGoogleUser: boolean;
   tokenVersion: number;
   role: "user" | "admin" | "host";
   
-  _id: string;
+  _id: Types.ObjectId;
   created_at: Date;
   updated_at: Date;
 }
@@ -47,7 +48,7 @@ export interface RegularUser extends UserForAuth {
 export type UserAuthType = GoogleUser | RegularUser;
 
 export interface UserFromDB {
-  _id: string;
+  _id: Types.ObjectId;
   email: string;
   fullName: string;
   phoneNumber?: string;

@@ -1,5 +1,5 @@
 import { Response, NextFunction, RequestHandler, Request } from 'express';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import jwtp from '../libs/jwtp';
 import { authenticatedRequest, TokenPayload } from '../types/requests/authenticatedRequest';
 import UserModel from '../models/user';
@@ -42,7 +42,7 @@ const authMiddleware: RequestHandler = async (
         }
 
         customReq.user = {
-          _id: decoded._id,
+          _id: new Types.ObjectId(decoded._id),
           accessToken,
           role: user.role,
           tokenVersion: user.tokenVersion,
@@ -50,7 +50,7 @@ const authMiddleware: RequestHandler = async (
         };
 
         if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(customReq.method)) {
-          if (!csrfToken || !tokenUtil.verifyCsrfToken(csrfToken as string, decoded._id)) {
+          if (!csrfToken || !tokenUtil.verifyCsrfToken(csrfToken as string, new Types.ObjectId(decoded._id))) {
             res.status(403).json({
               code: 'INVALID_CSRF',
               message: 'Invalid CSRF token'
@@ -60,7 +60,7 @@ const authMiddleware: RequestHandler = async (
         }
 
         if (customReq.method === 'GET' && customReq.user) {
-          const newCsrfToken = tokenUtil.generateCsrfToken(customReq.user._id);
+          const newCsrfToken = tokenUtil.generateCsrfToken(new Types.ObjectId(customReq.user._id));
           res.header('X-CSRF-Token', await newCsrfToken); 
         }
 

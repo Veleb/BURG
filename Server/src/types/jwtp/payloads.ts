@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+
 export interface payloadInterface {
-  _id: string;
+  _id: Types.ObjectId;
   email: string;
   isGoogleUser: boolean,
   role: string,

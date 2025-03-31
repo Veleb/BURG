@@ -1,8 +1,9 @@
+import { Types } from "mongoose";
 import CompanyModel from "../models/company";
 import RentModel from "../models/rent";
 import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle"
-import { VehicleInterface } from "../types/model-types/vehicle-types"
+import { VehicleForCreate, VehicleInterface } from "../types/model-types/vehicle-types"
 
 async function getAllVehicles(): Promise<VehicleInterface[]> {
   const vehicles: VehicleInterface[] = await VehicleModel.find().lean();
@@ -15,6 +16,32 @@ async function getAllVehicles(): Promise<VehicleInterface[]> {
 
   return vehicles;
 }
+
+async function createVehicle(vehicleData: VehicleForCreate): Promise<VehicleInterface> {
+  const newVehicle = await VehicleModel.create(vehicleData);
+
+  await CompanyModel.findByIdAndUpdate(
+    vehicleData.company,
+    { $addToSet: { carsAvailable: newVehicle._id } },
+    { new: true }
+  );
+
+  return newVehicle;
+}
+
+const updateVehicle = async (vehicleId: Types.ObjectId, data: VehicleForCreate) => {
+   try {
+     const vehicle = await VehicleModel.findByIdAndUpdate(vehicleId, data);
+
+     if (!vehicle) {
+      throw new Error(`Error occurred while updating vehicle`);
+     }
+
+     return vehicle;
+   } catch (err) {
+     throw new Error('Error updating vehicle');
+   }
+ };
 
 async function getCompanyVehicles(companyId: string): Promise<VehicleInterface[]> {
   const company = await CompanyModel.findById(companyId)
@@ -42,7 +69,7 @@ async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
   return vehicle;
 }
 
-async function checkAvailability(vehicleId: string, startDate: Date, endDate: Date): Promise<boolean> {
+async function checkAvailability(vehicleId: Types.ObjectId, startDate: Date, endDate: Date): Promise<boolean> {
   const utcStart = new Date(startDate.toISOString());
   const utcEnd = new Date(endDate.toISOString());
 
@@ -86,7 +113,7 @@ async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {
   return isAvailable;
 }
 
-async function likeVehicle(vehicleId: string, userId: string) {
+async function likeVehicle(vehicleId: string, userId: Types.ObjectId) {
 
   const updatedVehicle = await VehicleModel.findByIdAndUpdate(
     vehicleId,
@@ -103,7 +130,7 @@ async function likeVehicle(vehicleId: string, userId: string) {
   return updatedVehicle;
 }
 
-async function removeLikeVehicle(vehicleId: string, userId: string) {
+async function removeLikeVehicle(vehicleId: string, userId: Types.ObjectId) {
   const updatedVehicle = await VehicleModel.findByIdAndUpdate(
     vehicleId,
     { $pull: { likes: userId } },
@@ -154,7 +181,8 @@ const vehicleService = {
   likeVehicle,
   removeLikeVehicle,
   deleteVehicleById,
-
+  createVehicle,
+  updateVehicle
 }
 
 export default vehicleService

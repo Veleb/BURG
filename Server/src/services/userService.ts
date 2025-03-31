@@ -12,13 +12,14 @@ import { RentInterface } from "../types/model-types/rent-types";
 import RentModel from "../models/rent";
 import VehicleModel from "../models/vehicle";
 import CompanyModel from "../models/company";
+import { Types } from "mongoose";
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-async function getUserById(id: string | undefined): Promise<UserFromDB> { 
+async function getUserById(id: Types.ObjectId | undefined): Promise<UserFromDB> { 
   if (!id) throw new Error("Id is required");
 
   const user = await UserModel.findById(id).select('-password').lean();
@@ -85,7 +86,7 @@ async function registerUser(user: UserForAuth): Promise<payloadTokens> {
   return generateTokens(newUser); 
 }
 
-const logoutUser = async (userId: string, res: Response) => {
+const logoutUser = async (userId: Types.ObjectId, res: Response) => {
   await UserModel.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
   res.clearCookie('access_token');
   res.clearCookie('refresh_token');
@@ -111,19 +112,19 @@ async function generateTokens(user: UserFromDB): Promise<payloadTokens> {
   }
 }
 
-async function getUserLikedVehicles(userId: string): Promise<VehicleInterface[]> {
+async function getUserLikedVehicles(userId: Types.ObjectId): Promise<VehicleInterface[]> {
   const user = await UserModel.findById(userId).populate<{ likes: VehicleInterface[] }>('likes').lean();
    
   return user?.likes || [];
 }
 
-async function getUserCompanies(userId: string): Promise<CompanyInterface[]> {
+async function getUserCompanies(userId: Types.ObjectId): Promise<CompanyInterface[]> {
   const user = await UserModel.findById(userId).populate<{ companies: CompanyInterface[] }>('companies').lean();
    
   return user?.companies || [];
 }
 
-async function getUserRents(userId: string): Promise<RentInterface[]> {
+async function getUserRents(userId: Types.ObjectId): Promise<RentInterface[]> {
   const user = await UserModel.findById(userId)
     .populate({
       path: 'rents',
@@ -137,8 +138,7 @@ async function getUserRents(userId: string): Promise<RentInterface[]> {
   return user?.rents || [];
 }
 
-
-async function updateUser(userId: string, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
+async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error('User not found');
 
@@ -157,7 +157,7 @@ async function updateUser(userId: string, updatedData: Partial<UserForAuth>): Pr
   return user.toObject() as unknown as UserFromDB;
 }
 
-async function deleteUser(userId: string): Promise<void> {
+async function deleteUser(userId: Types.ObjectId): Promise<void> {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error("User not found");
 
@@ -232,7 +232,7 @@ async function handleGoogleAuth(idToken: string): Promise<{
   };
 }
 
-async function promoteUserStatus(userId: string, userStatus: "user" | "host"): Promise<UserInterface> {
+async function promoteUserStatus(userId: Types.ObjectId, userStatus: "user" | "host"): Promise<UserInterface> {
   const updatedUser = await UserModel.findByIdAndUpdate(
     userId,
     { role: userStatus },

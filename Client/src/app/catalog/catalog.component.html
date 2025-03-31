@@ -26,11 +26,26 @@
       <h2 class="filter-heading">{{ sort }} {{ mainCategory }}</h2>
     </div>
 
-    <div class="product-wrapper">  
-      @for (vehicle of vehicles; track $index) {
-        <app-product-card [vehicle]="vehicle" />
-      }
-    </div>
+    @if (mainCategory === "vehicles") {
+      <div class="product-wrapper">  
+        @for (vehicle of vehicles; track $index) {
+          <app-product-card [vehicle]="vehicle" />
+        }
+      </div>
+    } @else {
+      <div class="message-wrapper">
+        <div class="graphic-wrapper">
+          <svg class="astronaut" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="90" fill="#F5F5F5"/>
+            <path d="M80 120 Q 100 80 120 120" stroke="#2c3e50" fill="none" stroke-width="2"/>
+            <circle cx="85" cy="95" r="8" fill="#2c3e50"/>
+            <circle cx="115" cy="95" r="8" fill="#2c3e50"/>
+            <path d="M70 140 L130 140" stroke="#2c3e50" stroke-width="2"/>
+          </svg>
+        </div>
+        <h2>No {{ mainCategory }} yet! Stay tuned!</h2>
+      </div>
+    }
 
   </div>
 

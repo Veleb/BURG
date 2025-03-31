@@ -85,8 +85,8 @@ export class DashboardVehiclesViewComponent {
   }
 
   editVehicle(vehicleId: string): void {
-    this.router.navigate([`/host/edit-vehicle`, vehicleId], {
-      queryParams: { companyId: this.currentCompanyId }
+    this.router.navigate([`/dashboard/host/edit-vehicle`], {
+      queryParams: { vehicleId: vehicleId }
     });
   }
 
@@ -95,7 +95,13 @@ export class DashboardVehiclesViewComponent {
     if (confirmation?.toUpperCase() === 'I AM SURE') {
       this.vehicleService.deleteVehicle(vehicleId).subscribe({
         next: () => {
-          this.user?.role === 'host' ? this.loadCompanyVehicles() : this.loadAllVehicles();
+          if (!this.currentCompanyId) {
+            this.error = 'No company selected';
+            this.loading = false;
+            return;
+          }
+
+          this.user?.role === 'host' ? this.vehicleService.getCompanyVehicles(this.currentCompanyId) : this.vehicleService.getAll();
         },
         error: (err) => this.error = 'Failed to delete vehicle'
       });
