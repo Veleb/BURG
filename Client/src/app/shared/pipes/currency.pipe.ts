@@ -29,7 +29,7 @@ export class CurrencyConverterPipe implements PipeTransform, OnDestroy {
     }
 
     const convertedPrice = this.currencyService.convertPrice(price, this.currentCurrency);
-    return Number(convertedPrice.toFixed(2));
+    return parseFloat(convertedPrice.toFixed(2));
   }
 
   ngOnDestroy() {

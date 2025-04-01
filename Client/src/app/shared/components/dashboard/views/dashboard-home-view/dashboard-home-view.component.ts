@@ -4,7 +4,7 @@ import { CurrencyConverterPipe } from '../../../../pipes/currency.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { CompanyInterface } from '../../../../../../types/company-types';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Subject, throwError, switchMap, map, catchError, takeUntil } from 'rxjs';
+import { combineLatest, Subject, throwError, switchMap, map, catchError, takeUntil, of } from 'rxjs';
 import { HostService } from '../../../../../services/host.service';
 import { RentService } from '../../../../../rents/rent.service';
 import { RentInterface } from '../../../../../../types/rent-types';
@@ -55,14 +55,26 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
 
   private loadAdminData(): void {
     combineLatest([
-      this.hostService.getCompanies(),
+      this.route.queryParamMap,
       this.rentService.rents$,
       this.vehicleService.vehicles$
     ]).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: ([companies, rents, vehicles]) => {
-        this.allCompanies = companies;
+      next: ([params, rents, vehicles]) => {
+
+        const companyId = params.get('companyId');
+
+        if (companyId) {
+          this.hostService.getCompanyById(companyId).subscribe({
+            next: (company) => {
+              this.company = company;
+            }
+          })
+        } else {
+          this.error = 'Company ID is missing';
+        }
+
         this.activeRents = rents;
         
         this.totalEarnings = rents.reduce((sum, rent) => sum + (rent.total || 0), 0);

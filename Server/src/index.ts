@@ -4,20 +4,23 @@ dotenv.config();
 import express from 'express';
 import { expressConfig } from './configs/expressConfig';
 import mongooseInit from './configs/mongooseConfig';
+import './tasks/rentsCleanupTask'; 
+// import { v2 as cloudinary } from 'cloudinary';
 
-async function initializeApp() {
-  const app = express();
-  
-  try {
-    expressConfig(app);
 
-    await mongooseInit();
+const app = express();
 
-    return app;
-  } catch (error) {
-    console.error("Application initialization failed:", error);
-    process.exit(1);
-  }
-}
+expressConfig(app);
+mongooseInit();
 
-export default initializeApp;
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_SECRET,
+// });
+
+const port = (process.env.PROD === "true" ? process.env.PORT : 3030);
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});

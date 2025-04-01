@@ -47,6 +47,18 @@ async function createRent(rentData: RentInterface): Promise<RentInterface> {
       );
     }
 
+    const adminCompanyId = process.env.ADMIN_COMPANY_ID;
+    
+    if (!adminCompanyId) {
+      throw new Error("Admin company ID is not set in environment variables.");
+    }
+
+    await CompanyModel.findByIdAndUpdate(
+      adminCompanyId,
+      { $inc: { totalEarnings: -rent.total } },
+      { new: true }
+    );
+
     return rent.toObject();
   } catch (err) {
     throw new Error(err instanceof Error ? err.message : `Error creating a rent`);
@@ -157,9 +169,11 @@ async function rentWithoutPaying(rentData: RentInterface): Promise<RentInterface
     ]);
 
     const adminCompanyId = process.env.ADMIN_COMPANY_ID;
+
     if (!adminCompanyId) {
       throw new Error("Admin company ID is not set in environment variables.");
     }
+
     await CompanyModel.findByIdAndUpdate(
       adminCompanyId,
       { $inc: { totalEarnings: -rent.total } },
