@@ -20,4 +20,4 @@ async function initializeApp() {
   }
 }
 
-export default initializeApp();
+export default initializeApp;
