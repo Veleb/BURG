@@ -17,11 +17,4 @@ mongooseInit();
 //   api_secret: process.env.CLOUDINARY_SECRET,
 // });
 
-
-if (process.env.PROD === 'false') {
-  app.listen(3030, () => {
-    console.log(`Server running on port ${3030}`);
-  });
-}
-
 export default app;
