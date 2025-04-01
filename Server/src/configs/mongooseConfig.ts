@@ -12,6 +12,11 @@ export default async function mongooseInit() {
     ? process.env.DB_URL_PROD!
     : process.env.DB_URL_LOCAL!;
 
+  if (!DB_URL) throw new Error("Missing DB_URL environment variable");
+  if (!DB_URL.includes("mongodb.net") && process.env.PROD === "true") {
+    throw new Error("Production DB must use MongoDB Atlas");
+  }
+
   try {
     const connection = await mongoose.connect(DB_URL, {
       serverSelectionTimeoutMS: 3000,
