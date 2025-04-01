@@ -274,7 +274,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       total: this.totalPrice as number
     };
 
-    this.rentService.rentVehicle(rentData).subscribe({
+    this.rentService.rentVehicleWithoutPaying(rentData).subscribe({
       next: () => {
         this.router.navigate((['catalog']))
         this.toastr.success(`Successfully created rent without paying!`, `Success`)

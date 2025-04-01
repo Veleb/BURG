@@ -147,6 +147,31 @@ async function changeRentStatus(rentId: string, status: string) {
 
 }
 
+async function rentWithoutPaying(rentData: RentInterface): Promise<RentInterface> {
+  try {
+    const rent = await RentModel.create(rentData);
+
+    await Promise.all([
+      rent.user && UserModel.findByIdAndUpdate(rent.user, { $push: { rents: rent._id } }, { new: true }),
+      rent.vehicle && VehicleModel.findByIdAndUpdate(rent.vehicle, { $push: { reserved: rent._id } }, { new: true })
+    ]);
+
+    const adminCompanyId = process.env.ADMIN_COMPANY_ID;
+    if (!adminCompanyId) {
+      throw new Error("Admin company ID is not set in environment variables.");
+    }
+    await CompanyModel.findByIdAndUpdate(
+      adminCompanyId,
+      { $inc: { totalEarnings: -rent.total } },
+      { new: true }
+    );
+
+    return rent.toObject();
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : "Error creating rent without paying");
+  }
+}
+
 const rentService = {
   getAllRents,
   createRent,
@@ -154,6 +179,7 @@ const rentService = {
   getRentsByCompanyId,
   getUnavailableDates,
   changeRentStatus,
+  rentWithoutPaying
 
 }
 

@@ -124,6 +124,10 @@ export class RentService {
     return this.http.post<RentInterface>(`/api/rents`, rentData);
   }
 
+  rentVehicleWithoutPaying(rentData: RentInterface): Observable<RentInterface> {
+    return this.http.post<RentInterface>(`/api/rents/without-payment`, rentData);
+  }
+
   getUnavailableDates(vehicleId: string): Observable<RentInterface[]> {
     return this.http.get<RentInterface[]>(`/api/rents/${vehicleId}/unavailable-dates`);
   }
