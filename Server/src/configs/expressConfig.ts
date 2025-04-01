@@ -9,7 +9,7 @@ const FRONT_END = (process.env.PROD === 'true') ? process.env.FRONT_END_PROD : p
 
 const corsOptions = {
   credentials: true,
-  origin: FRONT_END, 
+  origin: FRONT_END,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type',

@@ -1,5 +1,9 @@
-import ServerlessHttp from 'serverless-http';
-import app from '../src/index';
+import serverlessHttp from 'serverless-http';
+import initializeApp from '../src/index';
 
-export default ServerlessHttp(app);
-// export default app;
+const handlerPromise = initializeApp.then((app) => serverlessHttp(app));
+
+export default async (event: any, context: any) => {
+  const handler = await handlerPromise;
+  return handler(event, context);
+};
