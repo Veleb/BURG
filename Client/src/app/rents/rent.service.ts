@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { RentInterface } from '../../types/rent-types';
+import { RentForCreate, RentInterface } from '../../types/rent-types';
 import { FilterState as RentFilterState } from '../../types/rent-types';
 
 @Injectable({
@@ -120,11 +120,11 @@ export class RentService {
     return this.http.post<{ message: string }>(`/api/rents/cancel-rent`, { rentId });
   }
 
-  rentVehicle(rentData: RentInterface): Observable<RentInterface> {
+  rentVehicle(rentData: RentForCreate): Observable<RentInterface> {
     return this.http.post<RentInterface>(`/api/rents`, rentData);
   }
 
-  rentVehicleWithoutPaying(rentData: RentInterface): Observable<RentInterface> {
+  rentVehicleWithoutPaying(rentData: RentForCreate): Observable<RentInterface> {
     return this.http.post<RentInterface>(`/api/rents/without-payment`, rentData);
   }
 

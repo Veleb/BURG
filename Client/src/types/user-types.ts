@@ -8,6 +8,9 @@ export interface UserFromDB {
   rents: string[];
   companies: CompanyInterface[] | string[] ;
   role: "user" | "host" | "admin";
+  referralCode: string;
+  disallowedReferralCodes: string[];
+  credits: number;
   created_at: Date;
   updated_at: Date;
 }

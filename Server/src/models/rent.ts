@@ -29,8 +29,6 @@ const RentSchema = new Schema<RentInterface>({
     required: true,
   },
 
-  
-
   user: {
     type: Types.ObjectId,
     ref: "User",

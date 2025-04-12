@@ -12,7 +12,7 @@ import { RentInterface } from "../types/model-types/rent-types";
 import RentModel from "../models/rent";
 import VehicleModel from "../models/vehicle";
 import CompanyModel from "../models/company";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
@@ -135,7 +135,7 @@ async function getUserRents(userId: Types.ObjectId): Promise<RentInterface[]> {
     .lean();
 
    
-  return user?.rents || [];
+  return (user?.rents as RentInterface[]) || [];
 }
 
 async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
@@ -243,6 +243,98 @@ async function promoteUserStatus(userId: Types.ObjectId, userStatus: "user" | "h
   return updatedUser;
 }
 
+async function updateUserAfterPayment(
+  userId: Types.ObjectId,
+  rentalData: RentInterface,
+  sessionId: string,
+  referralCode?: string
+): Promise<{ status: string; rental: RentInterface; user: any }> {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const [user, rental] = await Promise.all([
+      UserModel.findById(userId).session(session).lean(false),
+      RentModel.findById(rentalData._id).session(session).lean(false)
+    ]);
+
+    if (!user) throw new Error(`User ${userId} not found`);
+    if (!rental) throw new Error(`Rental ${rentalData._id} not found`);
+
+    // Validate rental ownership
+    if (!rental.user._id.equals(userId)) {
+      throw new Error('User does not own this rental');
+    }
+
+    // Check valid state transition
+    if (rental.status !== 'pending') {
+      throw new Error(`Rental already in ${rental.status} state`);
+    }
+
+    // Process referral code atomically
+    let referralBonus = 0;
+    if (referralCode) {
+      const referrer = await UserModel.findOne({ 
+        referralCode 
+      }).session(session);
+
+      if (referrer) {
+        const isSelfReferral = referrer._id.equals(userId);
+        const isCodeBlacklisted = user.disallowedReferralCodes.includes(referralCode);
+
+        if (!isSelfReferral && !isCodeBlacklisted) {
+          // Update referrer
+          referrer.credits += 5;
+          await referrer.save({ session });
+
+          // Update current user
+          user.disallowedReferralCodes.push(referralCode);
+          referralBonus = 5;
+        }
+      }
+    }
+
+    // Update rental with atomic operations
+    const updatedRental = await RentModel.findByIdAndUpdate(
+      rental._id,
+      { 
+        status: 'confirmed',
+        paymentSessionId: sessionId,
+        $inc: { 'appliedDiscounts.referral': referralBonus }
+      },
+      { new: true, session }
+    );
+
+    // Update user with atomic operations
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: { rentalHistory: rental._id },
+        $inc: { 
+          credits: -rentalData.appliedDiscounts.creditsUsed,
+          creditsUsed: -rentalData.appliedDiscounts.creditsUsed 
+        },
+        $push: referralCode ? { disallowedReferralCodes: referralCode } : {}
+      },
+      { new: true, session }
+    );
+
+    await session.commitTransaction();
+
+    return { 
+      status: 'success',
+      rental: updatedRental || (() => { throw new Error('Updated rental not found'); })(),
+      user: updatedUser
+    };
+
+  } catch (error) {
+    await session.abortTransaction();
+    throw new Error('Payment update failed');
+  } finally {
+    session.endSession();
+  }
+}
+
 const UserService = {
   loginUser,
   registerUser,
@@ -258,7 +350,8 @@ const UserService = {
   deleteUser,
   handleGoogleAuth,
   promoteUserStatus,
-  
+  updateUserAfterPayment,
+
 }
 
 export default UserService;

@@ -198,5 +198,4 @@ export class UserService {
       })
     );
   }
-
 }

@@ -91,37 +91,82 @@
     </div>
 
     <div class="checkout-wrapper">
-      <div class="first-row">
-        <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
-        <app-slider />
-      </div>
+      <div class="checkout-details-wrapper">
 
-      <div class="datepicker-wrapper">
-        <app-datepicker 
-          [startDateInput]="startDate"
-          [endDateInput]="endDate"
-          [isPricePerDay]="isPricePerDay" 
-          [vehicleId]="vehicle?._id"
-          [functionality]="['rent', vehicle?._id]"
-          [kilometers]="kilometers"
-          (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
-        ></app-datepicker>
-
-        <div class="location-picker-wrapper">
-          @if (locationCheckbox.checked) {
-            <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
-          } @else {
-            <div class="location-picker-wrapper-different">
-              <app-location-picker layoutType="default" id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
-              <app-location-picker layoutType="default" id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
-            </div>        
-          }
-
-          <div class="location-checkbox-wrapper">
-            <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox [(ngModel)]="isSameLocation">
-            <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
+        <div class="first-row">
+          <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
+          <app-slider (pricePerDayChanged)="pricePerDayChange($event)"/>
+        </div>
+  
+        <div class="datepicker-wrapper">
+          <app-datepicker 
+            [startDateInput]="startDate"
+            [endDateInput]="endDate"
+            [isPricePerDay]="isPricePerDay" 
+            [vehicleId]="vehicle?._id"
+            [functionality]="['rent', vehicle?._id]"
+            [kilometers]="kilometers"
+            (dateSelected)="onDateSelection($event.startDate, $event.endDate)"
+          ></app-datepicker>
+  
+          <div class="location-picker-wrapper">
+            @if (locationCheckbox.checked) {
+              <app-location-picker id="combinedLocation" class="location-input" (locationSelected)="onLocationSelected($event, true)"/>
+            } @else {
+              <div class="location-picker-wrapper-different">
+                <app-location-picker layoutType="default" id="pickupLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'pickup')"/>
+                <app-location-picker layoutType="default" id="dropoffLocation" class="half-width-input" (locationSelected)="onLocationSelected($event, false, 'dropoff')"/>
+              </div>        
+            }
+  
+            <div class="location-checkbox-wrapper">
+              <input id="location-checkbox" class="location-checkbox" type="checkbox" #locationCheckbox [(ngModel)]="isSameLocation">
+              <label class="location-checkbox-label" for="location-checkbox">Pick up location is the same as drop off location</label>
+            </div>
           </div>
         </div>
+
+        <div class="third-row">
+
+          @if (!isPricePerDay) {
+            <div class="km-wrapper">
+              <label for="km">KM (distance for rent):</label>
+              <input 
+                id="km" 
+                type="text" 
+                [(ngModel)]="kilometers" 
+                placeholder="Enter km " 
+                class="km-input"
+                required
+              />
+            </div>
+
+          }
+          
+          <div class="referral-code-wrapper">
+            <label for="referralCode">Referral Code (optional):</label>
+            <input 
+              id="referralCode" 
+              type="text" 
+              [(ngModel)]="referralCode" 
+              placeholder="Enter referral code" 
+              class="referral-code-input"
+              (input)="onReferralCodeChange($event)"
+            />
+          </div>
+        </div>
+
+        @if ((user?.credits ?? 0) > 0) {
+          <label class="credits-checkbox-wrapper">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="useCredits" 
+              (change)="calculatePrice()" 
+            />
+            Use my {{ user?.credits }} credits ($1 per credit)
+          </label>
+        }
+
       </div>
 
       <button class="cta-button" (click)="rentVehicle()">Rent Now</button>
@@ -133,21 +178,40 @@
       @if (rentalHours) {
         <div class="price-breakdown-wrapper">
           <h4>Price breakdown:</h4>
+        
           <div class="price-breakdown">
-            <p class="price-factor">Rent fee x {{ rentalHours.toFixed(2) }} hours</p>
-            <p>{{ totalPriceBeforeTax !== undefined ? (totalPriceBeforeTax | currencyConverter | currency: selectedCurrency) : '' }}</p>
+            @if (isPricePerDay) {
+              <p>Rent fee x {{ rentalDays }} days</p>
+            } @else {
+              <p>Rent fee x {{ rentalHours.toFixed(2) }} hours</p>
+            }
+            <p>{{ (basePrice ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
           </div>
-
+        
           <div class="price-breakdown">
-            <p class="price-factor">Goods and Services tax ( 18% )</p>
-            <p>{{ ( (totalPrice ?? 0) - (totalPriceBeforeTax ?? 0) ) | currencyConverter | currency: selectedCurrency }}</p>
+            <p>GST (18%)</p>
+            <p>{{ (gstAmount ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
           </div>
-
-          <hr class="dotted-hr">
-
+        
+          @if (useCredits) {
+            <div class="price-breakdown" >
+              <p>Credit Discount</p>
+              <p>-{{ (user?.credits ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+            </div>
+          }
+        
+          @if (referralDiscount) {
+            <div class="price-breakdown">
+              <p>Referral Discount</p>
+              <p>-{{ referralDiscount | currencyConverter | currency: selectedCurrency }}</p>
+            </div>
+          }
+        
+          <hr class="dotted-hr" />
+        
           <div class="price-breakdown">
-            <h3 class="total-price">Total</h3>
-            <p>{{ totalPrice !== undefined ? (totalPrice | currencyConverter | currency: selectedCurrency) : '0' }}</p>
+            <h3>Total</h3>
+            <p>{{ (totalPrice ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
           </div>
         </div>
       }
@@ -158,6 +222,7 @@
 
 
 <div class="specs-wrapper">
+  
   <h3 class="specs-heading">Key specifications of {{ vehicle?.details?.model }}:</h3>
   
   <div class="specs-grid">

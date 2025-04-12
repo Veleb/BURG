@@ -69,6 +69,29 @@ vehicleController.get('/:vehicleId', async (req: Request, res: Response, next: N
   }
 })
 
+
+vehicleController.get(`/referral-code/:referralCode`, async (req: Request, res: Response, next: NextFunction) => {
+    const customReq = req as authenticatedRequest;
+    
+    const userId: Types.ObjectId | undefined = customReq.user?._id;
+    const referralCode = req.params.referralCode;
+
+    try {
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized!" })
+            return;
+        }
+
+        const isValid = await vehicleService.isReferralValid(referralCode ,userId);
+
+        res.status(200).json({message: isValid ? "Referral code is valid": "Referral code is invalid", valid: isValid});
+        return;
+
+    } catch (err) {
+        next(err)
+    }
+})
+
 vehicleController.post('/available', async (req: Request, res: Response, next: NextFunction) => {
   try {
 

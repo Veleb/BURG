@@ -3,7 +3,7 @@ import RentModel from "../models/rent";
 import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle";
 import { CompanyInterface } from "../types/model-types/company-types";
-import { RentInterface } from "../types/model-types/rent-types";
+import { RentForCreate, RentInterface } from "../types/model-types/rent-types";
 
 async function getAllRents(): Promise<RentInterface[]> {
   try {
@@ -28,7 +28,7 @@ async function getAllRents(): Promise<RentInterface[]> {
   }
 }
 
-async function createRent(rentData: RentInterface): Promise<RentInterface> {
+async function createRent(rentData: RentForCreate): Promise<RentInterface> {
   try {
     const rent = await RentModel.create(rentData);
 
@@ -42,7 +42,7 @@ async function createRent(rentData: RentInterface): Promise<RentInterface> {
     if (vehicle?.company) {
       await CompanyModel.findByIdAndUpdate(
         (vehicle.company as CompanyInterface)._id,
-        { $inc: { totalEarnings: rent.total * 0.90 } },
+        { $inc: { totalEarnings: (rent?.total ?? 0) * 0.90 } },
         { new: true }
       );
     }
@@ -135,7 +135,10 @@ async function changeRentStatus(rentId: string, status: string) {
       { new: true }
     )
     .populate('vehicle')
-    .populate('vehicle.company')
+    .populate({
+      path: 'vehicle',
+      populate: { path: 'company' }
+    })
     .lean()
 
     if (!rent) {
@@ -159,7 +162,7 @@ async function changeRentStatus(rentId: string, status: string) {
 
 }
 
-async function rentWithoutPaying(rentData: RentInterface): Promise<RentInterface> {
+async function rentWithoutPaying(rentData: RentForCreate): Promise<RentInterface> {
   try {
     const rent = await RentModel.create(rentData);
 

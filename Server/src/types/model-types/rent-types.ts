@@ -10,19 +10,35 @@ export interface RentInterface {
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
+  referralCode: string | null;
+  useCredits: boolean;
   status: 'pending' | 'confirmed' | 'canceled';
   total: number;
+  calculatedPrice: number; 
+  appliedDiscounts: { 
+    referral: number;
+    creditsUsed: number;
+  };
+  paymentSessionId?: string;
 }
+
 
 export interface RentForCreate {
   start: Date;
   end: Date;
-  vehicle: Types.ObjectId;  
+  vehicle: VehicleInterface;  
   pickupLocation: string;
   dropoffLocation: string;
-  user: Types.ObjectId;
+  user: UserFromDB;
+  referralCode: string | null;
+  useCredits: boolean;
   status: 'pending' | 'confirmed' | 'canceled';
-  total: number; 
+  total: number;
+  calculatedPrice: number; 
+  appliedDiscounts: { 
+    referral: number;
+    creditsUsed: number;
+  };
 }
 
 export type RentInterfaceWithoutUser = Omit<RentInterface, 'user'>;

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { VehicleService } from '../../vehicle/vehicle.service';
@@ -12,7 +12,7 @@ import { CurrencyService } from '../../currency/currency.service';
 import { LocationPickerComponent } from "../../shared/components/location-picker/location-picker.component";
 import { UserService } from '../../user/user.service';
 import { StripeService } from '../../services/stripe.service';
-import { RentInterface } from '../../../types/rent-types';
+import { RentForCreate } from '../../../types/rent-types';
 import { FormsModule } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout'
 import { ImageCarouselComponent } from '../../shared/components/image-carousel/image-carousel.component';
@@ -35,6 +35,16 @@ import { UserFromDB } from '../../../types/user-types';
 })
 export class DetailsComponent implements OnInit, OnDestroy {
 
+  private route = inject(ActivatedRoute);
+  private vehicleService = inject(VehicleService);
+  private toastr = inject(ToastrService);
+  private currencyService = inject(CurrencyService);
+  private userService = inject(UserService);
+  private rentService = inject(RentService);
+  private stripeService = inject(StripeService);
+  private router = inject(Router);
+  private breakpointObserver = inject(BreakpointObserver);
+
   private destroy$ = new Subject<void>();
 
   vehicleId: string | null = null;
@@ -43,9 +53,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
   isPricePerDay: boolean = true;
   kilometers?: number;
   rentalHours: number | undefined = undefined;
-
+  rentalDays: number | undefined;
+  
   totalPrice: number | undefined = undefined;
   totalPriceBeforeTax: number | undefined = undefined;
+  gstAmount: number | undefined = undefined;                   
+  totalDiscountDisplay: number | undefined = undefined;
+  basePrice: number | undefined = undefined;
 
   selectedCurrency: string = "USD";
 
@@ -60,22 +74,15 @@ export class DetailsComponent implements OnInit, OnDestroy {
   dropoffLocation: string = '';
   startDate: Date | null = null;
   endDate: Date | null = null;
-  
+
+  referralCode: string = '';
+  referralDiscount: number = 0;
+  useCredits: boolean = false;
+  actualCreditUsed: number = 0;
+
   user: UserFromDB | null = null;
 
   isMobile: boolean = false;
-
-  constructor(
-    private route: ActivatedRoute,
-    private vehicleService: VehicleService,
-    private toastr: ToastrService,
-    private currencyService: CurrencyService,
-    private userService: UserService,
-    private rentService: RentService,
-    private stripeService: StripeService,
-    private router: Router,
-    private breakpointObserver: BreakpointObserver,  
-  ) {}
 
   ngOnInit(): void {
     
@@ -122,6 +129,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   toggleContactDropdown() {
     this.isContactDropdownOpen = !this.isContactDropdownOpen;
+  }
+
+  pricePerDayChange(changed: boolean): void {
+    this.isPricePerDay = changed;
+    this.calculatePrice();
   }
 
   updateMainImage(image: string | undefined): void {
@@ -186,21 +198,38 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   calculatePrice(): void {
-    if (!this.vehicle || this.rentalHours === undefined) {
+    if (!this.vehicle || !this.rentalHours) {
       this.totalPrice = undefined;
+      this.totalPriceBeforeTax = undefined;
+      this.gstAmount = undefined;
       return;
     }
+  
     if (this.isPricePerDay) {
-      const pricePerHour = this.vehicle.details?.pricePerDay / 24;
-      this.totalPriceBeforeTax = Number(Math.ceil((pricePerHour * this.rentalHours)).toFixed(2));
-      this.totalPrice = Number(Math.ceil((pricePerHour * this.rentalHours) * 1.18).toFixed(2));
+      this.rentalDays = Math.ceil(this.rentalHours / 24);
+      this.basePrice = this.rentalDays * this.vehicle.details.pricePerDay;
     } else {
-      this.totalPriceBeforeTax = Math.ceil(Number((this.vehicle.details?.pricePerKm * (this.kilometers || 0)).toFixed(2)));
-      this.totalPrice = Number(Math.ceil(this.vehicle.details?.pricePerKm * (this.kilometers || 0) * 1.18).toFixed(2));
+      this.basePrice = (this.kilometers || 0) * this.vehicle.details.pricePerKm;
     }
-  }
 
+    const maxCreditUsable = Math.max(this.basePrice - this.referralDiscount, 0);
+    this.actualCreditUsed = this.useCredits
+    ? Math.min(this.user?.credits || 0, maxCreditUsable)
+    : 0;
+
+    const totalDiscount = this.referralDiscount + this.actualCreditUsed;
+    const priceAfterDiscounts = Math.max(this.basePrice - totalDiscount, 0);
+  
+    const gstAmount = priceAfterDiscounts * 0.18;
+    this.totalPriceBeforeTax = priceAfterDiscounts;
+    this.gstAmount = Math.round(gstAmount); 
+    this.totalPrice = Math.round(priceAfterDiscounts * 1.18); 
+  }
+  
+  
+  
   rentVehicle(): void {
+
     if (!this.startDate || !this.endDate) {
       this.toastr.error('Please select start and end dates.');
       return;
@@ -218,30 +247,43 @@ export class DetailsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const rentData: RentInterface = {
+    const rentalData = {
+      vehicleId: this.vehicleId,
       start: this.startDate,
       end: this.endDate,
-      vehicle: this.vehicleId, 
       pickupLocation: this.pickupLocation,
       dropoffLocation: this.dropoffLocation,
-      user: null,
-      status: "pending",
-      total: this.totalPrice as number
+      isPricePerDay: this.isPricePerDay,
+      kilometers: this.kilometers || 0,
+      referralCode: this.referralCode || '',
+      useCredits: this.useCredits || false,
+      userId: this.user?._id || '',
+      calculatedPrice: this.totalPrice || 0,
+      appliedDiscounts: {
+        creditsUsed: this.actualCreditUsed,
+        referral: this.referralDiscount || 0
+      }
     };
 
-    const rentalType = this.isPricePerDay ? 'perDay' : 'perKm';
-    const kmDriven = this.isPricePerDay ? undefined : this.kilometers;
-
-    this.rentService.rentVehicle(rentData)
-      .pipe(
-        switchMap(rent => 
-          this.stripeService.createCheckoutSession(rent._id!, rentalType, kmDriven)
-        )
-      )
-      .subscribe({
-        next: (session) => this.stripeService.redirectToCheckout(session.sessionId),
-        error: () => this.toastr.error('Error initiating payment'),
-      });
+    this.stripeService.createCheckoutSession(rentalData).pipe(
+      switchMap((session) => {
+        return this.stripeService.redirectToCheckout(session.sessionId).then(() => 
+          this.verifyPaymentAndUpdateData(session.sessionId)
+        );
+      }),
+      catchError((error) => {
+        this.toastr.error('Error initiating payment');
+        return of(null);
+      })
+    ).subscribe({
+      next: (result) => {
+        if (result) {
+          this.toastr.success('Payment successful and user updated.');
+        }
+      },
+      error: () => {
+      }
+    });
   }
 
   rentVehicleWithoutPaying(): void {
@@ -263,15 +305,22 @@ export class DetailsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const rentData: RentInterface = {
+    const rentData: RentForCreate = {
       start: this.startDate,
       end: this.endDate,
-      vehicle: this.vehicleId, 
+      vehicle: this.vehicleId,
       pickupLocation: this.pickupLocation,
       dropoffLocation: this.dropoffLocation,
       user: null,
       status: "pending",
-      total: this.totalPrice as number
+      total: this.totalPrice as number,
+      referralCode: this.referralCode,
+      useCredits: this.useCredits,
+      calculatedPrice: 0,
+      appliedDiscounts: {
+        referral: 0,
+        creditsUsed: 0
+      }
     };
 
     this.rentService.rentVehicleWithoutPaying(rentData).subscribe({
@@ -281,6 +330,52 @@ export class DetailsComponent implements OnInit, OnDestroy {
       },
       error: () => this.toastr.error('Error creating rent'),
     });
+  }
+
+  onReferralCodeChange(event: Event): void {
+    const input = (event.target as HTMLInputElement).value.trim();
+  
+    if (!input) {
+      this.referralDiscount = 0;
+      this.calculatePrice();
+      return;
+    }
+  
+    this.vehicleService.isReferralValid(input).subscribe({
+      next: (response) => {
+        const isValid = response.valid;
+
+        if (isValid) {
+          this.referralCode = input;
+          this.referralDiscount = 5;
+          this.toastr.success(response.message, 'Success');
+        }
+
+        this.calculatePrice();
+      },
+      error: () => {
+        this.referralDiscount = 0;
+        this.calculatePrice();
+      }
+    });
+  }
+
+  private verifyPaymentAndUpdateData(sessionId: string) {
+    return this.stripeService.verifyPayment(sessionId).pipe(
+      switchMap((response: { status: string }) => {
+        if (response.status === 'success') {
+          this.toastr.error('Payment verification successful.');
+          return of(null);
+        } else {
+          this.toastr.error('Payment verification failed.');
+          return of(null); 
+        }
+      }),
+      catchError((error) => {
+        this.toastr.error('Payment verification failed.');
+        return of(null);
+      })
+    );
   }
 
   ngOnDestroy(): void {

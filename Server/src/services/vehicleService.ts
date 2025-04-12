@@ -173,6 +173,29 @@ async function deleteVehicleById(vehicleId: string): Promise<VehicleInterface | 
   return deletedVehicle;
 }
 
+async function isReferralValid(referralCode: string, userId: Types.ObjectId): Promise<boolean> {
+  const user = await UserModel.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  const referer = await UserModel.findOne({ referralCode });
+  if (!referer) throw new Error("Referer not found");
+
+  if (user.disallowedReferralCodes.includes(referralCode)) {
+    return false;
+  }
+
+  if (referer._id.equals(user._id)) {
+    throw new Error("You cannot refer yourself");
+  }
+
+  referer.credits += 5;
+
+  await referer.save();
+  // await user.save();
+
+  return true;
+}
+
 const vehicleService = {
   getAllVehicles,
   getCompanyVehicles,
@@ -182,7 +205,9 @@ const vehicleService = {
   removeLikeVehicle,
   deleteVehicleById,
   createVehicle,
-  updateVehicle
+  updateVehicle,
+  isReferralValid,
+
 }
 
 export default vehicleService

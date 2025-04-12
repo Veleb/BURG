@@ -58,7 +58,21 @@ const UserSchema = new Schema<UserInterface>({
   companies: [{
     ref: "Company",
     type: Types.ObjectId,
-  }]
+  }],
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true,
+    default: undefined,  
+  },
+  disallowedReferralCodes: [{
+    type: String,
+    default: [],
+  }],
+  credits: {
+    type: Number,
+    default: 0,
+  }
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });
@@ -72,6 +86,26 @@ UserSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   
+  if (this.isNew && !this.referralCode) {
+    const { customAlphabet } = await import('nanoid');
+    const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const generateCode = customAlphabet(alphabet, 8);
+    let code;
+    do {
+      code = generateCode();
+    } while (await (this.constructor as typeof UserModel).findOne({ referralCode: code }));
+    this.referralCode = code;
+  }
+
+  if (this.referralCode) {
+    if (!this.disallowedReferralCodes) {
+      this.disallowedReferralCodes = [];
+    }
+    if (!this.disallowedReferralCodes.includes(this.referralCode)) {
+      this.disallowedReferralCodes.push(this.referralCode);
+    }
+  }
+
   next();
 });
 

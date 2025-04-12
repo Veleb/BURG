@@ -16,6 +16,10 @@ export interface UserInterface {
   tokenVersion: number;
   role: "user" | "admin" | "host";
   
+  referralCode: string;
+  disallowedReferralCodes: string[];
+  credits: number;
+
   _id: Types.ObjectId;
   created_at: Date;
   updated_at: Date;

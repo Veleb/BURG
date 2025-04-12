@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { Observable } from 'rxjs';
+import { RentInterface } from '../../types/rent-types';
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +15,8 @@ export class StripeService {
     this.stripePromise = loadStripe(environment.publishable_key);
   }
 
-  createCheckoutSession(rentId: string, rentalType: 'perDay' | 'perKm', kmDriven?: number): Observable<{ sessionId: string }> {
-    return this.http.post<{ sessionId: string }>(`${environment.apiUrl}/stripe/create-checkout-session`, {
-      rentId,
-      rentalType,
-      kmDriven,
-    });
+  createCheckoutSession(rentalData: Partial<RentInterface>): Observable<{ sessionId: string }> {
+    return this.http.post<{ sessionId: string }>(`/api/stripe/create-checkout-session`, rentalData);
   }
 
   async redirectToCheckout(sessionId: string): Promise<void> {
@@ -34,7 +31,7 @@ export class StripeService {
     }
   }
 
-  verifyPayment(sessionId: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/stripe/verify-payment`, { sessionId });
+  verifyPayment(sessionId: string): Observable<{ status: string}> {
+    return this.http.post<{ status: string }>(`/api/stripe/verify-payment`, { sessionId });
   }
 }

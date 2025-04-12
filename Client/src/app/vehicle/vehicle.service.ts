@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import { FilterState, VehicleForCreate, VehicleInterface } from '../../types/vehicle-types';
 
 @Injectable({
@@ -187,6 +187,15 @@ export class VehicleService {
 
   unlikeVehicle(vehicleId: string | undefined): Observable<{ message: string, likes?: VehicleInterface['likes'] }> {
     return this.http.put<{ message: string, likes?: VehicleInterface['likes'] }>(`/api/vehicles/unlike/${vehicleId}`, {});
+  }
+
+  
+  isReferralValid(referralCode: string): Observable<{message: string, valid: boolean}> {
+    return this.http.get<{message: string, valid: boolean}>(`/api/vehicles/referral-code/${referralCode}`).pipe(
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
   }
 
 }
