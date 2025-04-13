@@ -1,9 +1,10 @@
 import { Types } from "mongoose";
 import jwtp from "../libs/jwtp";
+import { Request, Response } from "express";
+import { nanoid } from 'nanoid';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
-const CSRF_TOKEN_SECRET = process.env.CSRF_TOKEN_SECRET as string;
 
 const generateAccessToken = (userId: Types.ObjectId, tokenVersion: number) => {
   return jwtp.sign(
@@ -21,27 +22,35 @@ const generateRefreshToken = (userId: Types.ObjectId, tokenVersion: number) => {
   );
 };
 
-const generateCsrfToken = (userId: Types.ObjectId) => {
-  return jwtp.sign(
-    { _id: userId },
-    CSRF_TOKEN_SECRET!,
-    { expiresIn: '15m' }
-  );
+const generateCsrfToken = (): string => {
+  return nanoid(32);
 };
 
-const verifyCsrfToken = async (token: string, userId: Types.ObjectId) => {
-  try {
-    const decoded = await jwtp.verify(token, CSRF_TOKEN_SECRET!) as { _id: string };
-    return decoded._id === userId.toString();
-  } catch {
-    return false;
-  }
+const generateAndStoreCsrfToken = (res: Response): string => {
+  const csrfToken = generateCsrfToken();
+
+  res.cookie('csrf_token', csrfToken, {
+    httpOnly: true,      
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'strict',
+  });
+
+  res.setHeader('X-CSRF-Token', csrfToken);
+
+  return csrfToken;
+};
+
+const verifyCsrfToken = (token: string, req: Request): boolean => {
+  const csrfTokenFromCookie = req.cookies['csrf_token'];
+
+  return csrfTokenFromCookie === token;
 };
 
 const tokenUtil = {
   generateAccessToken,
   generateRefreshToken,
   generateCsrfToken,
+  generateAndStoreCsrfToken,
   verifyCsrfToken
 }
 

@@ -16,24 +16,24 @@ export class UserService {
   private user$$ = new BehaviorSubject<UserFromDB | null>(null);
   public user$ = this.user$$.asObservable();
 
-  private csrfToken$$ = new BehaviorSubject<string | null>(null);
+  // private csrfToken$$ = new BehaviorSubject<string | null>(null);
 
   private isAuthenticating = false;
   platformId = inject(PLATFORM_ID);
 
   // CSRF token functions
 
-  private storeCsrfToken(token: string): void {
-    this.csrfToken$$.next(token);
-  }
+  // private storeCsrfToken(token: string): void {
+  //   this.csrfToken$$.next(token);
+  // }
 
-  getCsrfToken(): string | null {
-    return this.csrfToken$$.value;
-  }
+  // getCsrfToken(): string | null {
+  //   return this.csrfToken$$.value;
+  // }
   
-  private clearCsrfToken(): void {
-    this.csrfToken$$.next(null);
-  }
+  // private clearCsrfToken(): void {
+  //   this.csrfToken$$.next(null);
+  // }
 
   // Main functions
 
@@ -62,10 +62,10 @@ export class UserService {
     return this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
       tap(response => {
         this.isAuthenticating = false;
-        const csrfToken = response.headers.get('X-CSRF-Token');
+        // const csrfToken = response.headers.get('X-CSRF-Token');
         const userData = response.body;
       
-        if (csrfToken) this.storeCsrfToken(csrfToken); // store the fetched csrf token
+        // if (csrfToken) this.storeCsrfToken(csrfToken); // store the fetched csrf token
         if (userData) this.user$$.next(userData); // set the fetched user to the user subject
 
       }),
@@ -80,16 +80,18 @@ export class UserService {
   }
 
   login(user: UserForLogin): Observable<UserFromDB> {
-    return this.http.post<UserFromDB>('/api/users/login', user, { observe: 'response' }).pipe(
+    return this.http.post<UserFromDB>('/api/users/login', user, { observe: 'response', withCredentials: true }).pipe(
       tap(response => {
 
-        const csrfToken = response.headers.get('X-CSRF-Token');
+        // const csrfToken = response.headers.get('X-CSRF-Token');
 
-        if (csrfToken) {
-          this.storeCsrfToken(csrfToken); // store the csrf token
-        }
+        // if (csrfToken) {
+        //   this.storeCsrfToken(csrfToken); // store the csrf token
+        // }
 
-        this.user$$.next(response.body); // set the fetched user to the user subject
+        this.getProfile().subscribe(); // fetch the user profile after login
+
+        this.user$$.next(response.body); // set the fetched user to the user object
       }),
       map(response => response.body as UserFromDB),
       catchError(err => {
@@ -106,10 +108,12 @@ export class UserService {
       refreshToken: string 
     }>(`/api/users/google-auth`, { idToken }, { observe: 'response' }).pipe(
       tap(response => {
-        const csrfToken = response.headers.get('X-CSRF-Token');
+        // const csrfToken = response.headers.get('X-CSRF-Token');
         const userData = response.body?.user;
         
-        if (csrfToken) this.storeCsrfToken(csrfToken);
+        // if (csrfToken) this.storeCsrfToken(csrfToken);
+        this.getProfile().subscribe(); // fetch the user profile after login
+
         if (userData) this.user$$.next(userData);
 
       }),
@@ -124,8 +128,11 @@ export class UserService {
   register(user: UserForRegister): Observable<UserFromDB> {
   return this.http.post<UserFromDB>('/api/users/register', user, { observe: 'response' }).pipe(
     tap(response => {
-      const csrfToken = response.headers.get('X-CSRF-Token');
-      if (csrfToken) this.storeCsrfToken(csrfToken);
+      // const csrfToken = response.headers.get('X-CSRF-Token');
+      // if (csrfToken) this.storeCsrfToken(csrfToken);
+
+      this.getProfile().subscribe(); // fetch the user profile after login
+
       if (response.body) this.user$$.next(response.body);
     }),
     map(response => response.body as UserFromDB),
@@ -137,19 +144,19 @@ export class UserService {
 }
 
   logout(): Observable<void> {
-    const csrfToken = this.getCsrfToken();
-    const headers = new HttpHeaders({
-      'x-csrf-token': csrfToken || ''
-    });
+    // const csrfToken = this.getCsrfToken();
+    // const headers = new HttpHeaders({
+    //   'x-csrf-token': csrfToken || ''
+    // });
 
-    return this.http.post<void>('/api/users/logout', {}, { headers }).pipe(
+    return this.http.post<void>('/api/users/logout', {}, { }).pipe(
       tap(() => {
         this.user$$.next(null);
-        this.clearCsrfToken();
+        // this.clearCsrfToken();
       }),
       catchError(err => {
         this.user$$.next(null);
-        this.clearCsrfToken();
+        // this.clearCsrfToken();
         return throwError(() => err);
       })
     );
@@ -177,6 +184,16 @@ export class UserService {
     );
   }
 
+  fetchCsrfToken(): Observable<string> {
+    return this.http.get<{ csrfToken: string }>('/api/users/csrf-token').pipe(
+      // tap(res => this.storeCsrfToken(res.csrfToken)),
+      map(res => res.csrfToken),
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
+
   updateProfile(updatedData: Partial<UserFromDB>): Observable<{ message: string, user: UserFromDB}> {
     return this.http.put<{ message: string, user: UserFromDB}>('/api/users/update', updatedData).pipe(
       tap(updatedUser => {
@@ -198,4 +215,5 @@ export class UserService {
       })
     );
   }
+
 }

@@ -13,7 +13,7 @@ export class CurrencyComponent {
   @Input() color: string = "black";
 
   currencies = ['INR' ,'USD', 'EUR', 'GBP', 'JPY', 'CAD'];
-  selectedCurrency = 'USD';
+  selectedCurrency = 'INR';
 
   constructor(private currencyService: CurrencyService) {
     currencyService.getCurrency().subscribe(currency => {

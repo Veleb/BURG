@@ -92,8 +92,8 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${FRONT_END}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${FRONT_END}/cancel`,
+      success_url: `${FRONT_END}/payments/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${FRONT_END}/payments/cancel`,
       metadata: {
         rentId: rent._id.toString(),
         userId: user._id.toString(),

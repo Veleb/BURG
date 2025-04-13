@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import authMiddleware from '../middlewares/authMiddleware';
 import routes from '../routes';
 import errorMiddleware from '../middlewares/errorMiddleware';
+import csrfMiddleware from '../middlewares/csrfMiddleware';
 
 const FRONT_END = (process.env.PROD === 'true') ? process.env.FRONT_END_PROD : process.env.FRONT_END_LOCAL;
 
@@ -38,6 +39,7 @@ export function expressConfig(app: Application): void {
   app.use(cors(corsOptions));
 
   app.use(authMiddleware);
+  // app.use(csrfMiddleware);
   app.use(routes);
-  app.use(errorMiddleware)
+  app.use(errorMiddleware);
 }

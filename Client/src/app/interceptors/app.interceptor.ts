@@ -23,16 +23,20 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(modifiedReq.method)) {
-    const csrfToken = userService.getCsrfToken();
-    if (csrfToken) {
-      modifiedReq = modifiedReq.clone({
-        headers: new HttpHeaders({
-          'x-csrf-token': csrfToken
-        })
-      });
-    }
-  }
+  // if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(modifiedReq.method)) {
+
+  //   if (req.url.includes('/login') || req.url.includes('/register')) {
+  //     return next(req);
+  //   }
+  
+  //   const csrfToken = userService.getCsrfToken();
+  //   if (csrfToken) {
+  //     modifiedReq = modifiedReq.clone({
+  //       headers: modifiedReq.headers.set('X-CSRF-Token', csrfToken)
+  //     });
+      
+  //   }
+  // }
 
   return next(modifiedReq).pipe(
     catchError((err) => {

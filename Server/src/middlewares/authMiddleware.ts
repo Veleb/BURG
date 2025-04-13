@@ -1,5 +1,5 @@
 import { Response, NextFunction, RequestHandler, Request } from 'express';
-import { Document, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import jwtp from '../libs/jwtp';
 import { authenticatedRequest, TokenPayload } from '../types/requests/authenticatedRequest';
 import UserModel from '../models/user';
@@ -15,18 +15,15 @@ const authMiddleware: RequestHandler = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-
   const customReq = req as authenticatedRequest;
 
   try {
-    const accessToken = customReq.cookies?.access_token;
-    const refreshToken = customReq.cookies?.refresh_token;
-    const csrfToken = customReq.headers['x-csrf-token'];
+    const accessToken = req.cookies?.access_token;
+    const refreshToken = req.cookies?.refresh_token;
 
     if (!accessToken && !refreshToken) {
       customReq.user = undefined;
       customReq.isAuthenticated = false;
-
       return next();
     }
 
@@ -49,63 +46,53 @@ const authMiddleware: RequestHandler = async (
           isGoogleUser: user.isGoogleUser
         };
 
-        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(customReq.method)) {
-          if (!csrfToken || !tokenUtil.verifyCsrfToken(csrfToken as string, new Types.ObjectId(decoded._id))) {
-            res.status(403).json({
-              code: 'INVALID_CSRF',
-              message: 'Invalid CSRF token'
-            });
-            return;
-          }
-        }
+        customReq.isAuthenticated = true;
 
-        if (customReq.method === 'GET' && customReq.user) {
-          const newCsrfToken = tokenUtil.generateCsrfToken(new Types.ObjectId(customReq.user._id));
-          res.header('X-CSRF-Token', await newCsrfToken); 
-        }
-
-        next();
-        return;
+        return next();
       } catch (accessError) {
-        if ((accessError as Error).name !== 'TokenExpiredError') throw accessError;
+        if ((accessError as Error).name !== 'TokenExpiredError') {
+          throw accessError;
+        }
       }
     }
 
     if (refreshToken) {
       const decoded = await jwtp.verify(refreshToken, REFRESH_TOKEN_SECRET!) as TokenPayload;
-      const user: (Document & UserFromDB) | null = await UserModel.findById(decoded._id);
+      const user = await UserModel.findById(decoded._id);
 
       if (!user || user.tokenVersion !== decoded.tokenVersion) {
         res.clearCookie('access_token');
         res.clearCookie('refresh_token');
-        res.status(401).json({
-          code: 'TOKEN_REVOKED',
-          message: 'Session expired. Please log in again.'
-        });
+        res.status(401).json({ code: 'TOKEN_REVOKED', message: 'Session expired. Please log in again.' });
         return 
       }
 
-      const newTokenVersion = user.tokenVersion + 1;
-      user.tokenVersion = newTokenVersion
-      await (user as Document).save();
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        decoded._id,
+        { $inc: { tokenVersion: 1 } },
+        { new: true }
+      );
 
-      const newAccessToken = await tokenUtil.generateAccessToken(user._id, newTokenVersion);
-      const newRefreshToken = await tokenUtil.generateRefreshToken(user._id, newTokenVersion);
-      const csrfToken = await tokenUtil.generateCsrfToken(user._id);
+      if (!updatedUser) throw new Error("User not found");
+
+      const newAccessToken = await tokenUtil.generateAccessToken(user._id, updatedUser.tokenVersion);
+      const newRefreshToken = await tokenUtil.generateRefreshToken(user._id, updatedUser.tokenVersion);
+
+      // tokenUtil.generateAndStoreCsrfToken(res);
 
       setAuthTokens(res, newAccessToken, newRefreshToken);
-      res.header('X-CSRF-Token', csrfToken); 
 
       customReq.user = {
         _id: user._id,
         accessToken: newAccessToken,
         role: user.role,
-        tokenVersion: newTokenVersion,
+        tokenVersion: updatedUser.tokenVersion,
         isGoogleUser: user.isGoogleUser
       };
 
-      next();
-      return; 
+      customReq.isAuthenticated = true;
+
+      return next();
     }
 
     res.clearCookie('access_token');
@@ -114,8 +101,7 @@ const authMiddleware: RequestHandler = async (
       code: 'INVALID_CREDENTIALS',
       message: 'Invalid authentication credentials'
     });
-    return 
-
+    return;
   } catch (error) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
@@ -123,7 +109,7 @@ const authMiddleware: RequestHandler = async (
       code: 'AUTH_ERROR',
       message: 'Authentication failed'
     });
-    return 
+    return;
   }
 };
 

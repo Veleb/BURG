@@ -147,7 +147,7 @@ userController.post('/google-auth', async (req: Request, res: Response, next: Ne
         refreshToken 
       } = await userService.handleGoogleAuth(idToken);
       
-      const csrfToken = await tokenUtil.generateCsrfToken(user._id);
+      const csrfToken = await tokenUtil.generateCsrfToken();
       
       setAuthTokens(res, accessToken, refreshToken);
       
@@ -216,6 +216,16 @@ userController.delete('/delete', async (req: Request, res: Response, next: NextF
         next(error);
     }
 });
+
+userController.get('/csrf-token', (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const csrfToken = tokenUtil.generateCsrfToken();
+        res.status(200).json({ csrfToken });
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 userController.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
     try {
