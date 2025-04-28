@@ -93,8 +93,8 @@
 
   <div class="form-group">
     <label for="vehicleName">Vehicle IDN (Identification number)</label>
-    <input type="text" id="vehicleidn" name="vehicleidn" 
-           [(ngModel)]="vehicleData.vehicleidn" required minlength="2" #idn="ngModel">
+    <input type="text" id="identificationNumber" name="identificationNumber" 
+           [(ngModel)]="vehicleData.identificationNumber" required minlength="2" #idn="ngModel">
     @if (idn.invalid && (idn.dirty || idn.touched)) {
       <div class="validation-error">
         @if (idn.errors?.['required']) {

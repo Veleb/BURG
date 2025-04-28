@@ -230,7 +230,7 @@ vehicleController.post('/', async (req: Request, res: Response, next: NextFuncti
         mileage: vehicleData.vehicleMileage,
         chassisType: vehicleData.vehicleChassisType,
         capacity: vehicleData.vehicleCapacity,
-        identificationNumber: vehicleData.vehicleidentificationNumber,
+        identificationNumber: vehicleData.identificationNumber,
         images: vehicleData.vehicleImages,
         vehicleRegistration: vehicleData.vehicleRegistration,
       },
@@ -241,13 +241,13 @@ vehicleController.post('/', async (req: Request, res: Response, next: NextFuncti
     }
 
     const vehicle: VehicleInterface | null = await vehicleService.createVehicle(vehicleDataWithOwner);
-
+    
     if (!vehicle) {
       res.status(400).json({ message: 'Error creating vehicle' });
       return; 
     }
 
-    res.status(201).json(vehicle);
+    res.status(201).json({message: 'Vehicle created successfully!', vehicle});
     return;
 
   } catch (err) {
@@ -299,7 +299,7 @@ vehicleController.put('/', async (req: Request, res: Response, next: NextFunctio
         mileage: vehicleData.vehicleMileage,
         chassisType: vehicleData.vehicleChassisType,
         capacity: vehicleData.vehicleCapacity,
-        identificationNumber: vehicleData.vehicleidentificationNumber,
+        identificationNumber: vehicleData.identificationNumber,
         images: vehicleData.vehicleImages,
         vehicleRegistration: vehicleData.vehicleRegistration,
       },

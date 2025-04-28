@@ -4,21 +4,26 @@ import { VehicleInterface } from "./vehicle-types";
 
 export interface RentInterface {
   _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+
   start: Date;
   end: Date;
   vehicle: VehicleInterface;  
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
-  referralCode: string | null;
-  useCredits: boolean;
   status: 'pending' | 'confirmed' | 'canceled';
   total: number;
-  calculatedPrice: number; 
+
+  referralCode: string | null;
+  useCredits: boolean;
+
   appliedDiscounts: { 
     referral: number;
     creditsUsed: number;
   };
+
   paymentSessionId?: string;
 }
 
@@ -30,15 +35,18 @@ export interface RentForCreate {
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
-  referralCode: string | null;
-  useCredits: boolean;
   status: 'pending' | 'confirmed' | 'canceled';
   total: number;
-  calculatedPrice: number; 
+
+  referralCode: string | null;
+  useCredits: boolean;
+
   appliedDiscounts: { 
     referral: number;
     creditsUsed: number;
   };
+  
+  paymentSessionId?: string;
 }
 
 export type RentInterfaceWithoutUser = Omit<RentInterface, 'user'>;

@@ -49,7 +49,7 @@ export interface VehicleForCreate {
   vehicleChassisType: string;
   vehicleCategory: CategoryEnum;
   vehicleCapacity: number;
-  vehicleidn: string;
+  identificationNumber: string;
   vehiclePricePerDay: number;
   vehiclePricePerKm: number;
   vehicleImages: string[];

@@ -10,7 +10,9 @@ const CompanySchema = new Schema<CompanyInterface>({
   companyType: { type: String, required: true },
   stateRegistration: { type: String, required: true },
   
-  owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  transactions: [{ type: Types.ObjectId, ref: "Transaction" }],
+
+  owner: { type: Types.ObjectId, ref: "User", required: true },
 
   status: { type: String, required: true },
 

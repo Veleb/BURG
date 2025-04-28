@@ -4,7 +4,7 @@ import UserService from "../services/userService";
 import rentService from "../services/rentService";
 import { RentInterface } from "../types/model-types/rent-types";
 import vehicleService from "../services/vehicleService";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const rentController = Router();
 
@@ -147,13 +147,13 @@ rentController.get('/:rentId', async (req: Request, res: Response, next: NextFun
   
   try {
 
-    const rentId: string = req.params.rentId;
+    const rentId = req.params.rentId;
 
     if (!rentId) {
       res.status(400).json({ message: 'No rent ID provided.' });
     }
 
-    const rent = await rentService.getRentById(rentId);
+    const rent = await rentService.getRentById(new Types.ObjectId(rentId));
 
     res.status(200).json(rent);
 
@@ -164,7 +164,7 @@ rentController.get('/:rentId', async (req: Request, res: Response, next: NextFun
 });
 
 rentController.get('/:vehicleId/unavailable-dates', async (req: Request, res: Response, next: NextFunction) => {
-  const vehicleId = req.params.vehicleId;
+  const vehicleId = new Types.ObjectId(req.params.vehicleId);
 
   if (!vehicleId) {
     res.status(400).json( { message: 'Vehicle ID is required' } );

@@ -64,6 +64,7 @@ companyController.post('/', async (req: Request, res: Response, next: NextFuncti
       owner: userId, 
       status: "pending" as "pending" | "confirmed" | "canceled",
       totalEarnings: 0,
+      transactions: [],
     };
 
     const newCompany = await companyService.createCompany(dataWithOwner);

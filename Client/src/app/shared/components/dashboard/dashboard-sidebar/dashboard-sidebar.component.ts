@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { UserService } from '../../../../user/user.service';
 import { CompanyInterface } from '../../../../../types/company-types';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { UserFromDB } from '../../../../../types/user-types';
 
 @Component({
   selector: 'app-dashboard-sidebar',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, RouterModule],
   templateUrl: './dashboard-sidebar.component.html',
   styleUrl: './dashboard-sidebar.component.css'
 })

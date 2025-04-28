@@ -9,6 +9,7 @@ export interface CompanyInterface {
   phoneNumber: string;
   location: string;
   carsAvailable?: VehicleInterface[];
+  transactions: Types.ObjectId[]; 
   owner: Types.ObjectId | UserInterface;
   status: 'pending' | 'confirmed' | 'canceled';
   totalEarnings: number;
@@ -22,6 +23,7 @@ export interface CompanyForCreate {
   phoneNumber: string;
   location: string;
   owner: Types.ObjectId;
+  transactions: string[]; 
   status: 'pending' | 'confirmed' | 'canceled';
   totalEarnings: number;
   companyType: string;

@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Size, CategoryEnum } from '../../../types/enums';
 import { VehicleForCreate } from '../../../types/vehicle-types';
 import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-vehicle',
@@ -15,6 +16,7 @@ export class AddVehicleComponent implements OnInit {
 
   private vehicleService = inject(VehicleService);
   private route = inject(ActivatedRoute);
+  private toastr = inject(ToastrService);
 
   companyId: string | null = null;
   isSubmitting: boolean = false;
@@ -38,7 +40,7 @@ export class AddVehicleComponent implements OnInit {
     vehicleMileage: 0,
     vehicleChassisType: '',
     vehicleCapacity: 0,
-    vehicleidn: '',
+    identificationNumber: '',
     vehicleImages: [''],
     vehicleRegistration: [''],
   };
@@ -94,12 +96,13 @@ export class AddVehicleComponent implements OnInit {
     this.vehicleService.createVehicle(this.vehicleData).subscribe({
       next: (res) => {
         this.isSubmitting = false;
-        this.successMessage = 'Vehicle created successfully!';
         form.resetForm();
         this.vehicleData.vehicleImages = [''];
+        this.toastr.success('Vehicle added successfully!', "Success");
       },
       error: (err) => {
         this.isSubmitting = false;
+        this.toastr.error('Error while adding vehicle!', "Error Occurred!");
       }
     });
   }

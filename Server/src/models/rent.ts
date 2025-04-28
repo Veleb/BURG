@@ -45,6 +45,32 @@ const RentSchema = new Schema<RentInterface>({
     required: true,
   },
 
+  appliedDiscounts: {
+    referral: {
+      type: Number,
+      default: 0,
+    },
+    creditsUsed: {
+      type: Number,
+      default: 0,
+    },
+  },
+
+  paymentSessionId: {
+    type: String,
+    required: false,
+  },
+
+  referralCode: {
+    type: String,
+    required: false,
+  },
+
+  useCredits: {
+    type: Boolean,
+    required: false,
+  },
+
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 const RentModel = model('Rent', RentSchema, 'rents');

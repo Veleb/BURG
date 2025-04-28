@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CompanyInterface } from '../../types/company-types';
 
@@ -8,9 +8,7 @@ import { CompanyInterface } from '../../types/company-types';
 })
 export class HostService {
 
-  constructor(
-    private http: HttpClient,
-  ) { }
+  private http = inject(HttpClient)
 
   createCompany(companyData: CompanyInterface): Observable<CompanyInterface> {
     return this.http.post<CompanyInterface>(`/api/companies`, companyData);

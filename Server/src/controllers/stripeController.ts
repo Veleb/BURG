@@ -5,6 +5,7 @@ import vehicleService from "../services/vehicleService";
 import UserService from "../services/userService";
 import { Types } from "mongoose";
 import { RentInterface } from "../types/model-types/rent-types";
+import TransactionService from "../services/transactionService";
 
 const stripeController = Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
@@ -26,20 +27,27 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
       appliedDiscounts
     } = req.body;
 
-    if (!vehicleId || !start || !end || !userId) {
-      res.status(400).json({ error: 'Missing required fields' });
+    // validate input data
+
+    if (!vehicleId || !start || !end || !isPricePerDay || !userId || !calculatedPrice) {
+      res.status(400).json({ message: 'Missing required fields' });
       return; 
     }
+
+    // fetch vehicle and user
 
     const vehicle = await vehicleService.getVehicleById(vehicleId);
     const user = await UserService.getUserById(userId);
 
     if (!vehicle || !user) {
-      res.status(404).json({ error: 'Vehicle or user not found' });
+      res.status(404).json({ message: 'Vehicle or user not found' });
       return; 
     }
 
+    // calculate the price like the front-end
+
     let basePrice = 0;
+
     const rentalHours = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
     
     if (isPricePerDay) {
@@ -58,12 +66,14 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
     const priceAfterDiscounts = Math.max(basePrice - (referralDiscountSafe + appliedDiscounts.creditsUsed), 0);
     const expectedTotal = Math.round(priceAfterDiscounts * 1.18);
 
-    if (calculatedPrice !== expectedTotal) {
-      res.status(400).json({ error: 'Price mismatch' });
+    if (calculatedPrice !== expectedTotal) { // check if the calculated price matches the expected total
+      res.status(400).json({ message: 'Price mismatch' });
       return;
     }
 
-    const rent = await rentService.createRent({
+    // create rent
+
+    const rent: RentInterface = await rentService.createRent({
       vehicle: vehicleId,
       user: userId,
       start,
@@ -74,12 +84,13 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
       useCredits,
       status: 'pending',
       total: calculatedPrice,
-      calculatedPrice: basePrice,
       appliedDiscounts: {
         referral: referralDiscountSafe,
         creditsUsed: useCredits ? appliedDiscounts.creditsUsed : 0
       }
     });
+
+    // create checkout session and add metadata
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -103,12 +114,9 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
     });
 
     res.json({ sessionId: session.id });
+
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'An unknown error occurred' });
-    }
+    res.status(500).json({ message: (error as Error).message });
   }
 });
 
@@ -118,92 +126,188 @@ stripeController.post('/verify-payment', async (req: Request, res: Response, nex
 
     if (!sessionId || typeof sessionId !== 'string' || sessionId.length > 66) {
       res.status(400).json({ message: 'Invalid sessionId' });
-      return 
+      return;
     }
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const session = await stripe.checkout.sessions.retrieve(sessionId); // retrieve the session
+
+    const rentId = new Types.ObjectId(session.metadata?.rentId); // extract the rentId from the session metadata
 
     if (!session) {
       res.status(404).json({ message: 'Session not found' });
-      return 
+      return;
     }
 
+    // check if the session is already paid
+
     if (session.payment_status === 'paid') {
-      res.status(200).json({ status: 'success' });
-      return 
-    } else {
-      res.status(400).json({ status: 'fail' });
-      return 
+
+      const rent = await rentService.changeRentStatus(rentId, 'confirmed'); // update the rent status to confirmed
+
+      if (!rent) {
+        res.status(404).json({ message: 'Rent not found' });
+        return;
+      }
+
+      res.status(200).json({ status: 'success', rental: rent });
+      return;
     }
+
+    // handle unpaid or incomplete payments (unpaid means user didn't complete payment - left the page or closed the tab etc.)
+
+    if (session.payment_status === 'unpaid') {
+
+      const rent = await rentService.changeRentStatus(rentId, 'pending'); // update the rent status to pending
+
+      if (!rent) {
+        res.status(404).json({ message: 'Rent not found' });
+        return;
+      }
+
+      res.status(200).json({ status: 'pending', rental: rent });
+      return;
+    }
+
+    // if no payment is required - admin rental without payment
+
+    if (session.payment_status === 'no_payment_required') {
+
+      const rent = await rentService.changeRentStatus(rentId, 'confirmed'); // update the rent status to confirmed
+
+      if (!rent) {
+        res.status(404).json({ message: 'Rent not found' });
+        return;
+      }
+
+      res.status(200).json({ status: 'success', rental: rent });
+      return;
+    }
+
+    // handle other payment statuses
+
+    res.status(400).json({ message: 'Unknown payment status' });
 
   } catch (error) {
     if (error instanceof Stripe.errors.StripeError) {
-      res.status(500).json({ message: 'Stripe payment verification failed', error: error.message });
-      return 
+      res.status(500).json({ message: 'Stripe payment verification failed'});
+      return;
     }
 
     return next(error);
   }
 });
 
-stripeController.post('/webhook', async (req: Request, res: Response, next: NextFunction) => {
+export const postWebhook = async (req: Request, res: Response) => {
+  
   const sig = req.headers['stripe-signature'] as string;
   const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
-
+  
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET);
   } catch (err) {
     res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Invalid signature'}`);
-    return; 
-  }
-
-  if (event.type !== 'checkout.session.completed') {
-    res.status(200).json({ received: true });
-    return; 
+    return;
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
-  
-  try {
-    if (!session.metadata?.rentId || !session.metadata?.userId) {
-      throw new Error('Missing required metadata');
-    }
 
-    // Validate ObjectID format
-    if (!Types.ObjectId.isValid(session.metadata.rentId) || 
-        !Types.ObjectId.isValid(session.metadata.userId)) {
-      throw new Error('Invalid ID format in metadata');
-    }
+  // extract metadata from the session 
 
-    // Atomic transaction with referral handling
-    const result = await UserService.updateUserAfterPayment(
-      new Types.ObjectId(session.metadata.userId),
-      { 
-        _id: new Types.ObjectId(session.metadata.rentId),
-        appliedDiscounts: { // Preserve existing discounts
-          referral: Number(session.metadata.referralDiscount) || 0,
-          creditsUsed: Number(session.metadata.creditsUsed) || 0
-        }
-      } as RentInterface,
-      session.id,
-      session.metadata.referralCode
+  const rentId = session.metadata?.rentId;
+  const userId = session.metadata?.userId;
+  const amountTotal = session.amount_total || 0;
+
+  // make sure the rentId and userId are valid Ids
+
+  const validRentId = rentId && Types.ObjectId.isValid(rentId) ? new Types.ObjectId(rentId) : null;
+  const validUserId = userId && Types.ObjectId.isValid(userId) ? new Types.ObjectId(userId) : null;
+
+  if (!validRentId || !validUserId) {
+    res.status(400).send('Invalid metadata');
+    return;
+  }
+
+  // check whether the event was of type checkout.session.completed
+
+  if (event.type === 'checkout.session.completed') { 
+    try {
+
+      const result = await UserService.updateDataAfterPayment(
+        validUserId,
+        {
+          _id: validRentId,
+          appliedDiscounts: {
+            referral: session.metadata ? Number(session.metadata.referralDiscount) || 0 : 0,
+            creditsUsed: session.metadata ? Number(session.metadata.creditsUsed) || 0 : 0
+          }
+        } as RentInterface,
+        session.id,
+        session.metadata?.referralCode || ''
+      );
+
+      await TransactionService.createTransaction(
+        validUserId,
+        validRentId,
+        'success',
+        amountTotal / 100
+      );
+
+      res.status(200).json({ received: true, rental: result.rental, user: result.user });
+    } catch (error) {
+      console.error("Error in checkout.session.completed handler:", error);
+    
+      if (!validRentId || !validUserId) {
+        console.error('Missing or invalid metadata');
+        res.status(400).json({ message: 'Missing or invalid metadata' });
+        return;
+      }
+    
+      await TransactionService.createTransaction(
+        validUserId,
+        validRentId,
+        'failed',
+        amountTotal / 100,
+      );
+    
+      res.status(500).json({
+        message: 'Payment processing failed',
+      });
+    }
+  } else if (event.type === 'checkout.session.expired') {
+    await TransactionService.createTransaction(
+      validUserId,
+      validRentId,
+      'failed',
+      amountTotal / 100,
     );
 
-    res.status(200).json({ 
-      received: true,
-      rental: result.rental,
-      user: result.user
-    });
+    res.status(200).send();
+  } else if (event.type === 'payment_intent.payment_failed') {
 
-  } catch (error) {
-    console.error('Webhook processing failed:', error);
-    res.status(500).json({ 
-      error: 'Payment processing failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-    return 
+    const session = event.data.object;
+    const rentId = new Types.ObjectId(session.metadata.rentId); // extract the rentId from the session metadata
+
+    const rent = await rentService.changeRentStatus(rentId, 'canceled'); // update the rent status to canceled
+
+    if (!rent) {
+      res.status(404).json({ message: 'Rent not found' });
+      return;
+    }
+
+    await TransactionService.createTransaction(
+      validUserId,
+      validRentId,
+      'failed',
+      amountTotal / 100,
+    );
+
+    res.status(200).send();
+
+  } else {
+    res.status(200).send();
   }
-});
+  
+};
 
 export default stripeController;

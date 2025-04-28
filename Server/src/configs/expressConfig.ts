@@ -5,6 +5,8 @@ import authMiddleware from '../middlewares/authMiddleware';
 import routes from '../routes';
 import errorMiddleware from '../middlewares/errorMiddleware';
 import csrfMiddleware from '../middlewares/csrfMiddleware';
+import { postWebhook } from '../controllers/stripeController';
+
 
 const FRONT_END = (process.env.PROD === 'true') ? process.env.FRONT_END_PROD : process.env.FRONT_END_LOCAL;
 
@@ -30,7 +32,13 @@ const corsOptions = {
 export function expressConfig(app: Application): void {
 
   app.set('trust proxy', 1);
-
+    
+  app.post(
+    '/stripe/webhook',
+    express.raw({ type: 'application/json' }),
+    postWebhook 
+  );
+  
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());

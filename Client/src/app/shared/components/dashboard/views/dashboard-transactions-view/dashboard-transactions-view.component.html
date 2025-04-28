@@ -1,0 +1,19 @@
+<div class="transactions-wrapper">
+  @if (transactions.length < 0) {
+    <p class="no-transactions">No transactions found!</p>
+  } @else {
+    @for (transaction of transactions; track $index) {
+      <div class="transaction-card">
+        <div class="transaction-card-header">
+          <h3>Company - {{ transaction.company.name }}</h3>
+          <h3>User - {{ transaction.user.fullName }}</h3>
+          <p>{{ transaction.created_at | date }}</p>
+        </div>
+        <div class="transaction-card-body">
+          <p>Total: {{ transaction.total | currencyConverter | currency }}</p>
+          <p>Status: {{ transaction.status }}</p>
+        </div>
+      </div>
+    }
+  }
+</div>

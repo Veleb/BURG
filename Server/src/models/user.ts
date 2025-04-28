@@ -59,6 +59,10 @@ const UserSchema = new Schema<UserInterface>({
     ref: "Company",
     type: Types.ObjectId,
   }],
+  transactions: [{
+    ref: "Transaction",
+    type: Types.ObjectId,
+  }],
   referralCode: {
     type: String,
     unique: true,

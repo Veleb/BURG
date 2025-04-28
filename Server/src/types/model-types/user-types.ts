@@ -11,7 +11,8 @@ export interface UserInterface {
   rents: RentInterface[];
   likes: Types.ObjectId[] | VehicleInterface[];
   companies?: CompanyInterface[];
-  
+  transactions: Types.ObjectId[];
+
   isGoogleUser: boolean;
   tokenVersion: number;
   role: "user" | "admin" | "host";
@@ -52,12 +53,22 @@ export interface RegularUser extends UserForAuth {
 export type UserAuthType = GoogleUser | RegularUser;
 
 export interface UserFromDB {
-  _id: Types.ObjectId;
+  fullName: string
   email: string;
-  fullName: string;
   phoneNumber?: string;
-  password: string | null;
+  rents: RentInterface[];
+  likes: Types.ObjectId[] | VehicleInterface[];
+  companies?: CompanyInterface[];
+  transactions: Types.ObjectId[];
+
   isGoogleUser: boolean;
-  role: string;
   tokenVersion: number;
+  role: "user" | "admin" | "host";
+  
+  referralCode: string;
+  disallowedReferralCodes: string[];
+  credits: number;
+  _id: Types.ObjectId;
+  created_at: Date;
+  updated_at: Date;
 }

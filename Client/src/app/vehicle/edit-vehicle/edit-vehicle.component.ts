@@ -80,7 +80,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
       vehicleMileage: vehicle?.details.mileage || 0,
       vehicleChassisType: vehicle?.details.chassisType || '',
       vehicleCapacity: vehicle?.details.capacity || 0,
-      vehicleidn: vehicle?.details.identificationNumber || '',
+      identificationNumber: vehicle?.details.identificationNumber || '',
       vehicleImages: [...vehicle.details.images],
       vehicleRegistration: [...vehicle.details.vehicleRegistration],
     };
@@ -103,7 +103,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     vehicleMileage: 0,
     vehicleChassisType: '',
     vehicleCapacity: 0,
-    vehicleidn: '',
+    identificationNumber: '',
     vehicleImages: [''],
     vehicleRegistration: [''],
   };

@@ -1,7 +1,7 @@
 import { CompanyInterface } from "./company-types";
+import { TransactionInterface } from "./transaction-types";
 
 export interface UserFromDB {
-  _id: string;
   fullName: string,
   email: string;
   phoneNumber?: string;
@@ -11,6 +11,9 @@ export interface UserFromDB {
   referralCode: string;
   disallowedReferralCodes: string[];
   credits: number;
+  transactions: TransactionInterface[],
+  
+  _id: string;
   created_at: Date;
   updated_at: Date;
 }

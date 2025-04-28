@@ -243,97 +243,103 @@ async function promoteUserStatus(userId: Types.ObjectId, userStatus: "user" | "h
   return updatedUser;
 }
 
-async function updateUserAfterPayment(
+async function updateDataAfterPayment(
   userId: Types.ObjectId,
   rentalData: RentInterface,
   sessionId: string,
   referralCode?: string
 ): Promise<{ status: string; rental: RentInterface; user: any }> {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
+
+    // fetch the user and the rental respectively
+
     const [user, rental] = await Promise.all([
-      UserModel.findById(userId).session(session).lean(false),
-      RentModel.findById(rentalData._id).session(session).lean(false)
-    ]);
+      UserModel.findById(userId),
+      RentModel.findById(rentalData._id)
+    ]); 
+
+    // validate the user and rental
 
     if (!user) throw new Error(`User ${userId} not found`);
     if (!rental) throw new Error(`Rental ${rentalData._id} not found`);
 
-    // Validate rental ownership
     if (!rental.user._id.equals(userId)) {
       throw new Error('User does not own this rental');
     }
-
-    // Check valid state transition
     if (rental.status !== 'pending') {
       throw new Error(`Rental already in ${rental.status} state`);
     }
 
-    // Process referral code atomically
     let referralBonus = 0;
+
     if (referralCode) {
-      const referrer = await UserModel.findOne({ 
-        referralCode 
-      }).session(session);
+      const referrer = await UserModel.findOne({ referralCode }); // fetch the referrer by referral code
 
       if (referrer) {
         const isSelfReferral = referrer._id.equals(userId);
         const isCodeBlacklisted = user.disallowedReferralCodes.includes(referralCode);
 
-        if (!isSelfReferral && !isCodeBlacklisted) {
-          // Update referrer
-          referrer.credits += 5;
-          await referrer.save({ session });
+        if (!isSelfReferral && !isCodeBlacklisted) { // here we check if the referrer is not the user themselves and if the code is not blacklisted
+          referrer.credits += 5; // we add 5 credits to the referrer
+          await referrer.save();
 
-          // Update current user
-          user.disallowedReferralCodes.push(referralCode);
+          user.disallowedReferralCodes.push(referralCode); // we add the referral code to the user's disallowed codes
           referralBonus = 5;
         }
       }
     }
 
-    // Update rental with atomic operations
+    // update the rental status to confirmed and apply the referral bonus
+    
     const updatedRental = await RentModel.findByIdAndUpdate(
       rental._id,
-      { 
+      {
         status: 'confirmed',
         paymentSessionId: sessionId,
         $inc: { 'appliedDiscounts.referral': referralBonus }
       },
-      { new: true, session }
+      { new: true }
     );
 
-    // Update user with atomic operations
+    if (!updatedRental) {
+      throw new Error('Updated rental not found');
+    }
+
+    // Update user
+    const updateUserData: any = {
+      $addToSet: { rentalHistory: rental._id },
+      $inc: { 
+        credits: -rentalData.appliedDiscounts.creditsUsed,
+        creditsUsed: -rentalData.appliedDiscounts.creditsUsed 
+      }
+    };
+
+    if (referralCode && referralCode.trim()) {
+      updateUserData.$push = { disallowedReferralCodes: referralCode.trim() };
+    }
+
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
-      {
-        $addToSet: { rentalHistory: rental._id },
-        $inc: { 
-          credits: -rentalData.appliedDiscounts.creditsUsed,
-          creditsUsed: -rentalData.appliedDiscounts.creditsUsed 
-        },
-        $push: referralCode ? { disallowedReferralCodes: referralCode } : {}
-      },
-      { new: true, session }
+      updateUserData,
+      { new: true }
     );
 
-    await session.commitTransaction();
+    if (!updatedUser) {
+      throw new Error('Updated user not found');
+    }
 
-    return { 
+    return {
       status: 'success',
-      rental: updatedRental || (() => { throw new Error('Updated rental not found'); })(),
+      rental: updatedRental,
       user: updatedUser
     };
 
   } catch (error) {
-    await session.abortTransaction();
+    console.error('Error in updateDataAfterPayment:', error);
     throw new Error('Payment update failed');
-  } finally {
-    session.endSession();
   }
 }
+
 
 const UserService = {
   loginUser,
@@ -350,7 +356,7 @@ const UserService = {
   deleteUser,
   handleGoogleAuth,
   promoteUserStatus,
-  updateUserAfterPayment,
+  updateDataAfterPayment,
 
 }
 

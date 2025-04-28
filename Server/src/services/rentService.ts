@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import CompanyModel from "../models/company";
 import RentModel from "../models/rent";
 import UserModel from "../models/user";
@@ -92,7 +93,7 @@ async function getRentsByCompanyId(companyId: string): Promise<RentInterface[]> 
   }
 }
 
-async function getRentById(rentId: string): Promise<RentInterface | null> {
+async function getRentById(rentId: Types.ObjectId): Promise<RentInterface | null> {
   try {
     const rent = await RentModel.findById(rentId)
       .populate({
@@ -112,7 +113,7 @@ async function getRentById(rentId: string): Promise<RentInterface | null> {
   }
 }
 
-async function getUnavailableDates(vehicleId: string): Promise<RentInterface[]> {
+async function getUnavailableDates(vehicleId: Types.ObjectId): Promise<RentInterface[]> {
   try {
     const reservations: RentInterface[] = await RentModel.find({
       vehicle: vehicleId,
@@ -125,10 +126,10 @@ async function getUnavailableDates(vehicleId: string): Promise<RentInterface[]> 
   }
 }
 
-async function changeRentStatus(rentId: string, status: string) {
+async function changeRentStatus(rentId: Types.ObjectId, status: string) {
 
   try {
-
+    
     const rent = await RentModel.findByIdAndUpdate(
       rentId,
       { $set: { status: status } },

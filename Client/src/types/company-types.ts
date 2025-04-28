@@ -1,3 +1,4 @@
+import { TransactionInterface } from "./transaction-types";
 import { VehicleInterface } from "./vehicle-types";
 
 export interface CompanyInterface {
@@ -11,4 +12,5 @@ export interface CompanyInterface {
   status: 'pending' | 'confirmed' | 'canceled';
   carsAvailable: VehicleInterface[],
   totalEarnings: number,
+  transactions: TransactionInterface[],
 }
