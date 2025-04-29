@@ -9,6 +9,11 @@ TransactionController.get('/', async (req: Request, res: Response, next: NextFun
    
     const transactions = await TransactionService.getAllTransactions();
 
+    if (!transactions || transactions.length === 0) {
+      res.status(404).json({ message: "No transactions found." });
+      return;
+    }
+
     res.status(200).json(transactions);
   } catch (err) {
     next(err);
