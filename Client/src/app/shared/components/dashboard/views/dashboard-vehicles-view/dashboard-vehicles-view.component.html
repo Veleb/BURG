@@ -2,15 +2,41 @@
   <div class="header">
     <h2 class="title">Manage Vehicles</h2>
 
-    <button 
-    [routerLink]="[user?.role === 'host' ? '/dashboard/host/add-vehicle' : '/dashboard/admin/add-vehicle']" 
-    [queryParams]="{ companyId: currentCompanyId }"
-    class="add-btn"
+    <div class="button-wrapper">
+      <button 
+      [routerLink]="[user?.role === 'host' ? '/dashboard/host/add-vehicle' : '/dashboard/admin/add-vehicle']" 
+      [queryParams]="{ companyId: currentCompanyId }"
+      class="add-btn"
+      >
+      
+        <i class="fas fa-plus"></i>
+        <span class="btn-text">Add Vehicle</span>
+      </button>
+  
+      <button class="add-btn" (click)="fileInput.click()">
+        <i class="fas fa-plus"></i>
+        <span class="btn-text">Add Vehicles in bulk</span>
+      </button>
+      
+      <input 
+        #fileInput 
+        type="file" 
+        accept=".csv" 
+        style="display: none;" 
+        (change)="onFileSelected($event)"
+      >
+
+      <a 
+      href="/vehicle-template.xlsx" 
+      download="vehicle-template.xlsx" 
+      class="download-template-btn"
     >
-    
-      <i class="fas fa-plus"></i>
-      <span class="btn-text">Add Vehicle</span>
-    </button>
+      <i class="fas fa-download"></i>
+      <span>Download Template</span>
+    </a>
+
+    </div>
+
   </div>
 
   @if (loading) {

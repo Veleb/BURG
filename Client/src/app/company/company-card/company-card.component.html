@@ -1,0 +1,20 @@
+<div class="company-card">
+  <h3>{{ company?.name }}</h3>
+  <p><strong>Email:</strong> {{ company?.email }}</p>
+  <p><strong>Phone:</strong> {{ company?.phoneNumber }}</p>
+  <p><strong>Location:</strong> {{ company?.location }}</p>
+  <p><strong>Status:</strong> {{ company?.status }}</p>
+  <p><strong>Total Earnings:</strong> {{ (company?.totalEarnings ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+  <p><strong>Company Type:</strong> {{ company?.companyType }}</p>
+  <p><strong>State Registration:</strong> {{ company?.stateRegistration }}</p>
+  <p><strong>Company ID:</strong> {{ (company?._id ?? '') }}</p>
+
+  @if (company?.status === 'pending') {
+    <div class="action-buttons">
+      <button (click)="confirmCompany((company?._id ?? ''))">Confirm</button>
+      <button (click)="rejectCompany((company?._id ?? ''))">Reject</button>
+    </div>
+  }
+
+  <a class="details-link" [routerLink]="['/company', (company?._id ?? '')]">View Details</a>
+</div> 

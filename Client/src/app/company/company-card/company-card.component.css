@@ -1,0 +1,111 @@
+.company-card {
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.company-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.company-card h3 {
+  margin: 0 0 1rem 0;
+  color: #1a202c;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.company-card p {
+  margin: 0 0 0.75rem 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.company-card p strong {
+  color: #2d3748;
+  font-weight: 500;
+}
+
+/* Status Badge Effect */
+.company-card p[strong="Status:"] {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.company-card p[strong="Status:"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a0aec0;
+}
+
+.company-card p[strong="Status:"]:has(:contains("confirmed"))::before {
+  background: #48bb78;
+}
+
+.company-card p[strong="Status:"]:has(:contains("pending"))::before {
+  background: #ed8936;
+}
+
+.company-card p[strong="Status:"]:has(:contains("canceled"))::before {
+  background: #f56565;
+}
+
+.action-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-buttons button:first-child {
+  background: #48bb78;
+  color: white;
+}
+
+.action-buttons button:first-child:hover {
+  background: #38a169;
+}
+
+.action-buttons button:last-child {
+  background: #f56565;
+  color: white;
+}
+
+.action-buttons button:last-child:hover {
+  background: #e53e3e;
+}
+
+.details-link {
+  display: block;
+  margin-top: 1rem;
+  color: #4299e1;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.details-link:hover {
+  color: #3182ce;
+  text-decoration: underline;
+}

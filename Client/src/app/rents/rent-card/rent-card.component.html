@@ -21,7 +21,7 @@
       @if (rent.total) {
         <div class="status-badge" [class]="rent.total">
           <h3>Rent total</h3>
-          <h4>{{ rent.total | currencyConverter | currency }}</h4>
+          <h4>{{ rent.total | currencyConverter | currency: selectedCurrency }}</h4>
         </div>
       }
       

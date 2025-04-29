@@ -16,7 +16,7 @@ import { DashboardUsersViewComponent } from "../shared/components/dashboard/view
 
 export const DASHBOARD_ROUTES: Routes = [
   { path: "user", component: UserDashboardComponent, canActivate: [ authGuard ] },
-  { path: "host", component: HostDashboardComponent, canActivate: [  ],
+  { path: "host", component: HostDashboardComponent, canActivate: [ hostGuard ],
     children: [
       { path: 'home', component: DashboardHomeViewComponent },
       { path: 'vehicles', component: DashboardVehiclesViewComponent },

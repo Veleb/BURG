@@ -43,7 +43,8 @@
             "allowedCommonJsDependencies": [
               "intl-tel-input",
               "moment",
-              "leaflet"
+              "leaflet",
+              "papaparse"
             ]
           },
           "configurations": {

@@ -62,7 +62,7 @@
   </div>
   
   @if (user?.role === 'admin') {
-    <div class="dashboard-nav-item" [routerLink]="[`admin/users`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/companies`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
       <i class="fa-solid fa-building"></i>
       <span class="nav-text">Companies</span>
     </div>

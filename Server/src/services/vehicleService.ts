@@ -29,6 +29,31 @@ async function createVehicle(vehicleData: VehicleForCreate): Promise<VehicleInte
   return newVehicle;
 }
 
+async function createBulk(vehiclesData: VehicleForCreate[]): Promise<VehicleInterface[]> {
+  const createdVehicles = await VehicleModel.insertMany(vehiclesData, { ordered: false });
+
+  const companyUpdates: { [key: string]: Types.ObjectId[] } = {};
+
+  for (const vehicle of createdVehicles) {
+    const companyId = vehicle.company._id.toString();
+
+    if (!companyUpdates[companyId]) {
+      companyUpdates[companyId] = [];
+    
+    }
+    companyUpdates[companyId].push(vehicle._id);
+  }
+
+  await Promise.all(
+    Object.entries(companyUpdates).map(([companyId, vehicleIds]) =>
+      CompanyModel.findByIdAndUpdate(companyId, { $addToSet: { carsAvailable: { $each: vehicleIds } } })
+    )
+  );
+
+  return createdVehicles;
+}
+
+
 const updateVehicle = async (vehicleId: Types.ObjectId, data: VehicleForCreate) => {
    try {
      const vehicle = await VehicleModel.findByIdAndUpdate(vehicleId, data);
@@ -205,9 +230,9 @@ const vehicleService = {
   removeLikeVehicle,
   deleteVehicleById,
   createVehicle,
+  createBulk,
   updateVehicle,
-  isReferralValid,
-
+  isReferralValid
 }
 
 export default vehicleService

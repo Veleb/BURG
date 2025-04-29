@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { RentInterface } from '../../../types/rent-types';
 import { VehicleInterface } from '../../../types/vehicle-types';
 import { DatePipe } from '../../shared/pipes/date.pipe';
@@ -7,6 +7,8 @@ import { RentService } from '../rent.service';
 import { ToastrService } from 'ngx-toastr';
 import { CurrencyPipe } from '@angular/common';
 import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
+import { CurrencyService } from '../../currency/currency.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-rent-card',
@@ -15,16 +17,32 @@ import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
   templateUrl: './rent-card.component.html',
   styleUrls: ['./rent-card.component.css']
 })
-export class RentCardComponent {
+export class RentCardComponent implements OnInit, OnDestroy {
+  
+  private rentService = inject(RentService)
+  private toastr = inject(ToastrService)
+  private currencyService = inject(CurrencyService)
+
+  private destroy$ = new Subject<void>();
+
   @Input() rent!: RentInterface;
 
   vehicle: VehicleInterface | null = null;
   error: string | null = null;
+  selectedCurrency: string = 'USD';
 
-  constructor(
-    private rentService: RentService,
-    private toastr: ToastrService,
-  ) {}
+  ngOnInit(): void {
+    this.currencyService.getCurrency()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(currency => {
+      this.selectedCurrency = currency;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   onCancel(): void {
     if (confirm(`Are you sure you want to cancel this rent?`)) {

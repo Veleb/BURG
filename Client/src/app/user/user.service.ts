@@ -16,6 +16,9 @@ export class UserService {
   private user$$ = new BehaviorSubject<UserFromDB | null>(null);
   public user$ = this.user$$.asObservable();
 
+  // private authLoadedSubject = new BehaviorSubject<boolean>(false);
+  // isAuthLoaded$ = this.authLoadedSubject.asObservable();
+
   // private csrfToken$$ = new BehaviorSubject<string | null>(null);
 
   private isAuthenticating = false;
@@ -51,17 +54,22 @@ export class UserService {
 
   getProfile(): Observable<UserFromDB | null> {
 
-    if (this.user$$.value && !this.isAuthenticating) {
-      return of(this.user$$.value);
-    }
-
     if (!isPlatformBrowser(this.platformId)) {
       return of(null);  // return null if the client hasn't loaded (for deploying purposes mainly)
     }
 
+    if (this.user$$.value && !this.isAuthenticating) {
+      return of(this.user$$.value);
+    }
+
+    this.isAuthenticating = true;
+
     return this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
       tap(response => {
         this.isAuthenticating = false;
+
+        // this.authLoadedSubject.next(true); // set the auth loaded subject to true
+      
         // const csrfToken = response.headers.get('X-CSRF-Token');
         const userData = response.body;
       
@@ -72,6 +80,9 @@ export class UserService {
       map(response => response.body),
       catchError(err => {
         this.isAuthenticating = false;
+
+        // this.authLoadedSubject.next(true); // set the auth loaded subject to true
+
         this.user$$.next(null); // if there is some error set the user subject to null  
         return of(null);
       }),

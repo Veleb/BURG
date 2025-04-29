@@ -1,1 +1,29 @@
-<p>dashboard-companies-view works!</p>
+<div class="dashboard-wrapper">
+  <div class="filter-controls">
+    <label for="statusFilter">Filter by Status:</label>
+    <select id="statusFilter" [(ngModel)]="selectedStatus">
+      <option value="all">All</option>
+      <option value="confirmed">Confirmed</option>
+      <option value="pending">Pending</option>
+      <option value="canceled">Canceled</option>
+    </select>
+  </div>
+
+  <div class="companies-wrapper">
+
+    @if (filteredCompanies().length === 0) {
+      
+      <div>
+        <p>No {{ selectedStatus }} companies found.</p>
+      </div>
+
+    } @else {
+
+      @for (company of filteredCompanies(); track $index) {
+        <app-company-card [company]="company" />
+      }
+
+    }
+
+  </div>
+</div>

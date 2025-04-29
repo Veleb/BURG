@@ -9,6 +9,7 @@ import { BecomeHostComponent } from './become-host/become-host.component';
 import { AboutComponent } from './about/about.component';
 import { FaqComponent } from './faq/faq.component';
 import { PrivacyComponent } from './legal/privacy/privacy.component';
+import { CompanyPageComponent } from './company/company-page/company-page.component';
 
 export const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -22,6 +23,8 @@ export const routes: Routes = [
   { path: "about", component: AboutComponent },
   { path: "become-host", component: BecomeHostComponent },
   { path: "faq", component: FaqComponent },
+
+  { path: "company/:id", component: CompanyPageComponent },
 
   { 
     path: "auth",

@@ -7,6 +7,7 @@ import { UserFromDB } from '../../../../../../types/user-types';
 import { ToastrService } from 'ngx-toastr';
 import { ProductCardComponent } from '../../../../../vehicle/product-card/product-card.component';
 import { UserService } from '../../../../../user/user.service';
+import Papapa from 'papaparse';
 
 @Component({
   selector: 'app-dashboard-vehicles-view',
@@ -71,6 +72,9 @@ export class DashboardVehiclesViewComponent {
   }
 
   loadAllVehicles(): void {
+    this.loading = true;
+    this.vehicleService.getAll();
+
     this.vehicleService.vehicles$.subscribe({
       next: (vehicles) => {
         this.vehicles = vehicles;
@@ -95,17 +99,83 @@ export class DashboardVehiclesViewComponent {
     if (confirmation?.toUpperCase() === 'I AM SURE') {
       this.vehicleService.deleteVehicle(vehicleId).subscribe({
         next: () => {
-          if (!this.currentCompanyId) {
-            this.error = 'No company selected';
-            this.loading = false;
-            return;
+          if (this.user?.role === 'host' && this.currentCompanyId) {
+            this.loadCompanyVehicles(); 
+          } else {
+            this.loadAllVehicles();
           }
-
-          this.user?.role === 'host' ? this.vehicleService.getCompanyVehicles(this.currentCompanyId) : this.vehicleService.getAll();
+          this.toastr.success('Vehicle deleted successfully');
         },
-        error: (err) => this.error = 'Failed to delete vehicle'
+        error: (err) => {
+          this.error = 'Failed to delete vehicle';
+          this.toastr.error(this.error);
+        }
       });
     }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+  
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+  
+    const file = input.files[0];
+    
+    const reader = new FileReader();
+  
+    reader.onload = () => {
+      const csvText = reader.result as string;
+      
+      this.processCSV(csvText);
+    };
+  
+    reader.readAsText(file);
+  }
+
+  processCSV(csvText: string): void {
+    const parsed = Papapa.parse(csvText, {
+      header: true,
+      delimiter: ';',
+      skipEmptyLines: true,
+      transformHeader: (header) => header.replace(/^\ufeff/, ''),
+      transform: (value) => value.trim(),
+    });
+  
+    const vehicles = parsed.data.map((row: any) => {
+      const vehicle: any = {
+        company: row.company,
+        available: row.available?.toLowerCase() === 'true',
+        details: {}
+      };
+  
+      Object.keys(row).forEach(key => {
+        if (key.startsWith('details.')) {
+          const detailKey = key.split('.')[1];
+          const value = row[key];
+          
+          if (['images', 'vehicleRegistration'].includes(detailKey)) {
+            vehicle.details[detailKey] = value 
+              ? value.split(',').map((url: string) => url.trim()) 
+              : [];
+          } else {
+            vehicle.details[detailKey] = isNaN(Number(value)) 
+              ? value 
+              : Number(value);
+          }
+        }
+      });
+  
+      return vehicle;
+    });
+  
+    this.vehicleService.bulkCreateVehicles(vehicles)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => this.toastr.success('Vehicles uploaded successfully'),
+      error: () => this.toastr.error('Failed to upload vehicles')
+    });
   }
 
   ngOnDestroy(): void {

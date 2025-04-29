@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { FilterState, VehicleForCreate, VehicleInterface } from '../../types/vehicle-types';
 
 @Injectable({
@@ -8,6 +8,8 @@ import { FilterState, VehicleForCreate, VehicleInterface } from '../../types/veh
 })
 export class VehicleService {
   
+  private http = inject(HttpClient)
+
   private vehicles$$: BehaviorSubject<VehicleInterface[]> = new BehaviorSubject<VehicleInterface[]>([]);
   vehicles$ = this.vehicles$$.asObservable();
 
@@ -19,8 +21,6 @@ export class VehicleService {
     year: undefined,
     sort: { key: 'none', direction: 'asc' },
   });
-
-  constructor(private http: HttpClient) {}
 
   filteredVehicles$: Observable<VehicleInterface[]> = combineLatest([
     this.availableVehicles$$,
@@ -118,12 +118,26 @@ export class VehicleService {
     return this.http.post<VehicleInterface>(`/api/vehicles`, vehicleData);
   }
 
+  bulkCreateVehicles(vehicles: any[]) {
+    return this.http.post('/api/vehicles/bulk', { vehicles }).pipe(
+      tap(() => {
+        this.getAll(); // Refresh the vehicles after bulk creation
+      })
+    );
+  }  
+
   updateVehicle(vehicleId: string, vehicleData: VehicleForCreate): Observable<VehicleInterface> {
     return this.http.put<VehicleInterface>(`/api/vehicles`, { vehicleData, vehicleId});
   }
 
   deleteVehicle(vehicleId: string): Observable<{message: string}> {
-    return this.http.delete<{message: string}>(`/api/vehicles/${vehicleId}`)
+    return this.http.delete<{message: string}>(`/api/vehicles/${vehicleId}`).pipe(
+      tap(() => {
+        const updatedVehicles = this.vehicles$$.value.filter(vehicle => vehicle._id !== vehicleId);
+        this.vehicles$$.next(updatedVehicles);
+        this.availableVehicles$$.next(updatedVehicles);
+      })
+    );
   }
 
   getCompanyVehicles(companyId: string): Observable<VehicleInterface[]> {

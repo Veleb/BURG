@@ -508,7 +508,8 @@
   font-weight: 400;
   text-align: right;
   margin-right: 20px;
-}
+} 
+
 
 @media (max-width: 768px) {
   .specs-grid {

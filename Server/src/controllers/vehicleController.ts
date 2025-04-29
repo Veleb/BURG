@@ -255,6 +255,63 @@ vehicleController.post('/', async (req: Request, res: Response, next: NextFuncti
   }
 })
 
+vehicleController.post('/bulk', async (req: Request, res: Response, next: NextFunction) => {
+  const modifiedReq = req as authenticatedRequest;
+  
+  const userId: Types.ObjectId | undefined = modifiedReq.user?._id;
+
+  if (!userId) {
+    res.status(400).json({ message: 'User ID is required' });
+    return;
+  }
+
+  try {
+
+    const vehiclesData = req.body.vehicles;
+    console.log(vehiclesData);
+    
+    if (!vehiclesData || vehiclesData.length === 0) {
+      res.status(400).json({ message: 'No vehicle data provided' });
+      return; 
+    }
+
+    const vehiclesWithOwner: VehicleForCreate[] = vehiclesData.map((vehicleData: any) => ({
+      details: {
+        name: vehicleData.details.name,
+        model: vehicleData.details.model,
+        size: vehicleData.details.size,
+        category: vehicleData.details.category,
+        pricePerDay: vehicleData.details.pricePerDay,
+        pricePerKm: vehicleData.details.pricePerKm,
+        year: vehicleData.details.year,
+        engine: vehicleData.details.engine,
+        power: vehicleData.details.power,
+        gvw: vehicleData.details.gvw,
+        fuelTank: vehicleData.details.fuelTank,
+        tyres: vehicleData.details.tyres,
+        mileage: vehicleData.details.mileage,
+        chassisType: vehicleData.details.chassisType,
+        capacity: vehicleData.details.capacity,
+        identificationNumber: vehicleData.details.identificationNumber,
+        images: vehicleData.details.images,
+        vehicleRegistration: vehicleData.details.vehicleRegistration,
+      },
+      company: vehicleData.company,
+      reserved: [],
+      likes: [],
+      available: true
+    }));
+
+    const createdVehicles = await vehicleService.createBulk(vehiclesWithOwner);
+
+    res.status(201).json({message: 'Vehicles created successfully!', vehicles: createdVehicles});
+    return;
+
+  } catch (err) {
+    next(err);
+  }
+})
+
 vehicleController.put('/', async (req: Request, res: Response, next: NextFunction) => {
   const modifiedReq = req as authenticatedRequest;
   

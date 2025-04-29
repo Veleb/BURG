@@ -5,7 +5,18 @@
   margin-bottom: 2rem;
 }
 
-.vehicles-view .header .add-btn {
+.vehicles-view {
+  flex-direction: row;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vehicles-view .header .add-btn, .download-template-btn {
   background: #110A08;
   color: white;
   border: none;
@@ -20,7 +31,7 @@
   height: 40px;
 }
 
-.vehicles-view .header .add-btn:hover {
+.vehicles-view .header .add-btn:hover, .download-template-btn:hover {
   cursor: pointer;
 }
 
@@ -106,4 +117,8 @@
 .empty-state i {
   font-size: 2rem;
   margin-bottom: 1rem;
+}
+
+.download-template-btn {
+  text-wrap: nowrap;
 }

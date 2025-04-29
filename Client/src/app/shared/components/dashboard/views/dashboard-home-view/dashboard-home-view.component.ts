@@ -11,6 +11,7 @@ import { RentInterface } from '../../../../../../types/rent-types';
 import { RentCardComponent } from '../../../../../rents/rent-card/rent-card.component';
 import { UserService } from '../../../../../user/user.service';
 import { VehicleService } from '../../../../../vehicle/vehicle.service';
+import { CurrencyService } from '../../../../../currency/currency.service';
 
 @Component({
   selector: 'app-dashboard-home-view',
@@ -24,6 +25,7 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   private rentService = inject(RentService);
   private vehicleService = inject(VehicleService);
   private userService = inject(UserService);
+  private currencyService = inject(CurrencyService)
 
   private destroy$ = new Subject<void>();
 
@@ -35,11 +37,18 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   activeRents: RentInterface[] = [];
   totalVehicles = 0;
   totalEarnings = 0;
+  selectedCurrency: string = 'USD';
 
   ngOnInit(): void {
 
     this.rentService.getAll();
     this.vehicleService.getAll()
+
+    this.currencyService.getCurrency()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(currency => {
+      this.selectedCurrency = currency;
+    });
 
     this.userService.user$.pipe(
       takeUntil(this.destroy$)

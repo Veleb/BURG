@@ -4,10 +4,14 @@ import { VehicleInterface } from "./vehicle-types";
 
 export interface CompanyInterface {
   _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+
   name: string;
   email: string;
   phoneNumber: string;
   location: string;
+
   carsAvailable?: VehicleInterface[];
   transactions: Types.ObjectId[]; 
   owner: Types.ObjectId | UserInterface;
