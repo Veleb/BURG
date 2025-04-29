@@ -200,7 +200,7 @@ stripeController.post('/verify-payment', async (req: Request, res: Response, nex
 export const postWebhook = async (req: Request, res: Response) => {
   
   const sig = req.headers['stripe-signature'] as string;
-  const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
+  const WEBHOOK_SECRET = process.env.PROD === 'true' ? process.env.STRIPE_WEBHOOK_SECRET_PROD! : process.env.STRIPE_WEBHOOK_SECRET_LOCAL!;
   
   let event: Stripe.Event;
   try {

@@ -4,7 +4,7 @@ const currencyController = Router();
 
 const CURRENCY_API_KEY = process.env.CURRENCY_API_KEY;
 
-const baseUrl = `https://apilayer.net/api/live?access_key=${CURRENCY_API_KEY}&currencies=EUR,GBP,CAD,PLN&source=USD`;
+const baseUrl = `https://apilayer.net/api/live?access_key=${CURRENCY_API_KEY}&currencies=EUR,GBP,CAD,PLN,INR&source=USD`;
 
 currencyController.get(``, async (req: Request, res: Response, next: NextFunction) => {
   try {
