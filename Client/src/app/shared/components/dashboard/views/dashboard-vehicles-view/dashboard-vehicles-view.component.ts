@@ -137,7 +137,7 @@ export class DashboardVehiclesViewComponent {
   processCSV(csvText: string): void {
     const parsed = Papapa.parse(csvText, {
       header: true,
-      delimiter: ';',
+      delimiter: ',',
       skipEmptyLines: true,
       transformHeader: (header) => header.replace(/^\ufeff/, ''),
       transform: (value) => value.trim(),
