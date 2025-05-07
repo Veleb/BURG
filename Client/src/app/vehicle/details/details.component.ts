@@ -231,19 +231,19 @@ export class DetailsComponent implements OnInit, OnDestroy {
   rentVehicle(): void {
 
     if (!this.startDate || !this.endDate) {
-      this.toastr.error('Please select start and end dates.');
+      this.toastr.warning('Please select start and end dates.', "Warning");
       return;
     }
     if (!this.pickupLocation || !this.dropoffLocation) {
-      this.toastr.error('Please select a location.');
+      this.toastr.warning('Please select a location.', "Warning");
       return;
     }
     if (!this.vehicleId) {
-      this.toastr.error('Vehicle not found.');
+      this.toastr.error('Vehicle not found.', "Error Occurred");
       return;
     }
     if (!this.user) {
-      this.toastr.error('Please log in to rent a vehicle.');
+      this.toastr.error('Please log in to rent a vehicle.', "Error Occurred");
       return;
     }
 
@@ -272,13 +272,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
         );
       }),
       catchError((error) => {
-        this.toastr.error('Error initiating payment');
+        this.toastr.error('Error initiating payment', "Error Occurred");
         return of(null);
       })
     ).subscribe({
       next: (result) => {
         if (result) {
-          this.toastr.success('Payment successful and user updated.');
+          this.toastr.success('Payment successful and user updated.', "Success");
         }
       },
       error: () => {
@@ -289,19 +289,19 @@ export class DetailsComponent implements OnInit, OnDestroy {
   rentVehicleWithoutPaying(): void {
 
     if (!this.startDate || !this.endDate) {
-      this.toastr.error('Please select start and end dates.');
+      this.toastr.warning('Please select start and end dates.', "Warning");
       return;
     }
     if (!this.pickupLocation || !this.dropoffLocation) {
-      this.toastr.error('Please select a location.');
+      this.toastr.warning('Please select a location.', "Warning");
       return;
     }
     if (!this.vehicleId) {
-      this.toastr.error('Vehicle not found.');
+      this.toastr.error('Vehicle not found.', "Error Occurred");
       return;
     }
     if (!this.user) {
-      this.toastr.error('Please log in to rent a vehicle.');
+      this.toastr.error('Please log in to rent a vehicle.', "Error Occurred");
       return;
     }
 
@@ -328,7 +328,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this.router.navigate((['catalog']))
         this.toastr.success(`Successfully created rent without paying!`, `Success`)
       },
-      error: () => this.toastr.error('Error creating rent'),
+      error: () => this.toastr.error('Error creating rent', "Error Occurred"),
     });
   }
 
@@ -364,15 +364,15 @@ export class DetailsComponent implements OnInit, OnDestroy {
     return this.stripeService.verifyPayment(sessionId).pipe(
       switchMap((response: { status: string }) => {
         if (response.status === 'success') {
-          this.toastr.error('Payment verification successful.');
+          this.toastr.success('Payment verification successful.', "Success");
           return of(null);
         } else {
-          this.toastr.error('Payment verification failed.');
+          this.toastr.error('Payment verification failed.', "Error Occurred");
           return of(null); 
         }
       }),
       catchError((error) => {
-        this.toastr.error('Payment verification failed.');
+        this.toastr.error('Payment verification failed.', "Error Occurred");
         return of(null);
       })
     );

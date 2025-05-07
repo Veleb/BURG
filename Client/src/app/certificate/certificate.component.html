@@ -1,0 +1,16 @@
+<div class="certificate-container">
+  <div class="certificate-wrapper">
+    <h2>Verify certificate code</h2>
+    <label for="certificateCode">Enter certificate code</label>
+    <input
+      type="text"
+      name="certificateCode"
+      id="certificateCode"
+      placeholder="Hu182Hnr13"
+      [(ngModel)]="certificateCode"
+      required
+    />
+    <button (click)="verifyCertificate()">Verify</button>
+  </div>
+  
+</div>

@@ -152,7 +152,7 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
 
   search(): void {
     if (!this.startDateInstance || !this.endDateInstance) {
-      this.toastr.error('Date pickers are not initialized.');
+      this.toastr.error('Date pickers are not initialized.', "Error Occurred");
       return;
     }
   
@@ -160,7 +160,7 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
     const endDateTime = this.endDateInstance?.selectedDates[0];
   
     if (!startDateTime || !endDateTime) {
-      this.toastr.error('Please select both start and end dates.');
+      this.toastr.error('Please select both start and end dates.', "Error Occurred");
       return;
     }
   
@@ -168,7 +168,7 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
   
     if (differenceInDays > 15) {
-      this.toastr.error('The maximum rental period is 15 days.');
+      this.toastr.error('The maximum rental period is 15 days.', "Error Occurred");
       return;
     }
   

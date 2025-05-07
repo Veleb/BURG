@@ -81,14 +81,14 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     const phoneNumber = this.iti ? this.iti.getNumber() : null; 
     
     if (phoneNumber && this.iti && !this.iti.isValidNumber()) {
-      this.toastr.error('Phone number is invalid!', 'Error occurred!');
+      this.toastr.error('Phone number is invalid!', 'Error Occurred');
       return;
     }
 
     formData.phoneNumber = phoneNumber; 
 
     if (formData.confirmPassword !== formData.password) {
-      this.toastr.error('Passwords mismatch!', 'Error occurred!');
+      this.toastr.error('Passwords mismatch!', 'Error Occurred');
       return;
     }
 
@@ -113,7 +113,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
       ? 'Account already exists. Please login instead' 
       : 'Google registration failed';
       
-    this.toastr.error(errorMessage, 'Error');
+    this.toastr.error(errorMessage, 'Error Occurred');
   }
 
 

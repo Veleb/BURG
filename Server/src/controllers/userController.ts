@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import userService from '../services/userService';
-import { UserForAuth } from '../types/model-types/user-types';
+import { UserForAuth, UserForUpdate } from '../types/model-types/user-types';
 import { authenticatedRequest } from '../types/requests/authenticatedRequest';
 import setAuthTokens from '../utils/setAuthTokens';
 import tokenUtil from '../utils/tokenUtil';
@@ -187,7 +187,7 @@ userController.put('/update', async (req: Request, res: Response, next: NextFunc
             return;
         }
 
-        const updatedData = customReq.body as Partial<UserForAuth>;
+        const updatedData = customReq.body as Partial<UserForUpdate>;
 
         const updatedUser = await userService.updateUser(userId, updatedData);
 
@@ -226,6 +226,23 @@ userController.get('/csrf-token', (req: Request, res: Response, next: NextFuncti
     }
 });
 
+userController.get('/', async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+        const users = await userService.getUsers();
+
+        if (!users) {
+            res.status(404).json({ message: 'No users found' });
+            return;
+        }
+
+        res.status(200).json(users);
+        return;
+    } catch (error) {
+        next(error);
+    }
+
+})
 
 userController.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
     try {

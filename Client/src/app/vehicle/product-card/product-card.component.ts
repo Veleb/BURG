@@ -90,7 +90,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
 
   onHeartIconClick(): void {
     if (!this.vehicle?._id) {
-      this.toastr.error(`Vehicle not found!`, `Error Occurred!`)
+      this.toastr.error(`Vehicle not found!`, `Error Occurred`)
       return;
     }
     

@@ -21,6 +21,9 @@ export interface UserInterface {
   disallowedReferralCodes: string[];
   credits: number;
 
+  certificateCode: string | null;
+  certificateDownloadLink: string | null;
+
   _id: Types.ObjectId;
   created_at: Date;
   updated_at: Date;
@@ -38,6 +41,17 @@ export interface UserForAuth {
   password?: string;
   isGoogleUser: Boolean;
   tokenVersion?: number;
+}
+
+export interface UserForUpdate {
+  fullName: string
+  email: string;
+  phoneNumber?: string;
+  password?: string;
+  isGoogleUser: Boolean;
+  tokenVersion?: number;
+  certificateDownloadLink?: string;
+
 }
 
 export interface GoogleUser extends Omit<UserForAuth, 'password'> {
@@ -68,6 +82,10 @@ export interface UserFromDB {
   referralCode: string;
   disallowedReferralCodes: string[];
   credits: number;
+
+  certificateCode: string | null;
+  certificateDownloadLink: string | null;
+
   _id: Types.ObjectId;
   created_at: Date;
   updated_at: Date;

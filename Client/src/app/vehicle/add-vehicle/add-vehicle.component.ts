@@ -102,7 +102,7 @@ export class AddVehicleComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.toastr.error('Error while adding vehicle!', "Error Occurred!");
+        this.toastr.error('Error while adding vehicle!', "Error Occurred");
       }
     });
   }

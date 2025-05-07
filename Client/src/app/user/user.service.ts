@@ -52,6 +52,10 @@ export class UserService {
     return this.http.get<RentInterface[]>(`/api/users/rents`);
   }
 
+  getUsers(): Observable<UserFromDB[]> {
+    return this.http.get<UserFromDB[]>(`/api/users/`);
+  }
+
   getProfile(): Observable<UserFromDB | null> {
 
     if (!isPlatformBrowser(this.platformId)) {

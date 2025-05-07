@@ -12,7 +12,9 @@ export interface UserFromDB {
   disallowedReferralCodes: string[];
   credits: number;
   transactions: TransactionInterface[],
-  
+  certificateCode: string | null;
+  certificateDownloadLink: string | null;
+
   _id: string;
   created_at: Date;
   updated_at: Date;

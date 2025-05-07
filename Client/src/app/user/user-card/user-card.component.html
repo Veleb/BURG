@@ -1,0 +1,29 @@
+<div class="user-card">
+  <div class="user-header">
+    <span class="user-name">{{ user?.fullName }}</span>
+    <span class="user-role role-{{ user?.role }}">{{ user?.role }}</span>
+  </div>
+
+  <div class="user-detail">{{ user?.email }}</div>
+  <div class="user-detail">{{ user?.phoneNumber }}</div>
+
+  @if (user?.certificateCode && user?.certificateDownloadLink) {
+    <div class="certificate-section">
+      <div class="user-detail">Certificate Code: {{ user?.certificateCode }}</div>
+    </div>
+  } @else {
+    @if (!isAddingCertificate) {
+      <button class="btn btn-primary" (click)="startAddingCertificate()">Add Download Link</button>
+    } @else {
+      <div class="certificate-form">
+        <input
+          type="text"
+          [(ngModel)]="certificateLinkInput"
+          placeholder="Enter download link"
+        />
+        <button class="btn btn-primary" (click)="saveCertificateLink()">Save</button>
+        <button class="btn btn-secondary" (click)="cancelAddCertificate()">Cancel</button>
+      </div>
+    }
+  }
+</div>

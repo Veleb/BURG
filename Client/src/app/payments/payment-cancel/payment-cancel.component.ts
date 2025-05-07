@@ -21,7 +21,7 @@ export class PaymentCancelComponent implements OnInit {
     this.rentId = this.route.snapshot.queryParamMap.get('rentId');
 
     if (!this.rentId) {
-      this.toastr.error('No rent ID found in the URL.');
+      this.toastr.error('No rent ID found in the URL.', "Error Occurred");
     }
   }
 

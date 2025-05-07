@@ -47,7 +47,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
         return this.vehicleCache.get(vehicleId)!;
       }),
       catchError(error => {
-        this.toastr.error('Error loading vehicle', `Error`);
+        this.toastr.error('Error loading vehicle', `Error Occurred`);
         return EMPTY;
       }),
       takeUntil(this.destroy$)
@@ -151,7 +151,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
         this.vehicleData.vehicleRegistration = [''];
       },
       error: (err) => {
-        this.toastr.error('Error while updating vehicle!', "Error Occurred!");
+        this.toastr.error('Error while updating vehicle!', "Error Occurred");
         this.isSubmitting = false;
       }
     });

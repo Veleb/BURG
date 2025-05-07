@@ -1,7 +1,7 @@
 import UserModel from "../models/user";
 import bcrypt from 'bcrypt';
 import { payloadInterface, payloadTokens } from "../types/jwtp/payloads";
-import { RegularUser, UserForAuth, userForLogin, UserFromDB, UserInterface } from "../types/model-types/user-types";
+import { RegularUser, UserForAuth, userForLogin, UserForUpdate, UserFromDB, UserInterface } from "../types/model-types/user-types";
 import checkIfUserExists from "../utils/checkIfUserExists";
 import jwtp from "../libs/jwtp";
 import { Response } from "express";
@@ -12,12 +12,16 @@ import { RentInterface } from "../types/model-types/rent-types";
 import RentModel from "../models/rent";
 import VehicleModel from "../models/vehicle";
 import CompanyModel from "../models/company";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
+import { customAlphabet } from 'nanoid';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+
+const generateCertificateCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 10);
 
 async function getUserById(id: Types.ObjectId | undefined): Promise<UserFromDB> { 
   if (!id) throw new Error("Id is required");
@@ -25,8 +29,20 @@ async function getUserById(id: Types.ObjectId | undefined): Promise<UserFromDB> 
   const user = await UserModel.findById(id).select('-password').lean();
   if (!user) throw new Error("User not found");
 
-  return user as unknown as UserFromDB;
+  return user as UserFromDB;
 }
+
+async function getUsers(): Promise<UserFromDB[]> { 
+  
+  const users = await UserModel.find().select('-password').lean()
+
+  if (!users) {
+    throw new Error("Users not found!");
+  }
+
+  return users as UserFromDB[];
+}
+
 
 async function getUserByEmail(email: string | undefined): Promise<UserFromDB> { 
   if (!email) throw new Error("Email is required");
@@ -35,7 +51,7 @@ async function getUserByEmail(email: string | undefined): Promise<UserFromDB> {
 
   if (!user) throw new Error("User not found");
 
-  return user as unknown as UserFromDB;
+  return user as UserFromDB;
 }
 
 async function createUser(user: UserForAuth): Promise<UserFromDB> {
@@ -53,7 +69,7 @@ async function createUser(user: UserForAuth): Promise<UserFromDB> {
     : user;
 
   const newUser = await UserModel.create(userToCreate);
-  return newUser.toObject() as unknown as UserFromDB;
+  return newUser.toObject() as UserFromDB;
 }
 
 async function loginUser({ email, password }: userForLogin): Promise<payloadTokens> {
@@ -75,7 +91,7 @@ async function loginUser({ email, password }: userForLogin): Promise<payloadToke
       throw new Error("Invalid email or password");
   }
 
-  return generateTokens(existingUser as unknown as UserFromDB);
+  return generateTokens(existingUser as UserFromDB);
 }
 
 async function registerUser(user: UserForAuth): Promise<payloadTokens> {
@@ -138,13 +154,22 @@ async function getUserRents(userId: Types.ObjectId): Promise<RentInterface[]> {
   return (user?.rents as RentInterface[]) || [];
 }
 
-async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
+async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForUpdate>): Promise<UserFromDB> {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error('User not found');
 
   if (updatedData.fullName) user.fullName = updatedData.fullName;
   if (updatedData.email) user.email = updatedData.email;
   if (updatedData.phoneNumber) user.phoneNumber = updatedData.phoneNumber;
+
+  if (updatedData.certificateDownloadLink !== undefined) {
+    const isLinkChanged = updatedData.certificateDownloadLink !== user.certificateDownloadLink;
+    user.certificateDownloadLink = updatedData.certificateDownloadLink;
+
+    if (isLinkChanged && updatedData.certificateDownloadLink !== '') {
+      user.certificateCode = generateCertificateCode();
+    }
+  }
 
   if (!user.isGoogleUser && updatedData.password) {
     user.password = updatedData.password;
@@ -153,9 +178,9 @@ async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAu
   }
 
   await user.save();
-
-  return user.toObject() as unknown as UserFromDB;
+  return user.toObject() as UserFromDB;
 }
+
 
 async function deleteUser(userId: Types.ObjectId): Promise<void> {
   const user = await UserModel.findById(userId);
@@ -215,7 +240,7 @@ async function handleGoogleAuth(idToken: string): Promise<{
   user.tokenVersion += 1;
   await user.save(); 
 
-  const { accessToken, refreshToken } = await generateTokens(user as unknown as UserFromDB);
+  const { accessToken, refreshToken } = await generateTokens(user as UserFromDB);
 
   return {
     user: {
@@ -357,7 +382,8 @@ const UserService = {
   handleGoogleAuth,
   promoteUserStatus,
   updateDataAfterPayment,
-
+  getUsers,
+  
 }
 
 export default UserService;

@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home']);
       },
       error: (err) => {
-        this.toastr.error(err.error.message || 'Login failed', 'Error');
+        this.toastr.error(err.error.message || 'Login failed', 'Error Occurred');
       }
     });
   }

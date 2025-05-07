@@ -84,7 +84,7 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
         ]);
       }),
       catchError(error => {
-        this.toastr.error('Failed to load profile data', 'Error');
+        this.toastr.error('Failed to load profile data', 'Error Occurred');
         return of([]);
       })
     ).subscribe(([vehicles, rents]) => {
@@ -119,7 +119,7 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
     this.userService.updateProfile(this.editModel).pipe(
         takeUntil(this.destroy$),
         catchError(error => {
-            this.toastr.error('Failed to update profile', 'Error');
+            this.toastr.error('Failed to update profile', 'Error Occurred');
             this.isUpdating = false;
             return of(null);
         })
@@ -146,7 +146,7 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
         this.router.navigate(['/home']);
       },
       error: () => {
-        this.toastr.error('Logout failed. Please try again.', 'Error');
+        this.toastr.error('Logout failed. Please try again.', 'Error Occurred');
       }
     });
   }

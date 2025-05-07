@@ -104,11 +104,11 @@ export class DashboardVehiclesViewComponent {
           } else {
             this.loadAllVehicles();
           }
-          this.toastr.success('Vehicle deleted successfully');
+          this.toastr.success('Vehicle deleted successfully', 'Success');
         },
         error: (err) => {
           this.error = 'Failed to delete vehicle';
-          this.toastr.error(this.error);
+          this.toastr.error(this.error, "Error Occurred");
         }
       });
     }
@@ -173,8 +173,8 @@ export class DashboardVehiclesViewComponent {
     this.vehicleService.bulkCreateVehicles(vehicles)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
-      next: () => this.toastr.success('Vehicles uploaded successfully'),
-      error: () => this.toastr.error('Failed to upload vehicles')
+      next: () => this.toastr.success('Vehicles uploaded successfully', "Success"),
+      error: () => this.toastr.error('Failed to upload vehicles', "Error Occurred")
     });
   }
 

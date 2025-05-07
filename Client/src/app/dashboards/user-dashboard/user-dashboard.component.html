@@ -114,6 +114,16 @@
             <span class="info-label">Email:</span
             ><span class="info-value">{{ user?.email }}</span>    
           </div>
+          @if (user?.certificateCode || user?.certificateDownloadLink) {
+            <div class="info-item">
+              <span class="info-label">Certificate Code:</span
+              ><span class="info-value">{{ user?.certificateCode }}</span>    
+            </div>
+            <div class="info-item">
+              <span class="info-label">Certificate Link:</span
+              ><span class="info-value">{{ user?.certificateDownloadLink }}</span>    
+            </div>
+          }
           <div class="info-item">
             <span class="info-label">Phone Number</span><span class="info-value">{{user?.phoneNumber || "No phone number provided"}}</span>
           </div>

@@ -1,1 +1,9 @@
-<p>dashboard-users-view works!</p>
+<div class="users-view-wrapper">
+  <div class="user-grid">
+    
+    @for (user of users; track $index) {
+      <app-user-card [user]="user"/>
+    }
+
+  </div>
+</div>
