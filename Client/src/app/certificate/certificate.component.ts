@@ -15,20 +15,29 @@ export class CertificateComponent {
   private toastr = inject(ToastrService);
 
   certificateCode: string = '';
+  downloadLink: string | undefined = undefined;
+  isValid: boolean = false;
+  isLoading: boolean = false;
+  hasVerified: boolean = false; 
 
   verifyCertificate(): void {
-    
+    this.isLoading = true;
     this.certificateService.verifyCertificate(this.certificateCode).subscribe({
       next: (response) => {
-        this.toastr.success(`Certificate is valid!`, `Success`)
+        this.isValid = response.valid;
+        this.hasVerified = true;
+        this.isLoading = false;
+        this.downloadLink = response.downloadLink;
+        this.toastr.success(response.message, `Success`);
       },
       error: (error) => {
+        const res = error as { message: string, valid: boolean, downloadLink: string };
+        this.isValid = res.valid;
+        this.hasVerified = true;
+        this.isLoading = false;
+        this.downloadLink = res.downloadLink;
         console.error('Error verifying certificate:', error);
       }
-    })
-
-
-
+    });
   }
-
 }

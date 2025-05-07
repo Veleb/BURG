@@ -1,7 +1,7 @@
 import UserModel from "../models/user";
 import bcrypt from 'bcrypt';
 import { payloadInterface, payloadTokens } from "../types/jwtp/payloads";
-import { RegularUser, UserForAuth, userForLogin, UserForUpdate, UserFromDB, UserInterface } from "../types/model-types/user-types";
+import { RegularUser, UserForAuth, userForLogin, UserFromDB, UserInterface } from "../types/model-types/user-types";
 import checkIfUserExists from "../utils/checkIfUserExists";
 import jwtp from "../libs/jwtp";
 import { Response } from "express";
@@ -13,15 +13,12 @@ import RentModel from "../models/rent";
 import VehicleModel from "../models/vehicle";
 import CompanyModel from "../models/company";
 import { Types } from "mongoose";
-import { customAlphabet } from 'nanoid';
-
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 
-const generateCertificateCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 10);
 
 async function getUserById(id: Types.ObjectId | undefined): Promise<UserFromDB> { 
   if (!id) throw new Error("Id is required");
@@ -154,22 +151,13 @@ async function getUserRents(userId: Types.ObjectId): Promise<RentInterface[]> {
   return (user?.rents as RentInterface[]) || [];
 }
 
-async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForUpdate>): Promise<UserFromDB> {
+async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error('User not found');
 
   if (updatedData.fullName) user.fullName = updatedData.fullName;
   if (updatedData.email) user.email = updatedData.email;
   if (updatedData.phoneNumber) user.phoneNumber = updatedData.phoneNumber;
-
-  if (updatedData.certificateDownloadLink !== undefined) {
-    const isLinkChanged = updatedData.certificateDownloadLink !== user.certificateDownloadLink;
-    user.certificateDownloadLink = updatedData.certificateDownloadLink;
-
-    if (isLinkChanged && updatedData.certificateDownloadLink !== '') {
-      user.certificateCode = generateCertificateCode();
-    }
-  }
 
   if (!user.isGoogleUser && updatedData.password) {
     user.password = updatedData.password;

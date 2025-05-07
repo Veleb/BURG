@@ -10,6 +10,19 @@
   @if (user?.certificateCode && user?.certificateDownloadLink) {
     <div class="certificate-section">
       <div class="user-detail">Certificate Code: {{ user?.certificateCode }}</div>
+      @if (!isAddingCertificate) {
+        <button class="btn btn-primary" (click)="startAddingCertificate()">Edit Download Link</button>
+      } @else {
+        <div class="certificate-form">
+          <input
+            type="text"
+            [(ngModel)]="certificateLinkInput"
+            placeholder="Enter download link"
+          />
+          <button class="btn btn-primary" (click)="saveCertificateLink()">Save</button>
+          <button class="btn btn-secondary" (click)="cancelAddCertificate()">Cancel</button>
+        </div>
+      }
     </div>
   } @else {
     @if (!isAddingCertificate) {

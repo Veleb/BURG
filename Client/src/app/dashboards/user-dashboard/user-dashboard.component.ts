@@ -13,10 +13,11 @@ import { VehicleInterface } from '../../../types/vehicle-types';
 import { RentInterface } from '../../../types/rent-types';
 import { isPlatformBrowser } from '@angular/common';
 import intlTelInput from 'intl-tel-input';
+import { TruncPipe } from '../../shared/pipes/trunc.pipe';
 
 @Component({
   selector: 'app-user-dashboard',
-  imports: [ FormsModule, ProductCardComponent, EmailDirective, FullnameDirective ],
+  imports: [ FormsModule, ProductCardComponent, EmailDirective, FullnameDirective, TruncPipe ],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
@@ -31,9 +32,10 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
   @ViewChild('phoneInput', { static: false }) phoneInput!: ElementRef;
   iti: intlTelInput.Plugin | undefined = undefined;  
 
-  editMode = false;
-  isUpdating = false;
-  isLoading = true;
+  editMode: boolean = false;
+  isUpdating: boolean = false;
+  isLoading: boolean = true;
+  isTextExpanded: boolean = false;
 
   user: UserFromDB | null = null;
   userRents: RentInterface[] = [];
@@ -93,6 +95,10 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
       this.rentVehicles = rents.map(rent => rent.vehicle as VehicleInterface);
       this.isLoading = false;
     });
+  }
+
+  toggleTextExpansions() {
+    this.isTextExpanded = !this.isTextExpanded;
   }
 
   toggleEditMode() {

@@ -1,8 +1,8 @@
 import { Component, inject, Input } from '@angular/core';
 import { UserFromDB } from '../../../types/user-types';
-import { UserService } from '../user.service';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { CertificateService } from '../../services/certificate.service';
 
 @Component({
   selector: 'app-user-card',
@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UserCardComponent {
   
-  private userService = inject(UserService);
+  private certificateService = inject(CertificateService);
   private toastr = inject(ToastrService);
 
   @Input() user?: UserFromDB;
@@ -34,9 +34,12 @@ export class UserCardComponent {
   saveCertificateLink() {
     if (!this.user || !this.certificateLinkInput) return;
 
-    this.userService.updateProfile({
-      certificateDownloadLink: this.certificateLinkInput,
-    }).subscribe({
+    this
+
+    this.certificateService.addCertificate(
+      this.certificateLinkInput,
+      this.user._id
+    ).subscribe({
       next: (res) => {
         this.user = res.user;
         this.isAddingCertificate = false;

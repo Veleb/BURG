@@ -120,8 +120,12 @@
               ><span class="info-value">{{ user?.certificateCode }}</span>    
             </div>
             <div class="info-item">
-              <span class="info-label">Certificate Link:</span
-              ><span class="info-value">{{ user?.certificateDownloadLink }}</span>    
+              <span class="info-label">Certificate Link:</span>
+              @if (!isTextExpanded) {
+                <span (click)="toggleTextExpansions()" class="info-value">{{ (user?.certificateDownloadLink ?? "") | trunc }}</span>
+              } @else {
+                <span (click)="toggleTextExpansions()" class="info-value">{{ (user?.certificateDownloadLink ?? "")}}</span>
+              }
             </div>
           }
           <div class="info-item">

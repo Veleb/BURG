@@ -13,4 +13,21 @@
     <button (click)="verifyCertificate()">Verify</button>
   </div>
   
+  @if (hasVerified) {
+    @if (isValid) {
+      <div class="certificate-verified">
+        <h3>Certificate is valid</h3>
+        <p>Certificate code: {{ certificateCode }}</p>
+
+        <img src="{{ downloadLink }}" alt="Image of the certificate" />
+        
+      </div>
+    } @else {
+      <div class="certificate-invalid">
+        <h3>Certificate is invalid</h3>
+        <p>Please check the code and try again.</p>
+      </div>
+    }
+  }
+
 </div>

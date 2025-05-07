@@ -43,17 +43,6 @@ export interface UserForAuth {
   tokenVersion?: number;
 }
 
-export interface UserForUpdate {
-  fullName: string
-  email: string;
-  phoneNumber?: string;
-  password?: string;
-  isGoogleUser: Boolean;
-  tokenVersion?: number;
-  certificateDownloadLink?: string;
-
-}
-
 export interface GoogleUser extends Omit<UserForAuth, 'password'> {
   isGoogleUser: true;
   password?: never;

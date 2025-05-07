@@ -14,7 +14,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-height: 500px;
+  height: min-content;
   max-width: 350px;
   margin: 0 auto;
 }
@@ -106,7 +106,6 @@
 
 .info-item {
   margin-bottom: 1rem;
-  width: max-content;
 }
 
 .info-label {
@@ -118,6 +117,8 @@
 
 .info-value {
   font-weight: 500;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .form-buttons {
@@ -168,16 +169,16 @@
 
 .products-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
 }
 
 .product-card {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-height: 330px;
-
+  height: min-content;
 }
 
 .full-width-card {
