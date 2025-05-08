@@ -121,11 +121,7 @@
             </div>
             <div class="info-item">
               <span class="info-label">Certificate Link:</span>
-              @if (!isTextExpanded) {
-                <span (click)="toggleTextExpansions()" class="info-value">{{ (user?.certificateDownloadLink ?? "") | trunc }}</span>
-              } @else {
-                <span (click)="toggleTextExpansions()" class="info-value">{{ (user?.certificateDownloadLink ?? "")}}</span>
-              }
+                <a class="info-value" target="_blank" href="{{ user?.certificateDownloadLink ?? '' }}">View Certificate</a>
             </div>
           }
           <div class="info-item">

@@ -152,6 +152,10 @@
   margin: 4px 10px;
 }
 
+.desktop-user-icon:hover, .fa-handshake:hover {
+  cursor: pointer;
+}
+
 .become-host-link {
   display: flex;
   justify-content: center;

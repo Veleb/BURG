@@ -17,7 +17,7 @@ import { TruncPipe } from '../../shared/pipes/trunc.pipe';
 
 @Component({
   selector: 'app-user-dashboard',
-  imports: [ FormsModule, ProductCardComponent, EmailDirective, FullnameDirective, TruncPipe ],
+  imports: [ FormsModule, ProductCardComponent, EmailDirective, FullnameDirective ],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
@@ -35,7 +35,6 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
   editMode: boolean = false;
   isUpdating: boolean = false;
   isLoading: boolean = true;
-  isTextExpanded: boolean = false;
 
   user: UserFromDB | null = null;
   userRents: RentInterface[] = [];
@@ -97,9 +96,6 @@ export class UserDashboardComponent implements OnInit, AfterViewChecked ,OnDestr
     });
   }
 
-  toggleTextExpansions() {
-    this.isTextExpanded = !this.isTextExpanded;
-  }
 
   toggleEditMode() {
     if (this.editMode) {

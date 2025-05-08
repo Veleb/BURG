@@ -15,16 +15,16 @@
   
   @if (hasVerified) {
     @if (isValid) {
-      <div class="certificate-verified">
-        <h3>Certificate is valid</h3>
-        <p>Certificate code: {{ certificateCode }}</p>
+      <div class="certificate-verified result">
+        <h3>Certificate is <span class="green">valid</span>!</h3>
+        <p>Certificate code: <b>{{ certificateCode }}</b></p>
 
-        <img src="{{ downloadLink }}" alt="Image of the certificate" />
+        <img class="certificate-image" src="{{ downloadLink }}" alt="Image of the certificate" />
         
       </div>
     } @else {
-      <div class="certificate-invalid">
-        <h3>Certificate is invalid</h3>
+      <div class="certificate-invalid result">
+        <h3>Certificate is <span class="red">invalid</span>!</h3>
         <p>Please check the code and try again.</p>
       </div>
     }
