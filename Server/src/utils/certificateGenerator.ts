@@ -9,14 +9,14 @@ const FRONT_END_URL = process.env.PROD === 'true' ? process.env.FRONT_END_PROD :
 
 export async function generateCertificatePDF(data: CertificateForPDF): Promise<Buffer> {
 
-  const templatePath = path.join(__dirname, '../templates/burg-cert-generator-template.pdf');
+  const templatePath = path.join(__dirname, '../../public/templates/burg-cert-generator-template.pdf');
   const templateBytes = fs.readFileSync(templatePath);
   
   const pdfDoc = await PDFDocument.load(templateBytes);
   
   pdfDoc.registerFontkit(fontkit);
   
-  const fontBytes = fs.readFileSync(path.join(__dirname, '../assets/fonts/Roboto-Regular.ttf'));
+  const fontBytes = fs.readFileSync(path.join(__dirname, '../../public/fonts/Roboto-Regular.ttf'));
 
   const pages = pdfDoc.getPages();
   const page = pages[0];

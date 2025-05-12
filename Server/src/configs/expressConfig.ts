@@ -6,6 +6,7 @@ import routes from '../routes';
 import errorMiddleware from '../middlewares/errorMiddleware';
 import csrfMiddleware from '../middlewares/csrfMiddleware';
 import { postWebhook } from '../controllers/stripeController';
+import path from 'path';
 
 
 const FRONT_END = (process.env.PROD === 'true') ? process.env.FRONT_END_PROD : process.env.FRONT_END_LOCAL;
@@ -42,6 +43,8 @@ export function expressConfig(app: Application): void {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
+
+  app.use('/static', express.static(path.join(__dirname, '../../public')));
 
   app.options('*', cors(corsOptions));
   app.use(cors(corsOptions));
