@@ -1,10 +1,11 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterModule } from '@angular/router';
 import { UserService } from '../../../../user/user.service';
 import { CompanyInterface } from '../../../../../types/company-types';
 import { FormsModule } from '@angular/forms';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { combineLatest, filter, Subject, takeUntil } from 'rxjs';
 import { UserFromDB } from '../../../../../types/user-types';
+import { log } from 'node:console';
 
 @Component({
   selector: 'app-dashboard-sidebar',
@@ -24,9 +25,19 @@ export class DashboardSidebarComponent implements OnInit, OnDestroy {
   companies: CompanyInterface[] = [];
   selectedCompany: string | undefined = undefined;
   user: UserFromDB | null = null;
+  isProfileSection: boolean = false; 
 
   ngOnInit(): void {
     this.userService.getProfile().subscribe();
+
+    this.isProfileSection = this.router.url.startsWith('/dashboard/user');
+
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event: NavigationEnd) => {
+      this.isProfileSection = event.url.startsWith('/dashboard/user');
+    });
 
     combineLatest([
       this.userService.user$,
@@ -37,7 +48,7 @@ export class DashboardSidebarComponent implements OnInit, OnDestroy {
       this.user = user;
       this.companies = companies;
 
-      if (this.companies.length > 0) {
+      if (!this.isProfileSection  && this.companies.length > 0) {
         this.selectedCompany = this.selectedCompany || this.companies[0]._id;
         this.onCompanyChange();
       }
@@ -45,7 +56,7 @@ export class DashboardSidebarComponent implements OnInit, OnDestroy {
   }
 
   onCompanyChange() {
-    if (this.selectedCompany) {
+    if (this.selectedCompany && !this.isProfileSection) {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { companyId: this.selectedCompany },

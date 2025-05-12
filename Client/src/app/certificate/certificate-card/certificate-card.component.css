@@ -1,0 +1,117 @@
+/* certificate-card.component.css */
+.certificate-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  max-width: 400px;
+  margin: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.certificate-card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-bottom: 2px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: #4CAF50;
+  color: white;
+}
+
+.status-badge.redeemed {
+  background: #f44336;
+}
+
+.certificate-code {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.meta-item {
+  margin-bottom: 1rem;
+}
+
+.meta-item label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.meta-item p {
+  margin: 0;
+  font-weight: 500;
+  color: #333;
+}
+
+.dates-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.date-item {
+  text-align: center;
+}
+
+.date-item label {
+  font-size: 0.75rem;
+  color: #888;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.date-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.card-actions {
+  border-top: 2px solid #eee;
+  padding: 1rem;
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #2196F3;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.download-btn:hover {
+  background: #1976D2;
+}
+
+.download-btn.disabled {
+  background: #9E9E9E;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.fa-download {
+  font-size: 0.9rem;
+}

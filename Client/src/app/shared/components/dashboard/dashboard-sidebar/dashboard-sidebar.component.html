@@ -1,29 +1,46 @@
 <div class="dashboard-nav-wrapper">
-  <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/home`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-    <i class="fas fa-home nav-icon"></i>
-    <span class="nav-text">Home</span>
-  </div>
-  <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/vehicles`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-    <i class="fas fa-car nav-icon"></i>
-    <span class="nav-text">Vehicles</span>
-  </div>
-  <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/rents`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-    <i class="fa-solid fa-calendar-days"></i>
-    <span class="nav-text">Rents</span>
-  </div>
-  <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/transactions`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-    <i class="fa-solid fa-dollar-sign"></i>
-    <span class="nav-text">Transactions</span>
-  </div>
-  <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/users`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-    <i class="fas fa-user nav-icon"></i>
-    <span class="nav-text">Users</span>
-  </div>
   
-  @if (user?.role === 'admin') {
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/companies`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
-      <i class="fa-solid fa-building"></i>
-      <span class="nav-text">Companies</span>
+  @if (!isProfileSection) {
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/home`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+      <i class="fas fa-home nav-icon"></i>
+      <span class="nav-text">Home</span>
+    </div>
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/vehicles`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+      <i class="fas fa-car nav-icon"></i>
+      <span class="nav-text">Vehicles</span>
+    </div>
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/rents`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span class="nav-text">Rents</span>
+    </div>
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/transactions`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+      <i class="fa-solid fa-dollar-sign"></i>
+      <span class="nav-text">Transactions</span>
+    </div>
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/users`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+      <i class="fas fa-user nav-icon"></i>
+      <span class="nav-text">Users</span>
+    </div>
+    
+    @if (user?.role === 'admin') {
+      <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/companies`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+        <i class="fa-solid fa-building"></i>
+        <span class="nav-text">Companies</span>
+      </div>
+      <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/certificates`]" routerLinkActive="active">
+        <i class="fa-solid fa-file nav-icon"></i>
+        <span class="nav-text">Certificates</span>
+      </div>
+    }
+
+  } @else {
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/user/profile`]" routerLinkActive="active">
+      <i class="fas fa-user nav-icon"></i>
+      <span class="nav-text">My Profile</span>
+    </div>
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/user/documents`]" routerLinkActive="active">
+      <i class="fa-solid fa-file nav-icon"></i>
+      <span class="nav-text">My Documents</span>
     </div>
   }
   

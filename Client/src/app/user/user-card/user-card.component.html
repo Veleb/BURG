@@ -7,36 +7,31 @@
   <div class="user-detail">{{ user?.email }}</div>
   <div class="user-detail">{{ user?.phoneNumber }}</div>
 
-  @if (user?.certificateCode && user?.certificateDownloadLink) {
+  @if (user?.certificates?.length) {
     <div class="certificate-section">
-      <div class="user-detail">Certificate Code: {{ user?.certificateCode }}</div>
+      @for (cert of user?.certificates; track cert._id) {
+        <div class="user-detail">Certificate Code: {{ cert.code }}</div>
+        <div class="user-detail">Download Link: {{ cert.downloadLink }}</div>
+      }
       @if (!isAddingCertificate) {
-        <button class="btn btn-primary" (click)="startAddingCertificate()">Edit Download Link</button>
-      } @else {
-        <div class="certificate-form">
-          <input
-            type="text"
-            [(ngModel)]="certificateLinkInput"
-            placeholder="Enter download link"
-          />
-          <button class="btn btn-primary" (click)="saveCertificateLink()">Save</button>
-          <button class="btn btn-secondary" (click)="cancelAddCertificate()">Cancel</button>
-        </div>
+        <button class="btn btn-primary" (click)="startAddingCertificate()">Redeem New Certificate</button>
       }
     </div>
   } @else {
     @if (!isAddingCertificate) {
-      <button class="btn btn-primary" (click)="startAddingCertificate()">Add Download Link</button>
-    } @else {
-      <div class="certificate-form">
-        <input
-          type="text"
-          [(ngModel)]="certificateLinkInput"
-          placeholder="Enter download link"
-        />
-        <button class="btn btn-primary" (click)="saveCertificateLink()">Save</button>
-        <button class="btn btn-secondary" (click)="cancelAddCertificate()">Cancel</button>
-      </div>
+      <button class="btn btn-primary" (click)="startAddingCertificate()">Redeem Certificate</button>
     }
+  }
+
+  @if (isAddingCertificate) {
+    <div class="certificate-form">
+      <input
+        type="text"
+        [(ngModel)]="certificateCodeInput"
+        placeholder="Enter certificate code"
+      />
+      <button class="btn btn-primary" (click)="redeemCertificate()">Redeem</button>
+      <button class="btn btn-secondary" (click)="cancelAddCertificate()">Cancel</button>
+    </div>
   }
 </div>

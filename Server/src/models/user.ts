@@ -63,6 +63,10 @@ const UserSchema = new Schema<UserInterface>({
     ref: "Transaction",
     type: Types.ObjectId,
   }],
+  certificates: [{
+    ref: "Certificate",
+    type: Types.ObjectId,
+  }],
   referralCode: {
     type: String,
     unique: true,
@@ -76,15 +80,6 @@ const UserSchema = new Schema<UserInterface>({
   credits: {
     type: Number,
     default: 0,
-  },
-  certificateCode: {
-    type: String,
-    unique: true,
-    default: undefined,
-  },
-  certificateDownloadLink: {
-    type: String,
-    default: undefined,
   }
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 

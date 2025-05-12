@@ -87,7 +87,6 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
         this.activeRents = rents;
         
         this.totalEarnings = rents.reduce((sum, rent) => sum + (rent.total || 0), 0);
-        console.log(this.totalEarnings);
         
         this.totalVehicles = vehicles.length
         

@@ -1,0 +1,29 @@
+<div class="user-documents-wrapper">
+  
+  @if (certificates.length > 0) {
+  
+    <div class="documents-wrapper">
+  
+
+  
+      <div class="certificates-wrapper">
+  
+        @for (certificate of certificates; track $index) {
+          <app-certificate-card [certificate]="certificate" />
+        }
+  
+      </div>
+  
+    </div>
+  
+  } @else {
+  
+    <h2>No Certificates Awarded!</h2>
+  
+  }
+
+  @if (user?.role === 'admin') { 
+        <button class="add-cert-button" routerLink="/dashboard/admin/add-certificate">Add Certificate</button>
+  }
+
+</div>

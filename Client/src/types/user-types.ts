@@ -1,3 +1,4 @@
+import { CertificateInterface } from "./certificate-types";
 import { CompanyInterface } from "./company-types";
 import { TransactionInterface } from "./transaction-types";
 
@@ -12,9 +13,8 @@ export interface UserFromDB {
   disallowedReferralCodes: string[];
   credits: number;
   transactions: TransactionInterface[],
-  certificateCode: string | null;
-  certificateDownloadLink: string | null;
-
+  certificates: CertificateInterface[],
+  
   _id: string;
   created_at: Date;
   updated_at: Date;

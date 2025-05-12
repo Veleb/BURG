@@ -8,10 +8,12 @@ export interface UserInterface {
   email: string;
   phoneNumber?: string;
   password: string | null;
-  rents: RentInterface[];
+
   likes: Types.ObjectId[] | VehicleInterface[];
+  rents: RentInterface[];
   companies?: CompanyInterface[];
   transactions: Types.ObjectId[];
+  certificates: Types.ObjectId[];
 
   isGoogleUser: boolean;
   tokenVersion: number;
@@ -20,9 +22,6 @@ export interface UserInterface {
   referralCode: string;
   disallowedReferralCodes: string[];
   credits: number;
-
-  certificateCode: string | null;
-  certificateDownloadLink: string | null;
 
   _id: Types.ObjectId;
   created_at: Date;
@@ -71,9 +70,6 @@ export interface UserFromDB {
   referralCode: string;
   disallowedReferralCodes: string[];
   credits: number;
-
-  certificateCode: string | null;
-  certificateDownloadLink: string | null;
 
   _id: Types.ObjectId;
   created_at: Date;

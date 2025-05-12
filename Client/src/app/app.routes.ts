@@ -10,7 +10,7 @@ import { AboutComponent } from './about/about.component';
 import { FaqComponent } from './faq/faq.component';
 import { PrivacyComponent } from './legal/privacy/privacy.component';
 import { CompanyPageComponent } from './company/company-page/company-page.component';
-import { CertificateComponent } from './certificate/certificate.component';
+import { VerifyCertificateComponent } from './certificate/verify-certificate/verify-certificate.component';
 
 export const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: "about", component: AboutComponent },
   { path: "become-host", component: BecomeHostComponent },
   { path: "faq", component: FaqComponent },
-  { path: "certificate", component: CertificateComponent },
+  { path: "certificate", component: VerifyCertificateComponent },
 
   { path: "company/:id", component: CompanyPageComponent },
 

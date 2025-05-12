@@ -11,43 +11,37 @@ import { CertificateService } from '../../services/certificate.service';
   styleUrl: './user-card.component.css'
 })
 export class UserCardComponent {
-  
   private certificateService = inject(CertificateService);
   private toastr = inject(ToastrService);
 
   @Input() user?: UserFromDB;
-
   isAddingCertificate = false;
-  certificateLinkInput = '';
+  certificateCodeInput = '';
 
-  
   startAddingCertificate() {
     this.isAddingCertificate = true;
-    this.certificateLinkInput = this.user?.certificateDownloadLink || '';
   }
 
   cancelAddCertificate() {
     this.isAddingCertificate = false;
-    this.certificateLinkInput = '';
+    this.certificateCodeInput = '';
   }
 
-  saveCertificateLink() {
-    if (!this.user || !this.certificateLinkInput) return;
+  redeemCertificate() {
+    if (!this.user?._id || !this.certificateCodeInput) return;
 
-    this
-
-    this.certificateService.addCertificate(
-      this.certificateLinkInput,
+    this.certificateService.redeemUserCertificate(
+      this.certificateCodeInput,
       this.user._id
     ).subscribe({
       next: (res) => {
         this.user = res.user;
         this.isAddingCertificate = false;
-        this.toastr.success(`Successfully attached certificate to user`, `Success`)
+        this.toastr.success('Certificate redeemed successfully');
       },
       error: (err) => {
-        this.toastr.error(`Failed to update certificate link`, `Error Occurred`)
-        console.error('Failed to update certificate link', err);
+        this.toastr.error('Failed to redeem certificate');
+        console.error('Error:', err);
       }
     });
   }

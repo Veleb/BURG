@@ -268,7 +268,6 @@ vehicleController.post('/bulk', async (req: Request, res: Response, next: NextFu
   try {
 
     const vehiclesData = req.body.vehicles;
-    console.log(vehiclesData);
     
     if (!vehiclesData || vehiclesData.length === 0) {
       res.status(400).json({ message: 'No vehicle data provided' });

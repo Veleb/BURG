@@ -1,0 +1,50 @@
+<div class="certificate-card">
+  <div class="card-header">
+    <div class="status-badge" [class.redeemed]="certificate?.isRedeemed">
+      {{ certificate?.isRedeemed ? 'Redeemed' : 'Active' }}
+    </div>
+    <div class="certificate-code">#{{ certificate?.code }}</div>
+  </div>
+
+  <div class="card-content">
+    <div class="certificate-meta">
+      <div class="meta-item">
+        <label>Issued To:</label>
+        <p>{{ certificate?.issuedTo }}</p>
+      </div>
+      <div class="meta-item">
+        <label>Position:</label>
+        <p>{{ certificate?.position }}</p>
+      </div>
+    </div>
+
+    <div class="dates-container">
+      <div class="date-item">
+        <label>Issued:</label>
+        <p>{{ certificate?.created_at | date }}</p>
+      </div>
+      <div class="date-item">
+        <label>Updated:</label>
+        <p>{{ certificate?.updated_at | date }}</p>
+      </div>
+      @if (certificate?.redeemed_at) {
+        <div class="date-item" >
+          <label>Redeemed:</label>
+          <p>{{ certificate?.redeemed_at ?? undefined | date }}</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card-actions">
+      <a 
+        class="download-btn"
+        [href]="certificate?.downloadLink"
+        [attr.download]="'Certificate-' + certificate?.code + '.pdf'"
+        [class.disabled]="!certificate?.downloadLink"
+      >
+      <i class="fas fa-download"></i>
+      Download Certificate
+    </a>
+  </div>
+</div>

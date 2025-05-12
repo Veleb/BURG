@@ -21,14 +21,12 @@ export class CompanyPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const companyId = params.get('id');
-      console.log(companyId);
       
       if (companyId) {
         this.companyService.getCompanyById(companyId)
           .pipe(takeUntil(this.destroy$))
           .subscribe(company => {
             this.company = company;
-            console.log(company);
           });
       }
     })
