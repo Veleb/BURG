@@ -59,6 +59,7 @@ userController.get('/companies', async (req: Request, res: Response, next: NextF
     const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
+
         if (!userId) {
             res.status(401).json({ message: "Unauthorized!" })
             return;

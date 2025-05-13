@@ -1,4 +1,5 @@
-<form #certificateForm="ngForm" (ngSubmit)="onSubmit()">
+<div class="add-cert-wrapper">
+  <form #certificateForm="ngForm" class="add-cert-form" (ngSubmit)="onSubmit()">
 
   <div class="form-group">
     <label for="issuedTo">Issued To*</label>
@@ -97,3 +98,4 @@
     Submit
   </button>
 </form>
+</div>

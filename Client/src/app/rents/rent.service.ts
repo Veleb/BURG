@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { RentForCreate, RentInterface } from '../../types/rent-types';
@@ -10,6 +10,8 @@ import { FilterState as RentFilterState } from '../../types/rent-types';
 })
 export class RentService {
 
+  private http = inject(HttpClient);
+
   private rents$$: BehaviorSubject<RentInterface[]> = new BehaviorSubject<RentInterface[]>([]);
   rents$ = this.rents$$.asObservable();
 
@@ -19,8 +21,6 @@ export class RentService {
     startDate: null,
     endDate: null,
   });
-
-  constructor(private http: HttpClient) {}
 
   filteredRents$: Observable<RentInterface[]> = combineLatest([
     this.rents$$,

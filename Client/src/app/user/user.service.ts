@@ -16,8 +16,7 @@ export class UserService {
   private user$$ = new BehaviorSubject<UserFromDB | null>(null);
   public user$ = this.user$$.asObservable();
 
-  // private authLoadedSubject = new BehaviorSubject<boolean>(false);
-  // isAuthLoaded$ = this.authLoadedSubject.asObservable();
+  private profileRequest$: Observable<UserFromDB | null> | null = null;
 
   // private csrfToken$$ = new BehaviorSubject<string | null>(null);
 
@@ -62,36 +61,46 @@ export class UserService {
       return of(null);  // return null if the client hasn't loaded (for deploying purposes mainly)
     }
 
-    if (this.user$$.value && !this.isAuthenticating) {
+    if (this.user$$.value) {
       return of(this.user$$.value);
     }
 
+    if (this.profileRequest$)  {
+      return this.profileRequest$
+    };
+
     this.isAuthenticating = true;
 
-    return this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
+    this.profileRequest$ = this.http.get<UserFromDB>('/api/users/profile', { observe: 'response' }).pipe(
       tap(response => {
         this.isAuthenticating = false;
 
-        // this.authLoadedSubject.next(true); // set the auth loaded subject to true
-      
         // const csrfToken = response.headers.get('X-CSRF-Token');
+
         const userData = response.body;
       
         // if (csrfToken) this.storeCsrfToken(csrfToken); // store the fetched csrf token
-        if (userData) this.user$$.next(userData); // set the fetched user to the user subject
+
+        if (userData) {
+          this.user$$.next(userData); // set the fetched user to the user subject
+        }
 
       }),
       map(response => response.body),
-      catchError(err => {
-        this.isAuthenticating = false;
-
-        // this.authLoadedSubject.next(true); // set the auth loaded subject to true
+      catchError(( err ) => {
 
         this.user$$.next(null); // if there is some error set the user subject to null  
         return of(null);
       }),
+      tap(() => {
+        this.isAuthenticating = false;
+        this.profileRequest$ = of(null);
+      }),
       shareReplay(1)
     );
+
+    return this.profileRequest$;
+
   }
 
   login(user: UserForLogin): Observable<UserFromDB> {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { LoaderComponent } from '../shared/components/loader/loader.component';
 
@@ -9,27 +9,28 @@ import { LoaderComponent } from '../shared/components/loader/loader.component';
     styleUrl: './authenticate.component.css'
 })
 export class AuthenticateComponent implements OnInit {
-  isAuthenticating: boolean = true;
+  private userService = inject(UserService);
 
-  constructor(private userService: UserService) {}
-
+  
   ngOnInit(): void {
+    
     this.userService.getProfile().subscribe({
       next: (user) => {
-        this.isAuthenticating = false;
+        console.log('authenticate component fetch', user);
+        
+        this.isAuthenticating = false
       },
-      error: () => {
-        this.isAuthenticating = false;
-      }
+      error: () => this.isAuthenticating = false
     });
-
+    
     this.userService.user$.subscribe({
       next: () => {
-        this.isAuthenticating = false;
+        this.isAuthenticating = false
       },
-      error: () => {
-        this.isAuthenticating = false;
-      }
+      error: () => this.isAuthenticating = false
     });
+
   }
+  
+  isAuthenticating: boolean = true;
 }

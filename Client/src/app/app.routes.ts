@@ -11,6 +11,7 @@ import { FaqComponent } from './faq/faq.component';
 import { PrivacyComponent } from './legal/privacy/privacy.component';
 import { CompanyPageComponent } from './company/company-page/company-page.component';
 import { VerifyCertificateComponent } from './certificate/verify-certificate/verify-certificate.component';
+import { authUserResolver } from './resolvers/auth-user.resolver';
 
 export const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },

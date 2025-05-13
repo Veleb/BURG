@@ -21,6 +21,10 @@ const authMiddleware: RequestHandler = async (
     const accessToken = req.cookies?.access_token;
     const refreshToken = req.cookies?.refresh_token;
 
+    console.log(accessToken);
+    console.log(refreshToken);
+    
+
     if (!accessToken && !refreshToken) {
       customReq.user = undefined;
       customReq.isAuthenticated = false;
@@ -34,6 +38,8 @@ const authMiddleware: RequestHandler = async (
           .select('tokenVersion isGoogleUser role')
           .lean() as UserFromDB | null;
 
+        // console.log(user)
+          
         if (!user || user.tokenVersion !== decoded.tokenVersion) {
           throw new Error('Token revoked');
         }

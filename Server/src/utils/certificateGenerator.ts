@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { CertificateForPDF } from '../types/model-types/certificate-types';
 
-const FRONT_END_URL = process.env.PROD === 'true' ? process.env.FRONT_END_PROD : process.env.FRONT_END_LOCAL;
+const FRONT_END_URL = process.env.FRONT_END_PROD
 
 export async function generateCertificatePDF(data: CertificateForPDF): Promise<Buffer> {
 

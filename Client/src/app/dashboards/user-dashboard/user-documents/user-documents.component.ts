@@ -5,7 +5,7 @@ import { CertificateInterface } from '../../../../types/certificate-types';
 import { CertificateCardComponent } from '../../../certificate/certificate-card/certificate-card.component';
 import { UserService } from '../../../user/user.service';
 import { UserFromDB } from '../../../../types/user-types';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-documents',
@@ -16,24 +16,11 @@ import { RouterLink } from '@angular/router';
 export class UserDocumentsComponent implements OnInit, OnDestroy {
 
   private certificateService = inject(CertificateService);
-  private userService = inject(UserService);
-  
+
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.userService.getProfile();
-
-    this.userService.user$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (user => {
-        this.user = user;
-
-        this.user?.role === 'admin' ? this.loadAdminData() : this.loadUserData();
-
-      })
-    })
-
+    this.user?.role === 'admin' ? this.loadAdminData() : this.loadUserData();
   }
 
   ngOnDestroy(): void {
@@ -42,7 +29,7 @@ export class UserDocumentsComponent implements OnInit, OnDestroy {
   }
 
   certificates: CertificateInterface[] = [];
-  user: UserFromDB | null = null;
+  user: UserFromDB | null = inject(ActivatedRoute).snapshot.data['user'];
 
   private loadUserData(): void {
 

@@ -3,7 +3,7 @@ import { UserFromDB } from '../../../../../../types/user-types';
 import { CurrencyConverterPipe } from '../../../../pipes/currency.pipe';
 import { CurrencyPipe } from '@angular/common';
 import { CompanyInterface } from '../../../../../../types/company-types';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject, throwError, switchMap, map, catchError, takeUntil, of } from 'rxjs';
 import { HostService } from '../../../../../services/host.service';
 import { RentService } from '../../../../../rents/rent.service';
@@ -21,6 +21,7 @@ import { CurrencyService } from '../../../../../currency/currency.service';
 })
 export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private hostService = inject(HostService);
   private rentService = inject(RentService);
   private vehicleService = inject(VehicleService);
@@ -53,7 +54,14 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
     this.userService.user$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(user => {
-      this.user = user || undefined;
+
+      if (!user) {
+        this.router.navigate(['/auth/login']);
+        return;
+      }
+      
+      this.user = user;
+
       if (user?.role === 'admin') {
         this.loadAdminData();
       } else if (user?.role === 'host') {

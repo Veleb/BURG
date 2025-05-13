@@ -1,7 +1,7 @@
 import { AfterViewChecked, Component, ElementRef, inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { UserService } from '../../../user/user.service';
 import { UserFromDB } from '../../../../types/user-types';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, forkJoin, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -19,13 +19,14 @@ import intlTelInput from 'intl-tel-input';
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
-export class UserProfileComponent implements OnInit, AfterViewChecked ,OnDestroy {
+export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   private userService = inject(UserService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
-  private destroy$ = new Subject<void>();
   private platformId = inject(PLATFORM_ID)
+  
+  private destroy$ = new Subject<void>();
 
   @ViewChild('phoneInput', { static: false }) phoneInput!: ElementRef;
   iti: intlTelInput.Plugin | undefined = undefined;  
@@ -34,15 +35,39 @@ export class UserProfileComponent implements OnInit, AfterViewChecked ,OnDestroy
   isUpdating: boolean = false;
   isLoading: boolean = true;
 
-  user: UserFromDB | null = null;
+  // user: UserFromDB | null = null;
+  user: UserFromDB | null = inject(ActivatedRoute).snapshot.data['user'];
   userRents: RentInterface[] = [];
   rentVehicles: VehicleInterface[] = [];
   editModel: Partial<UserFromDB> = {};
   likedVehicles: VehicleInterface[] = [];
 
   ngOnInit(): void {
-    this.loadUserData();
+  if (!this.user) {
+    this.router.navigate(['/auth/login']);
+    return;
   }
+
+  this.editModel = { ...this.user };
+
+  forkJoin([
+    this.userService.getLikedVehicles().pipe(catchError(() => of([]))),
+    this.userService.getRents().pipe(catchError(() => of([])))
+  ])
+  .pipe(takeUntil(this.destroy$))
+  .subscribe({
+    next: ([vehicles, rents]) => {
+      this.likedVehicles = vehicles;
+      this.userRents = rents;
+      this.rentVehicles = rents.map(r => r.vehicle as VehicleInterface);
+      this.isLoading = false;
+    },
+    error: () => {
+      this.toastr.error('Failed to load profile data', 'Error');
+      this.isLoading = false;
+    }
+  });
+}
 
   ngAfterViewChecked(): void {
     if (isPlatformBrowser(this.platformId) && this.phoneInput && !this.iti) {
@@ -66,11 +91,19 @@ export class UserProfileComponent implements OnInit, AfterViewChecked ,OnDestroy
     this.userService.getProfile().pipe(
       takeUntil(this.destroy$),
       switchMap(user => {
+
+        if (!user) {
+          this.router.navigate(['/auth/login']);
+          return of([]);
+        }
+
         this.user = user;
         this.editModel = { ...user };
+        console.log(`USER_PROFILE_FETCH`, this.user);
         
         return forkJoin([
-          this.userService.getLikedVehicles().pipe(
+          this.userService.getLikedVehicles()
+          .pipe(
             catchError(error => {
               return of([]);
             })

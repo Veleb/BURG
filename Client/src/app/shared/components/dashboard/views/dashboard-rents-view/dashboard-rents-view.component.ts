@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { RentInterface } from '../../../../../../types/rent-types';
 import { RentService } from '../../../../../rents/rent.service';
@@ -17,8 +17,8 @@ import { RentCardComponent } from '../../../../../rents/rent-card/rent-card.comp
 export class DashboardRentsViewComponent {
 
   private rentService = inject(RentService);
-  private userService = inject(UserService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   private destroy$ = new Subject<void>();
 
@@ -29,45 +29,72 @@ export class DashboardRentsViewComponent {
   error: string | null = null;
 
   currentCompanyId?: string;
-
   startDate: Date | null = null;
   endDate: Date | null = null;
 
   user: UserFromDB | null = null;
 
   ngOnInit(): void {
-    this.userService.getProfile().subscribe();
-    
-        combineLatest([this.userService.user$, this.route.queryParamMap])
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(([user, params]) => {
-            this.user = user;
-            this.currentCompanyId = params.get('companyId') || undefined;
+    // 1. Read user from resolver
+    this.user = this.route.snapshot.data['user'];
 
-            if (user) {
-              user.role === 'host' ? this.loadCompanyRents() : this.loadAllRents();
-            } else {
-              this.error = 'User not logged in';
-              this.loading = false;
-            }
+    // 2. Fallback redirect in case resolver returns null (shouldn't happen unless redirected fails)
+    if (!this.user) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
 
-          });
+    // 3. Combine query param changes (for companyId)
+    this.route.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        this.currentCompanyId = params.get('companyId') || undefined;
+        this.loadRents();
+      });
 
-    this.rentService.filteredRents$.pipe(takeUntil(this.destroy$)).subscribe(rents => {
-      this.filteredRents = rents;
+    // 4. Listen to filtered rents
+    this.rentService.filteredRents$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(rents => {
+        this.filteredRents = rents;
+      });
+  }
+
+  private loadRents() {
+    this.loading = true;
+    this.error = null;
+
+    if (this.user?.role === 'host') {
+      if (this.currentCompanyId) {
+        this.rentService.getRentsByCompany(this.currentCompanyId).subscribe({
+          next: () => this.loading = false,
+          error: () => {
+            this.error = 'Failed to load rents';
+            this.loading = false;
+          }
+        });
+      } else {
+        this.error = 'Missing company ID';
+        this.loading = false;
+      }
+    } else {
+      this.rentService.getAll(); // triggers rents$$ update
       this.loading = false;
-    });
+    }
   }
 
   loadCompanyRents(): void {
-    if (!this.currentCompanyId) return;
-  
+    if (!this.currentCompanyId) {
+      this.error = 'Missing company ID';
+      return;
+    }
+
     this.loading = true;
     this.error = null;
-  
+
     this.rentService.getRentsByCompany(this.currentCompanyId).subscribe({
       next: () => this.loading = false,
-      error: (err) => {
+      error: () => {
         this.error = 'Failed to load rents';
         this.loading = false;
       }
@@ -77,15 +104,11 @@ export class DashboardRentsViewComponent {
   loadAllRents(): void {
     this.loading = true;
     this.error = null;
-  
-    this.rentService.rents$.subscribe({
-      next: () => this.loading = false,
-      error: (err) => {
-        this.error = 'Failed to load rents';
-        this.loading = false;
-      }
-    });
+
+    this.rentService.getAll();
+    this.loading = false;
   }
+
 
   onStartDateChange(newStartDate: Date | null): void {
     this.startDate = newStartDate;
@@ -103,7 +126,6 @@ export class DashboardRentsViewComponent {
     this.rentService.setSort(sortKey, 'asc');
   }
 
-  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

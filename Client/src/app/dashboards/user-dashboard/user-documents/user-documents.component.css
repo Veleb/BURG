@@ -1,7 +1,13 @@
+.user-documents-wrapper {
+  display: flex;
+}
+
 .certificates-wrapper {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
+  max-width: 85%;
 }
 
 .add-cert-button {
