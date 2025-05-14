@@ -63,8 +63,7 @@ const authMiddleware: RequestHandler = async (
         const user = await UserModel.findById(decoded._id);
   
         // if (!user || user.tokenVersion !== decoded.tokenVersion) {
-        //   res.clearCookie('access_token');
-        //   res.clearCookie('refresh_token');
+        // clearAuthCookies(res);
         //   res.status(401).json({ code: 'TOKEN_REVOKED', message: 'Session expired. Please log in again.' });
         //   return 
         // }
@@ -100,8 +99,7 @@ const authMiddleware: RequestHandler = async (
   
         return next();
       } catch (refreshError) {
-        res.clearCookie('access_token', { path: '/' });
-        res.clearCookie('refresh_token', { path: '/' });
+        clearAuthCookies(res);
         res.status(401).json({
           code: 'TOKEN_REVOKED',
           message: 'Session expired. Please log in again.'
@@ -110,8 +108,7 @@ const authMiddleware: RequestHandler = async (
       }
     } 
 
-    res.clearCookie('access_token', { path: '/' });
-    res.clearCookie('refresh_token', { path: '/' });
+    clearAuthCookies(res);
     res.status(401).json({
       code: 'INVALID_CREDENTIALS',
       message: 'Invalid authentication credentials'
@@ -121,8 +118,7 @@ const authMiddleware: RequestHandler = async (
   } catch (error) {
     console.log(error);
     
-    res.clearCookie('access_token', { path: '/' });
-    res.clearCookie('refresh_token', { path: '/' });
+    clearAuthCookies(res);
     res.status(401).json({
       code: 'AUTH_ERROR',
       message: 'Authentication failed'
@@ -133,6 +129,10 @@ const authMiddleware: RequestHandler = async (
 
 export default authMiddleware;
 
+
+function clearAuthCookies(res: Response<any, Record<string, any>>) {
+  throw new Error('Function not implemented.');
+}
 /* 
   Middleware that checks for the presence of an access token and refresh token in the request cookies.
 

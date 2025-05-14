@@ -101,8 +101,7 @@ async function registerUser(user: UserForAuth): Promise<payloadTokens> {
 
 const logoutUser = async (userId: Types.ObjectId, res: Response) => {
   await UserModel.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
-  res.clearCookie('access_token', { path: '/' });
-  res.clearCookie('refresh_token', { path: '/' });
+  clearAuthCookies(res);
   res.status(200).json({ message: "Logged out successfully" });
 };
 
@@ -375,3 +374,7 @@ const UserService = {
 }
 
 export default UserService;
+
+function clearAuthCookies(res: Response<any, Record<string, any>>) {
+  throw new Error("Function not implemented.");
+}
