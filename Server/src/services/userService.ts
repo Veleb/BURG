@@ -13,12 +13,11 @@ import RentModel from "../models/rent";
 import VehicleModel from "../models/vehicle";
 import CompanyModel from "../models/company";
 import { Types } from "mongoose";
+import clearAuthTokens from "../utils/clearAuthTokens";
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
-
-
 
 async function getUserById(id: Types.ObjectId | undefined): Promise<UserFromDB> { 
   if (!id) throw new Error("Id is required");
@@ -101,7 +100,7 @@ async function registerUser(user: UserForAuth): Promise<payloadTokens> {
 
 const logoutUser = async (userId: Types.ObjectId, res: Response) => {
   await UserModel.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
-  clearAuthCookies(res);
+  clearAuthTokens(res);
   res.status(200).json({ message: "Logged out successfully" });
 };
 
@@ -374,7 +373,3 @@ const UserService = {
 }
 
 export default UserService;
-
-function clearAuthCookies(res: Response<any, Record<string, any>>) {
-  throw new Error("Function not implemented.");
-}

@@ -6,6 +6,7 @@ import UserModel from '../models/user';
 import { UserFromDB } from '../types/model-types/user-types';
 import setAuthTokens from '../utils/setAuthTokens';
 import tokenUtil from '../utils/tokenUtil';
+import clearAuthTokens from '../utils/clearAuthTokens';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
@@ -63,7 +64,7 @@ const authMiddleware: RequestHandler = async (
         const user = await UserModel.findById(decoded._id);
   
         // if (!user || user.tokenVersion !== decoded.tokenVersion) {
-        // clearAuthCookies(res);
+        // clearAuthTokens(res);
         //   res.status(401).json({ code: 'TOKEN_REVOKED', message: 'Session expired. Please log in again.' });
         //   return 
         // }
@@ -99,7 +100,7 @@ const authMiddleware: RequestHandler = async (
   
         return next();
       } catch (refreshError) {
-        clearAuthCookies(res);
+        clearAuthTokens(res);
         res.status(401).json({
           code: 'TOKEN_REVOKED',
           message: 'Session expired. Please log in again.'
@@ -108,7 +109,7 @@ const authMiddleware: RequestHandler = async (
       }
     } 
 
-    clearAuthCookies(res);
+    clearAuthTokens(res);
     res.status(401).json({
       code: 'INVALID_CREDENTIALS',
       message: 'Invalid authentication credentials'
@@ -118,7 +119,7 @@ const authMiddleware: RequestHandler = async (
   } catch (error) {
     console.log(error);
     
-    clearAuthCookies(res);
+    clearAuthTokens(res);
     res.status(401).json({
       code: 'AUTH_ERROR',
       message: 'Authentication failed'
@@ -129,10 +130,6 @@ const authMiddleware: RequestHandler = async (
 
 export default authMiddleware;
 
-
-function clearAuthCookies(res: Response<any, Record<string, any>>) {
-  throw new Error('Function not implemented.');
-}
 /* 
   Middleware that checks for the presence of an access token and refresh token in the request cookies.
 
