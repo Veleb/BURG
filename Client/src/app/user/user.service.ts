@@ -1,7 +1,7 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, tap, shareReplay, map, distinctUntilChanged } from 'rxjs/operators';
+import { catchError, tap, shareReplay, map, distinctUntilChanged, switchMap, filter } from 'rxjs/operators';
 import { UserForLogin, UserForRegister, UserFromDB } from '../../types/user-types';
 import { VehicleInterface } from '../../types/vehicle-types';
 import { CompanyInterface } from '../../types/company-types';
@@ -94,7 +94,7 @@ export class UserService {
       }),
       tap(() => {
         this.isAuthenticating = false;
-        this.profileRequest$ = of(null);
+        this.profileRequest$ = null;
       }),
       shareReplay(1)
     );
@@ -105,7 +105,11 @@ export class UserService {
 
   login(user: UserForLogin): Observable<UserFromDB> {
     return this.http.post<UserFromDB>('/api/users/login', user, { observe: 'response', withCredentials: true }).pipe(
-      tap(response => {
+      switchMap(() => {
+        return this.getProfile();
+      }),
+      filter((user) => user !== null),
+      tap(userData => {
 
         // const csrfToken = response.headers.get('X-CSRF-Token');
 
@@ -113,11 +117,8 @@ export class UserService {
         //   this.storeCsrfToken(csrfToken); // store the csrf token
         // }
 
-        this.getProfile().subscribe(); // fetch the user profile after login
-
-        this.user$$.next(response.body); // set the fetched user to the user object
+        if (userData) this.user$$.next(userData); // set the fetched user to the user object
       }),
-      map(response => response.body as UserFromDB),
       catchError(err => {
         this.user$$.next(null); // once again set the user subject to null if there is an error
         return throwError(() => err);
@@ -131,17 +132,18 @@ export class UserService {
       accessToken: string,
       refreshToken: string 
     }>(`/api/users/google-auth`, { idToken }, { observe: 'response' }).pipe(
-      tap(response => {
+      switchMap(() => {
+        return this.getProfile();
+      }),
+      filter((user) => user !== null),
+      tap(userData => {
         // const csrfToken = response.headers.get('X-CSRF-Token');
-        const userData = response.body?.user;
         
         // if (csrfToken) this.storeCsrfToken(csrfToken);
-        this.getProfile().subscribe(); // fetch the user profile after login
 
         if (userData) this.user$$.next(userData);
 
       }),
-      map(response => response.body),
       catchError(err => {
         this.user$$.next(null);
         return throwError(() => err);
@@ -151,15 +153,16 @@ export class UserService {
 
   register(user: UserForRegister): Observable<UserFromDB> {
   return this.http.post<UserFromDB>('/api/users/register', user, { observe: 'response' }).pipe(
-    tap(response => {
+    switchMap(() => {
+      return this.getProfile();
+    }),
+    filter((user) => user !== null),
+    tap(userData => {
       // const csrfToken = response.headers.get('X-CSRF-Token');
       // if (csrfToken) this.storeCsrfToken(csrfToken);
 
-      this.getProfile().subscribe(); // fetch the user profile after login
-
-      if (response.body) this.user$$.next(response.body);
+      if (userData) this.user$$.next(userData);
     }),
-    map(response => response.body as UserFromDB),
     catchError(err => {
       this.user$$.next(null);
       return throwError(() => err);

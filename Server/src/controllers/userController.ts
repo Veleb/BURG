@@ -148,12 +148,12 @@ userController.post('/google-auth', async (req: Request, res: Response, next: Ne
         refreshToken 
       } = await userService.handleGoogleAuth(idToken);
       
-      const csrfToken = await tokenUtil.generateCsrfToken();
+    //   const csrfToken = await tokenUtil.generateCsrfToken();
       
       setAuthTokens(res, accessToken, refreshToken);
       
       res
-        .header('X-CSRF-Token', csrfToken)
+        // .header('X-CSRF-Token', csrfToken)
         .status(200)
         .json({ 
           message: 'Google authentication successful',
