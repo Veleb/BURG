@@ -99,7 +99,6 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
 
         this.user = user;
         this.editModel = { ...user };
-        console.log(`USER_PROFILE_FETCH`, this.user);
         
         return forkJoin([
           this.userService.getLikedVehicles()

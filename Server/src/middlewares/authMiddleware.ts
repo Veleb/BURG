@@ -21,10 +21,6 @@ const authMiddleware: RequestHandler = async (
     const accessToken = req.cookies?.access_token;
     const refreshToken = req.cookies?.refresh_token;
 
-    console.log(accessToken);
-    console.log(refreshToken);
-    
-
     if (!accessToken && !refreshToken) {
       customReq.user = undefined;
       customReq.isAuthenticated = false;
@@ -38,8 +34,6 @@ const authMiddleware: RequestHandler = async (
           .select('tokenVersion isGoogleUser role')
           .lean() as UserFromDB | null;
 
-        // console.log(user)
-          
         if (!user || user.tokenVersion !== decoded.tokenVersion) {
           throw new Error('Token revoked');
         }
@@ -63,43 +57,58 @@ const authMiddleware: RequestHandler = async (
     }
 
     if (refreshToken) {
-      const decoded = await jwtp.verify(refreshToken, REFRESH_TOKEN_SECRET!) as TokenPayload;
-      const user = await UserModel.findById(decoded._id);
+      try {
 
-      if (!user || user.tokenVersion !== decoded.tokenVersion) {
+        const decoded = await jwtp.verify(refreshToken, REFRESH_TOKEN_SECRET!) as TokenPayload;
+        const user = await UserModel.findById(decoded._id);
+  
+        // if (!user || user.tokenVersion !== decoded.tokenVersion) {
+        //   res.clearCookie('access_token');
+        //   res.clearCookie('refresh_token');
+        //   res.status(401).json({ code: 'TOKEN_REVOKED', message: 'Session expired. Please log in again.' });
+        //   return 
+        // }
+  
+        if (!user || user.tokenVersion !== decoded.tokenVersion) {
+            throw new Error('Refresh token revoked');
+        }
+  
+        // const updatedUser = await UserModel.findByIdAndUpdate(
+        //   decoded._id,
+        //   { $inc: { tokenVersion: 1 } },
+        //   { new: true }
+        // );
+  
+        // if (!updatedUser) throw new Error("User not found");
+  
+        const newAccessToken = await tokenUtil.generateAccessToken(user._id, user.tokenVersion);
+        const newRefreshToken = await tokenUtil.generateRefreshToken(user._id, user.tokenVersion);
+  
+        // tokenUtil.generateAndStoreCsrfToken(res);
+  
+        setAuthTokens(res, newAccessToken, newRefreshToken);
+  
+        customReq.user = {
+          _id: user._id,
+          accessToken: newAccessToken,
+          role: user.role,
+          tokenVersion: user.tokenVersion,
+          isGoogleUser: user.isGoogleUser
+        };
+  
+        customReq.isAuthenticated = true;
+  
+        return next();
+      } catch (refreshError) {
         res.clearCookie('access_token');
         res.clearCookie('refresh_token');
-        res.status(401).json({ code: 'TOKEN_REVOKED', message: 'Session expired. Please log in again.' });
-        return 
+        res.status(401).json({
+          code: 'TOKEN_REVOKED',
+          message: 'Session expired. Please log in again.'
+        });
+        return;
       }
-
-      const updatedUser = await UserModel.findByIdAndUpdate(
-        decoded._id,
-        { $inc: { tokenVersion: 1 } },
-        { new: true }
-      );
-
-      if (!updatedUser) throw new Error("User not found");
-
-      const newAccessToken = await tokenUtil.generateAccessToken(user._id, updatedUser.tokenVersion);
-      const newRefreshToken = await tokenUtil.generateRefreshToken(user._id, updatedUser.tokenVersion);
-
-      // tokenUtil.generateAndStoreCsrfToken(res);
-
-      setAuthTokens(res, newAccessToken, newRefreshToken);
-
-      customReq.user = {
-        _id: user._id,
-        accessToken: newAccessToken,
-        role: user.role,
-        tokenVersion: updatedUser.tokenVersion,
-        isGoogleUser: user.isGoogleUser
-      };
-
-      customReq.isAuthenticated = true;
-
-      return next();
-    }
+    } 
 
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
@@ -108,7 +117,10 @@ const authMiddleware: RequestHandler = async (
       message: 'Invalid authentication credentials'
     });
     return;
+
   } catch (error) {
+    console.log(error);
+    
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     res.status(401).json({

@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CertificateService } from '../../services/certificate.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CertificateForCreate } from '../../../types/certificate-types';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-certificate',
@@ -9,13 +10,10 @@ import { CertificateForCreate } from '../../../types/certificate-types';
   templateUrl: './add-certificate.component.html',
   styleUrl: './add-certificate.component.css'
 })
-export class AddCertificateComponent implements OnInit {
+export class AddCertificateComponent {
 
   private certificateService = inject(CertificateService);
-
-  ngOnInit(): void {
-    
-  }
+  private toastr = inject(ToastrService);
 
   certificate: CertificateForCreate = {
     issuedTo: '',
@@ -26,13 +24,14 @@ export class AddCertificateComponent implements OnInit {
     userId: null
   };
 
-  onSubmit() {
+  onSubmit(certificateForm: NgForm) {
     this.certificateService.addCertificate(this.certificate).subscribe({
       next: (res) => {
-        console.log(res);
+        this.toastr.success(`Successfully created certificate`, `Success`);
+        certificateForm.reset();
       },
       error: (err => {
-        console.log(err)
+        this.toastr.success(`Error occurred while creating certificate`, `Error Occurred`);
       })
     })
   }

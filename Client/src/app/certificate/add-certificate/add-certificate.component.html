@@ -1,5 +1,5 @@
 <div class="add-cert-wrapper">
-  <form #certificateForm="ngForm" class="add-cert-form" (ngSubmit)="onSubmit()">
+  <form #certificateForm="ngForm" class="add-cert-form" (ngSubmit)="onSubmit(certificateForm)">
 
   <div class="form-group">
     <label for="issuedTo">Issued To*</label>

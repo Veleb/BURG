@@ -9,7 +9,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
 
-  // Skip guard on the server (SSR)
   if (!isPlatformBrowser(platformId)) {
     return of(true);
   }
@@ -17,22 +16,17 @@ export const authGuard: CanActivateFn = (route, state) => {
   return userService.getProfile().pipe(
     take(1),
     switchMap(user => {
-      // ✅ If user already exists in memory, allow
-      console.log('auth guard first check', user);
       
       if (user) {
         return of(true);
       }
       
-      // ❌ If not, fetch from backend
       return userService.getProfile().pipe(
         map(fetchedUser => {
-          console.log('auth guard second check');
           return fetchedUser ? true : router.createUrlTree(['/home']);
         }),
         catchError(() => {
           userService.clearUser();
-          console.log('auth guard second error check');
           return of(router.createUrlTree(['/home']));
         })
       );
