@@ -101,8 +101,8 @@ async function registerUser(user: UserForAuth): Promise<payloadTokens> {
 
 const logoutUser = async (userId: Types.ObjectId, res: Response) => {
   await UserModel.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
-  res.clearCookie('access_token');
-  res.clearCookie('refresh_token');
+  res.clearCookie('access_token', { path: '/' });
+  res.clearCookie('refresh_token', { path: '/' });
   res.status(200).json({ message: "Logged out successfully" });
 };
 

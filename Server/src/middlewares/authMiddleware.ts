@@ -100,8 +100,8 @@ const authMiddleware: RequestHandler = async (
   
         return next();
       } catch (refreshError) {
-        res.clearCookie('access_token');
-        res.clearCookie('refresh_token');
+        res.clearCookie('access_token', { path: '/' });
+        res.clearCookie('refresh_token', { path: '/' });
         res.status(401).json({
           code: 'TOKEN_REVOKED',
           message: 'Session expired. Please log in again.'
@@ -110,8 +110,8 @@ const authMiddleware: RequestHandler = async (
       }
     } 
 
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/' });
     res.status(401).json({
       code: 'INVALID_CREDENTIALS',
       message: 'Invalid authentication credentials'
@@ -121,8 +121,8 @@ const authMiddleware: RequestHandler = async (
   } catch (error) {
     console.log(error);
     
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/' });
     res.status(401).json({
       code: 'AUTH_ERROR',
       message: 'Authentication failed'
