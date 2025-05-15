@@ -175,7 +175,7 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
     this.userService.logout().subscribe({
       next: () => {
         this.toastr.success('Successfully logged out!', 'Success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: () => {
         this.toastr.error('Logout failed. Please try again.', 'Error Occurred');
@@ -187,7 +187,7 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
     this.userService.deleteProfile().subscribe({
       next: () => {
         this.toastr.success('Successfully deleted profile!', 'Success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: () => {
         this.toastr.error('Profile deletion failed. Please try again.', 'Error Occurred');

@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
     this.userService.googleAuth(response.credential).subscribe({
       next: (res) => {
         this.toastr.success('Google authentication successful!', 'Success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.handleGoogleError(err);
@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
     this.userService.login(form.value).subscribe({
       next: (res) => {
         this.toastr.success('Login successful!', 'Success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.toastr.error(err.error.message || 'Login failed', 'Error Occurred');

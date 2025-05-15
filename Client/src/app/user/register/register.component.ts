@@ -66,7 +66,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     this.userService.googleAuth(response.credential).subscribe({
       next: (res) => {
         this.toastr.success('Google registration successful!', 'Success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.handleGoogleError(err);
@@ -97,7 +97,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     this.userService.register(formData).subscribe({
       next: (res) => {
         this.toastr.success('Registration successful!', 'Success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.toastr.error(

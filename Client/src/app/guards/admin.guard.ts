@@ -17,10 +17,10 @@ export const adminGuard: CanActivateFn = (route, state) => {
   return userService.getProfile().pipe(
     map((user) => {
       if (user?.role === "admin") return true;
-      return router.createUrlTree(['/home']);
+      return router.createUrlTree(['/']);
     }),
     catchError(() => {
-      return of(router.createUrlTree(['/home']));
+      return of(router.createUrlTree(['/']));
     })
   );
 };

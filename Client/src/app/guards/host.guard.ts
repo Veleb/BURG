@@ -17,10 +17,10 @@ export const hostGuard: CanActivateFn = (route, state) => {
   return userService.user$.pipe(
     map((user) => {
       if (user?.role === "host") return true;
-      return router.createUrlTree(['/home']);
+      return router.createUrlTree(['/']);
     }),
     catchError(() => {
-      return of(router.createUrlTree(['/home']));
+      return of(router.createUrlTree(['/']));
     })
   );
 };
