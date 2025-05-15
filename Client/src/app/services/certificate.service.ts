@@ -19,8 +19,8 @@
       return this.http.post<{ message: string, user: UserFromDB }>('/api/certificates/add', { certificate });
     }
 
-    redeemUserCertificate(certificateCode: string, userId: string): Observable<{user: UserFromDB}> {
-      return this.http.post<{ user: UserFromDB }>(`/api/certificates/add-user`, { certificateCode, userId });
+    redeemUserCertificate(certificateCode: string, userId: string): Observable<{ message: string, cert: CertificateInterface}> {
+      return this.http.post<{ message: string, cert: CertificateInterface}>(`/api/certificates/add-user`, { certificateCode, userId });
     }
 
     getAllUserCertificates(): Observable<{ message: string, certificates: CertificateInterface[] }> {

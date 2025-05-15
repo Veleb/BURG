@@ -1,0 +1,84 @@
+/* .certificate-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.certificate-wrapper {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.certificate-wrapper h2 {
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.certificate-wrapper label {
+  font-weight: 600;
+  color: #555;
+}
+
+.certificate-wrapper input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.certificate-wrapper input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.certificate-wrapper button {
+  padding: 10px 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.certificate-wrapper button:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.certificate-image {
+  max-height: 600px;
+  border-radius: 8px;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.green {
+  color: limegreen;
+}
+
+.red {
+  color: firebrick;
+}

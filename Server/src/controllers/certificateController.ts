@@ -147,9 +147,16 @@ certificateController.post(`/add`, async (req: Request, res: Response, next: Nex
 });
 
 certificateController.post(`/add-user`, async (req: Request, res: Response, next: NextFunction) => {
+  
+  const modifiedReq = req as authenticatedRequest;
+
   try {
     
-    const { certificateCode, userId } = req.body;
+    let { certificateCode, userId } = req.body;
+
+    if (userId === '') {
+      userId = modifiedReq.user?._id;
+    }
 
     if (!certificateCode || !userId) {
       res.status(400).json({ message: "Certificate code or userId is required." });

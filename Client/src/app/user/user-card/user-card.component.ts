@@ -35,7 +35,7 @@ export class UserCardComponent {
       this.user._id
     ).subscribe({
       next: (res) => {
-        this.user = res.user;
+        // this.user = res.user;
         this.isAddingCertificate = false;
         this.toastr.success('Certificate redeemed successfully');
       },

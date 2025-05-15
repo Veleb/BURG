@@ -51,6 +51,15 @@
             <a routerLink="/certificate" class="dropdown-item" (click)="isMenuOpen = false">
               <i class="fa-solid fa-certificate link-icon"></i> Certificate Validator
             </a>
+            
+            @if (vm$ | async; as vm) {
+              @if (vm.isLoggedIn) {
+                <a routerLink="/redeem-certificate" class="dropdown-item" (click)="isMenuOpen = false">
+                  <i class="fa-solid fa-certificate link-icon"></i> Redeem Certificate
+                </a>
+              }
+            }
+
             <a routerLink="/terms" class="dropdown-item" (click)="isMenuOpen = false">
               <i class="fa-solid fa-file-contract link-icon"></i> Terms of Service
             </a>

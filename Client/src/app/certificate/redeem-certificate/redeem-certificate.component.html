@@ -1,1 +1,16 @@
-<p>redeem-certificate works!</p>
+<div class="certificate-container">
+  <div class="certificate-wrapper">
+    <h2>Redeem a Certificate</h2>
+    <label for="certificateCode">Enter certificate code</label>
+    <input
+      type="text"
+      name="certificateCode"
+      id="certificateCode"
+      placeholder="Hu182Hnr13"
+      [(ngModel)]="certificateCode"
+      required
+    />
+    <button (click)="redeemCertificate()">Redeem</button>
+  </div>
+
+</div>

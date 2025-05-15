@@ -11,7 +11,8 @@ import { FaqComponent } from './faq/faq.component';
 import { PrivacyComponent } from './legal/privacy/privacy.component';
 import { CompanyPageComponent } from './company/company-page/company-page.component';
 import { VerifyCertificateComponent } from './certificate/verify-certificate/verify-certificate.component';
-import { authUserResolver } from './resolvers/auth-user.resolver';
+import { RedeemCertificateComponent } from './certificate/redeem-certificate/redeem-certificate.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -25,8 +26,10 @@ export const routes: Routes = [
   { path: "about", component: AboutComponent },
   { path: "become-host", component: BecomeHostComponent },
   { path: "faq", component: FaqComponent },
-  { path: "certificate", component: VerifyCertificateComponent },
 
+  { path: "certificate", component: VerifyCertificateComponent },
+  { path: "redeem-certificate", component: RedeemCertificateComponent, canActivate: [ authGuard ] },
+  
   { path: "company/:id", component: CompanyPageComponent },
 
   { 
