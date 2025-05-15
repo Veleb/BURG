@@ -2,26 +2,72 @@
 <html lang="en">
 <head>
   <script src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"></script>
-  <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="7r5rtCCjyFh8cm" async></script>
+  <script
+    id="usercentrics-cmp"
+    src="https://web.cmp.usercentrics.eu/ui/loader.js"
+    data-settings-id="7r5rtCCjyFh8cm"
+    async
+  ></script>
 
-  <!-- <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/67a339123a8427326079f1ca/1ijapdt1h';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script> -->
-  <script src="https://accounts.google.com/gsi/client" async></script>
-  <meta charset="utf-8">
+  <script>
+    function loadScriptOnce(src, globalFlag) {
+      if (window[globalFlag]) return;
+      window[globalFlag] = true;
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      if (src.includes('tawk.to')) {
+        script.charset = 'UTF-8';
+        script.setAttribute('crossorigin', '*');
+      }
+      document.head.appendChild(script);
+    }
+
+    // function loadTawk() {
+    //   loadScriptOnce('https://embed.tawk.to/67a339123a8427326079f1ca/1ijapdt1h', 'tawkLoaded');
+    // }
+
+    function loadGoogleGSI() {
+      loadScriptOnce('https://accounts.google.com/gsi/client', 'googleGSILoaded');
+    }
+
+    window.addEventListener('UC_UI_INITIALIZED', function () {
+      window.addEventListener('UC_UI_ACCEPT_ALL', function () {
+        // loadTawk();
+        loadGoogleGSI();
+      });
+
+      window.addEventListener('UC_UI_CATEGORIES_ACCEPTED', function (event) {
+        const categories = event.detail && event.detail.categories;
+        if (categories && categories.includes('functional')) {
+          // loadTawk();
+          loadGoogleGSI();
+        }
+      });
+
+      if (window.Usercentrics && window.Usercentrics.getConsents) {
+        window.Usercentrics.getConsents().then((consents) => {
+          if (consents.functional) {
+            // loadTawk();
+            loadGoogleGSI();
+          }
+        });
+      }
+    });
+  </script>
+
+  <meta charset="utf-8" />
   <title>BURG</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="preload" as="image" href="/images/hero-background.avif" type="image/avif" fetchpriority="high">
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link
+    rel="preload"
+    as="image"
+    href="/images/hero-background.avif"
+    type="image/avif"
+    fetchpriority="high"
+  />
 </head>
 <body>
   <app-root></app-root>
