@@ -15,8 +15,7 @@ import { RedeemCertificateComponent } from './certificate/redeem-certificate/red
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: "", redirectTo: "home", pathMatch: "full" },
-  { path: "home", component: HomeComponent },
+  { path: "", component: HomeComponent, pathMatch: "full" },
   { path: "contact", component: ContactComponent },
   
   { path: "terms", component: TermsComponent },
