@@ -23,9 +23,9 @@
       document.head.appendChild(script);
     }
 
-    // function loadTawk() {
-    //   loadScriptOnce('https://embed.tawk.to/67a339123a8427326079f1ca/1ijapdt1h', 'tawkLoaded');
-    // }
+    function loadTawk() {
+      loadScriptOnce('https://embed.tawk.to/67a339123a8427326079f1ca/1ijapdt1h', 'tawkLoaded');
+    }
 
     function loadGoogleGSI() {
       loadScriptOnce('https://accounts.google.com/gsi/client', 'googleGSILoaded');
@@ -33,22 +33,22 @@
 
     window.addEventListener('UC_UI_INITIALIZED', function () {
       window.addEventListener('UC_UI_ACCEPT_ALL', function () {
-        // loadTawk();
+        loadTawk();
         loadGoogleGSI();
       });
 
       window.addEventListener('UC_UI_CATEGORIES_ACCEPTED', function (event) {
-        const categories = event.detail && event.detail.categories;
-        if (categories && categories.includes('functional')) {
-          // loadTawk();
+        const categories = event.detail?.categories || [];
+        if (categories.includes('functional')) {
+          loadTawk();
           loadGoogleGSI();
         }
       });
 
-      if (window.Usercentrics && window.Usercentrics.getConsents) {
+      if (window.Usercentrics?.getConsents) {
         window.Usercentrics.getConsents().then((consents) => {
           if (consents.functional) {
-            // loadTawk();
+            loadTawk();
             loadGoogleGSI();
           }
         });
