@@ -3,7 +3,6 @@ import { VehicleInterface } from '../../../types/vehicle-types';
 import { RouterLink } from '@angular/router';
 import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
 import { CurrencyService } from '../../currency/currency.service';
-import { CurrencyPipe } from '@angular/common';
 import { UppercasePipe } from '../../shared/pipes/uppercase.pipe';
 import { VehicleService } from '../vehicle.service';
 import { UserService } from '../../user/user.service';
@@ -12,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-product-card',
-    imports: [RouterLink, CurrencyConverterPipe, CurrencyPipe, UppercasePipe],
+    imports: [RouterLink, CurrencyConverterPipe, UppercasePipe],
     templateUrl: './product-card.component.html',
     styleUrl: './product-card.component.css'
 })

@@ -1,6 +1,25 @@
 <section class="home-page">
   <app-hero></app-hero>
 
+  <section class="promoted-listings">
+    <h2>Promoted Listings</h2>
+    <div class="promoted-listings-grid">
+      <!-- Loop through promoted vehicles here -->
+      @for (vehicle of vehicles; track $index) {
+        <app-product-card [vehicle]="vehicle"/>
+      }
+    </div>
+  </section>
+
+  <!-- Ads Space -->
+  <section class="ads-space">
+    <h2>Sponsored</h2>
+    <div class="ads-container">
+      <!-- Could be a carousel or grid of ad banners -->
+      <!-- <app-ad-banner [ad]="ad" *ngFor="let ad of ads"></app-ad-banner> -->
+    </div>
+  </section>
+
   <section class="products-section">
 
     <!-- <div class="section-header">

@@ -94,7 +94,7 @@
       <div class="checkout-details-wrapper">
 
         <div class="first-row">
-          <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} <sub>day</sub> </h2>
+          <h2> {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter  }} <sub>day</sub> </h2>
           <app-slider (pricePerDayChanged)="pricePerDayChange($event)"/>
         </div>
   
@@ -185,25 +185,25 @@
             } @else {
               <p>Rent fee x {{ rentalHours.toFixed(2) }} hours</p>
             }
-            <p>{{ (basePrice ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+            <p>{{ (basePrice ?? 0) | currencyConverter  }}</p>
           </div>
         
           <div class="price-breakdown">
             <p>GST (18%)</p>
-            <p>{{ (gstAmount ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+            <p>{{ (gstAmount ?? 0) | currencyConverter  }}</p>
           </div>
         
           @if (useCredits) {
             <div class="price-breakdown" >
               <p>Credit Discount</p>
-              <p>-{{ (user?.credits ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+              <p>-{{ (user?.credits ?? 0) | currencyConverter  }}</p>
             </div>
           }
         
           @if (referralDiscount) {
             <div class="price-breakdown">
               <p>Referral Discount</p>
-              <p>-{{ referralDiscount | currencyConverter | currency: selectedCurrency }}</p>
+              <p>-{{ referralDiscount | currencyConverter  }}</p>
             </div>
           }
         
@@ -211,7 +211,7 @@
         
           <div class="price-breakdown">
             <h3>Total</h3>
-            <p>{{ (totalPrice ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+            <p>{{ (totalPrice ?? 0) | currencyConverter  }}</p>
           </div>
         </div>
       }

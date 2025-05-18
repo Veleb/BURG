@@ -1,4 +1,4 @@
-<form #form="ngForm" (ngSubmit)="onSubmit(form)" class="vehicle-form">
+<form #form="ngForm" (ngSubmit)="onSubmit()" class="vehicle-form">
   @if (successMessage) {
     <div class="success-message">
       {{ successMessage }}
@@ -28,7 +28,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Model</label>
+    <label for="vehicleModel">Vehicle Model</label>
     <input type="text" id="vehicleModel" name="vehicleModel" 
            [(ngModel)]="vehicleData.vehicleModel" required minlength="2" #model="ngModel">
     @if (model.invalid && (model.dirty || model.touched)) {
@@ -44,7 +44,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Year</label>
+    <label for="vehicleYear">Vehicle Year</label>
     <input type="number" id="vehicleYear" name="vehicleYear" 
            [(ngModel)]="vehicleData.vehicleYear" required minlength="2" #year="ngModel">
     @if (year.invalid && (year.dirty || year.touched)) {
@@ -60,7 +60,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Engine</label>
+    <label for="vehicleEngine">Vehicle Engine</label>
     <input type="text" id="vehicleEngine" name="vehicleEngine" 
            [(ngModel)]="vehicleData.vehicleEngine" required minlength="2" #engine="ngModel">
     @if (engine.invalid && (engine.dirty || engine.touched)) {
@@ -76,7 +76,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Power</label>
+    <label for="vehiclePower">Vehicle Power</label>
     <input type="text" id="vehiclePower" name="vehiclePower" 
            [(ngModel)]="vehicleData.vehiclePower" required minlength="2" #power="ngModel">
     @if (power.invalid && (power.dirty || power.touched)) {
@@ -92,7 +92,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle IDN (Identification number)</label>
+    <label for="identificationNumber">Vehicle IDN (Identification number)</label>
     <input type="text" id="identificationNumber" name="identificationNumber" 
            [(ngModel)]="vehicleData.identificationNumber" required minlength="2" #idn="ngModel">
     @if (idn.invalid && (idn.dirty || idn.touched)) {
@@ -108,7 +108,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle GVW (Gross Vehicle Weight)</label>
+    <label for="vehicleGVW">Vehicle GVW (Gross Vehicle Weight)</label>
     <input type="number" id="vehicleGVW" name="vehicleGVW" 
            [(ngModel)]="vehicleData.vehicleGvw" required #gvw="ngModel">
     @if (gvw.invalid && (gvw.dirty || gvw.touched)) {
@@ -121,7 +121,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Fuel Tank</label>
+    <label for="fuelTank">Vehicle Fuel Tank</label>
     <input type="number" id="fuelTank" name="fuelTank" 
            [(ngModel)]="vehicleData.vehicleFuelTank" required #fuelTank="ngModel">
     @if (fuelTank.invalid && (fuelTank.dirty || fuelTank.touched)) {
@@ -134,7 +134,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Tyres</label>
+    <label for="tyres">Vehicle Tyres</label>
     <input type="number" id="tyres" name="tyres" 
            [(ngModel)]="vehicleData.vehicleTyres" required #tyres="ngModel">
     @if (tyres.invalid && (tyres.dirty || tyres.touched)) {
@@ -147,7 +147,7 @@
   </div>
   
   <div class="form-group">
-    <label for="vehicleName">Vehicle Mileage</label>
+    <label for="mileage">Vehicle Mileage</label>
     <input type="number" id="mileage" name="mileage" 
            [(ngModel)]="vehicleData.vehicleMileage" required #mileage="ngModel">
     @if (mileage.invalid && (mileage.dirty || mileage.touched)) {
@@ -160,7 +160,7 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Chassis Type</label>
+    <label for="chassis">Vehicle Chassis Type</label>
     <input type="text" id="chassis" name="chassis" 
            [(ngModel)]="vehicleData.vehicleChassisType" required minlength="2" #chassisType="ngModel">
     @if (chassisType.invalid && (chassisType.dirty || chassisType.touched)) {
@@ -176,16 +176,23 @@
   </div>
 
   <div class="form-group">
-    <label for="vehicleName">Vehicle Capacity</label>
+    <label for="capacity">Vehicle Capacity</label>
     <input type="number" id="capacity" name="capacity" 
-           [(ngModel)]="vehicleData.vehicleCapacity" required #capacityType="ngModel">
-    @if (capacityType.invalid && (capacityType.dirty || capacityType.touched)) {
+           [(ngModel)]="vehicleData.vehicleCapacity" required #capacity="ngModel">
+    @if (capacity.invalid && (capacity.dirty || capacity.touched)) {
       <div class="validation-error">
-        @if (capacityType.errors?.['required']) {
-          <div>capacityType is required</div>
+        @if (capacity.errors?.['required']) {
+          <div>capacity is required</div>
         }
       </div>
     }
+  </div>
+
+  <div class="form-group">
+    <label for="isPromoted">Is Promoted?</label>
+    <input type="checkbox" id="isPromoted" name="isPromoted" 
+           [(ngModel)]="vehicleData.isPromoted" #isPromoted="ngModel">
+
   </div>
 
   <div class="form-row">
@@ -196,7 +203,7 @@
         @for (size of sizes; track size) {
           <option [value]="size">{{size}}</option>
         }
-      </select>
+      </select>\
       @if (size.invalid && (size.dirty || size.touched)) {
         <div class="validation-error">Size is required</div>
       }
@@ -241,31 +248,23 @@
   </div>
 
   <div class="form-group">
-    <label>Images</label>
-    @for (image of vehicleData.vehicleImages; track image; let i = $index) {
-      <div class="image-group">
-        <input type="url" 
-              [(ngModel)]="vehicleData.vehicleImages[i]" 
-              [name]="'vehicleImage' + i" 
-              placeholder="Image URL">
-        <button type="button" (click)="removeImage(i)" class="remove-btn">x</button>
-      </div>
-    }
-    <button type="button" (click)="addImage()" class="add-btn">Add Image URL</button>
+    <label for="vehicleImages">Vehicle Images</label>
+    <input type="file" id="vehicleImages" (change)="onImagesSelected($event)" multiple accept="image/*">
+    <ul>
+      @for (file of selectedImages; track $index) {
+        <li>{{ file.name }}</li>
+      }
+    </ul>
   </div>
 
   <div class="form-group">
-    <label>Vehicle Registration</label>
-    @for (reg of vehicleData.vehicleRegistration; track reg; let i = $index) {
-      <div class="image-group">
-        <input type="url" 
-              [(ngModel)]="vehicleData.vehicleRegistration[i]" 
-              [name]="'vehicleRegistration' + i" 
-              placeholder="Vehicle Registration URL">
-        <button type="button" (click)="removeRegistration(i)" class="remove-btn">x</button>
-      </div>
-    }
-    <button type="button" (click)="addRegistration()" class="add-btn">Add Vehicle Registration URL</button>
+    <label for="vehicleRegistration">Vehicle Registration</label>
+    <input type="file" id="vehicleRegistration" (change)="onRegistrationSelected($event)" multiple accept="image/*">
+    <ul>
+      @for (file of selectedRegistrations; track $index) {
+        <li>{{ file.name }}</li>
+      }
+    </ul>
   </div>
 
   <button type="submit" [disabled]="form.invalid || isSubmitting" class="submit-btn">

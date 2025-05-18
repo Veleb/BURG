@@ -4,8 +4,8 @@
   <div class="stats-grid">
     <div class="stat-card">
       <h3>Total Earnings</h3>
-      <p>{{ (user?.role === 'admin' ? totalEarnings : company?.totalEarnings) || 0 | currencyConverter | currency: selectedCurrency }}</p>
-      <!-- <p>{{ company?.totalEarnings || 0 | currencyConverter | currency }}</p> -->
+      <p>{{ (user?.role === 'admin' ? totalEarnings : company?.totalEarnings) || 0 | currencyConverter }}</p>
+      <!-- <p>{{ company?.totalEarnings || 0 | currencyConverter }}</p> -->
     </div>
     
     <div class="stat-card">

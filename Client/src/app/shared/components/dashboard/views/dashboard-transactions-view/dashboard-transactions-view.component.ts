@@ -7,12 +7,11 @@ import { UserFromDB } from '../../../../../../types/user-types';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { DatePipe } from '../../../../pipes/date.pipe';
 import { CurrencyConverterPipe } from '../../../../pipes/currency.pipe';
-import { CurrencyPipe } from '@angular/common';
 import { CurrencyService } from '../../../../../currency/currency.service';
 
 @Component({
   selector: 'app-dashboard-transactions-view',
-  imports: [ DatePipe, CurrencyConverterPipe, CurrencyPipe ],
+  imports: [ DatePipe, CurrencyConverterPipe ],
   templateUrl: './dashboard-transactions-view.component.html',
   styleUrl: './dashboard-transactions-view.component.css'
 })

@@ -4,7 +4,7 @@
   <p><strong>Phone:</strong> {{ company?.phoneNumber }}</p>
   <p><strong>Location:</strong> {{ company?.location }}</p>
   <p><strong>Status:</strong> {{ company?.status }}</p>
-  <p><strong>Total Earnings:</strong> {{ (company?.totalEarnings ?? 0) | currencyConverter | currency: selectedCurrency }}</p>
+  <p><strong>Total Earnings:</strong> {{ (company?.totalEarnings ?? 0) | currencyConverter }}</p>
   <p><strong>Company Type:</strong> {{ company?.companyType }}</p>
   <p><strong>State Registration:</strong> {{ company?.stateRegistration }}</p>
   <p><strong>Company ID:</strong> {{ (company?._id ?? '') }}</p>

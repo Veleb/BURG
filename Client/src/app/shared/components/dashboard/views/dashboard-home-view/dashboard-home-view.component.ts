@@ -1,7 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UserFromDB } from '../../../../../../types/user-types';
 import { CurrencyConverterPipe } from '../../../../pipes/currency.pipe';
-import { CurrencyPipe } from '@angular/common';
 import { CompanyInterface } from '../../../../../../types/company-types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject, throwError, switchMap, map, catchError, takeUntil, of } from 'rxjs';
@@ -15,7 +14,7 @@ import { CurrencyService } from '../../../../../currency/currency.service';
 
 @Component({
   selector: 'app-dashboard-home-view',
-  imports: [CurrencyConverterPipe, CurrencyPipe, RentCardComponent],
+  imports: [CurrencyConverterPipe, RentCardComponent],
   templateUrl: './dashboard-home-view.component.html',
   styleUrl: './dashboard-home-view.component.css'
 })

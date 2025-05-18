@@ -7,24 +7,16 @@ import { isPlatformBrowser } from '@angular/common';
 export const guestGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const router = inject(Router);
-
   const platformId = inject(PLATFORM_ID);
 
   if (!isPlatformBrowser(platformId)) {
-    return true;
+    return of(true);
   }
 
   return userService.ensureAuthChecked().pipe(
     switchMap(() => userService.user$),
     take(1),
-    map(user => {
-      if (user) {
-        return router.createUrlTree(['/']);
-      }
-      return true;
-    }),
-    catchError(() => {
-      return of(router.createUrlTree(['/']));
-    })
+    map(user => (user ? router.createUrlTree(['/']) : true)),
+    catchError(() => of(router.createUrlTree(['/']))),
   );
 };

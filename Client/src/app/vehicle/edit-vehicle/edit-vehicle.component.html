@@ -229,35 +229,23 @@
   </div>
 
   <div class="form-group">
-    <label>Images</label>
-    @for (image of vehicleData.vehicleImages; track image; let i = $index) {
-      <div class="image-group">
-        <input type="url" 
-              [(ngModel)]="vehicleData.vehicleImages[i]" 
-              [name]="'vehicleImage' + i" 
-              placeholder="Image URL"
-              [value]="image"
-              >
-        <button type="button" (click)="removeImage(i)" class="remove-btn">x</button>
-      </div>
-    }
-    <button type="button" (click)="addImage()" class="add-btn">Add Image URL</button>
+    <label for="vehicleImages">Vehicle Images</label>
+    <input type="file" (change)="onImagesSelected($event)" multiple accept="image/*">
+    <ul>
+      @for (file of selectedImages; track $index) {
+        <li>{{ file.name }}</li>
+      }
+    </ul>
   </div>
 
   <div class="form-group">
-    <label>Vehicle Registration</label>
-    @for (reg of vehicleData.vehicleRegistration; track reg; let i = $index) {
-      <div class="image-group">
-        <input type="url" 
-              [(ngModel)]="vehicleData.vehicleRegistration[i]" 
-              [name]="'vehicleRegistration' + i" 
-              placeholder="Vehicle Registration URL"
-              [value]="reg"
-              >
-        <button type="button" (click)="removeRegistration(i)" class="remove-btn">x</button>
-      </div>
-    }
-    <button type="button" (click)="addRegistration()" class="add-btn">Add Vehicle Registration URL</button>
+    <label for="vehicleRegistration">Vehicle Registration</label>
+    <input type="file" (change)="onRegistrationSelected($event)" multiple accept="image/*">
+    <ul>
+      @for (file of selectedRegistrations; track $index) {
+        <li>{{ file.name }}</li>
+      }
+    </ul>
   </div>
 
   <button type="submit" [disabled]="form.invalid || isSubmitting" class="submit-btn">

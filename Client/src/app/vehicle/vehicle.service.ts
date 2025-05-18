@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { FilterState, VehicleForCreate, VehicleInterface } from '../../types/vehicle-types';
 
@@ -21,6 +21,9 @@ export class VehicleService {
     year: undefined,
     sort: { key: 'none', direction: 'asc' },
   });
+
+  private totalCount$$ = new BehaviorSubject<number>(0);
+  totalCount$ = this.totalCount$$.asObservable();
 
   filteredVehicles$: Observable<VehicleInterface[]> = combineLatest([
     this.availableVehicles$$,
@@ -101,12 +104,32 @@ export class VehicleService {
 
   // main functions
 
-  getAll(): void {
-    this.http.get<VehicleInterface[]>(`/api/vehicles/`).subscribe(
-      vehicles => {
-        this.vehicles$$.next(vehicles);
-        this.availableVehicles$$.next(vehicles);
-      }
+  getVehicles(options: { limit?: number; offset?: number; promoted?: boolean; sortByLikes?: boolean }) {
+    let params = new HttpParams();
+
+    if (options.limit !== undefined) params = params.set('limit', options.limit.toString());
+    if (options.offset !== undefined) params = params.set('offset', options.offset.toString());
+    if (options.promoted !== undefined) params = params.set('promoted', options.promoted.toString());
+    if (options.sortByLikes !== undefined) params = params.set('sortByLikes', options.sortByLikes.toString());
+
+    return this.http.get<{ vehicles: VehicleInterface[], totalCount: number }>('/api/vehicles', { params });
+  }
+
+
+  getAll(options: { limit?: number; offset?: number; promoted?: boolean; sortByLikes?: boolean } = {}): Observable<{ vehicles: VehicleInterface[], totalCount: number }> {
+    return this.getVehicles(options).pipe(
+      tap({
+        next: ({ vehicles, totalCount }) => {
+          this.totalCount$$.next(totalCount);
+          this.vehicles$$.next(vehicles);
+          this.availableVehicles$$.next(vehicles.filter(v => v.available));
+        },
+        error: (err) => {
+          console.error('Sync failed:', err);
+          this.vehicles$$.next([]);
+          this.availableVehicles$$.next([]);
+        }
+      })
     );
   }
 
@@ -114,14 +137,14 @@ export class VehicleService {
     return this.http.get<VehicleInterface>(`/api/vehicles/${vehicleId}`);
   }
 
-  createVehicle(vehicleData: VehicleForCreate): Observable<VehicleInterface> {
+  createVehicle(vehicleData: FormData): Observable<VehicleInterface> {
     return this.http.post<VehicleInterface>(`/api/vehicles`, vehicleData);
   }
 
   bulkCreateVehicles(vehicles: any[]) {
     return this.http.post('/api/vehicles/bulk', { vehicles }).pipe(
       tap(() => {
-        this.getAll(); // Refresh the vehicles after bulk creation
+        this.getAll().subscribe(); // Refresh the vehicles after bulk creation
       })
     );
   }  

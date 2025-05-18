@@ -4,12 +4,11 @@ import { RouterLink } from '@angular/router';
 import { CompanyService } from '../company.service';
 import { Subject, takeUntil } from 'rxjs';
 import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
-import { CurrencyPipe } from '@angular/common';
 import { CurrencyService } from '../../currency/currency.service';
 
 @Component({
   selector: 'app-company-card',
-  imports: [ RouterLink, CurrencyPipe, CurrencyConverterPipe ],
+  imports: [ RouterLink, CurrencyConverterPipe ],
   templateUrl: './company-card.component.html',
   styleUrl: './company-card.component.css'
 })

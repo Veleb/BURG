@@ -24,7 +24,7 @@ export class CurrencyService {
 
   private initializeCurrency() {
     const savedCurrency = this.getCurrencyFromCookie();
-    this.setCurrency(savedCurrency || 'USD');
+    this.setCurrency(savedCurrency || 'INR');
   }
 
   getCurrency(): Observable<string> {
@@ -39,14 +39,14 @@ export class CurrencyService {
 
   private getCurrencyFromCookie(): string {
     if (isPlatformBrowser(this.platformId)) {
-      return this.cookieService.get('currency') || 'USD';
+      return this.cookieService.get('currency') || 'INR';
     }
-    return 'USD';
+    return 'INR';
   }
 
   private saveCurrencyToCookie(currency: string) {
     if (isPlatformBrowser(this.platformId)) {
-      this.cookieService.set('currency', currency, { expires: 30 });
+      this.cookieService.set('currency', currency, { expires: 30, path: "/" });
     }
   }
 

@@ -25,6 +25,59 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
 
   isSubmitting: boolean = false;
   vehicle: VehicleInterface | undefined = undefined;
+  sizes = Object.values(Size);
+  categories = Object.values(CategoryEnum);
+
+  selectedImages: File[] = [];
+  selectedRegistrations: File[] = [];
+  
+  private initializeFormData(vehicle: VehicleInterface) {
+    this.vehicleData = {
+      vehicleCompany: vehicle?.company._id || '',
+      vehicleName: vehicle?.details.name || '',
+      vehicleModel: vehicle?.details.model || '',
+      vehicleSize: vehicle?.details.size || Size.Small,
+      vehicleCategory: vehicle?.details.category || CategoryEnum.Cars,
+      vehiclePricePerDay: vehicle?.details.pricePerDay || 0,
+      vehiclePricePerKm: vehicle?.details.pricePerKm || 0,
+      vehicleYear: vehicle?.details.year || new Date().getFullYear(),
+      vehicleEngine: vehicle?.details.engine || '',
+      vehiclePower: vehicle?.details.power || '',
+      vehicleGvw: vehicle?.details.gvw || 0,
+      vehicleFuelTank: vehicle?.details.fuelTank || 0,
+      vehicleTyres: vehicle?.details.tyres || 4,
+      vehicleMileage: vehicle?.details.mileage || 0,
+      vehicleChassisType: vehicle?.details.chassisType || '',
+      vehicleCapacity: vehicle?.details.capacity || 0,
+      identificationNumber: vehicle?.details.identificationNumber || '',
+      isPromoted: false,
+      vehicleImages: [...vehicle.details.images],
+      vehicleRegistration: [...vehicle.details.vehicleRegistration],
+    };
+  }
+
+  vehicleData: VehicleForCreate = {
+    vehicleCompany: '',
+    vehicleName: '',
+    vehicleModel: '',
+    vehicleSize: Size.Small,
+    vehicleCategory: CategoryEnum.Cars,
+    vehiclePricePerDay: 0,
+    vehiclePricePerKm: 0,
+    vehicleYear: new Date().getFullYear(),
+    vehicleEngine: '',
+    vehiclePower: '',
+    vehicleGvw: 0,
+    vehicleFuelTank: 0,
+    vehicleTyres: 4,
+    vehicleMileage: 0,
+    vehicleChassisType: '',
+    vehicleCapacity: 0,
+    identificationNumber: '',
+    isPromoted: false,
+    vehicleImages: [''],
+    vehicleRegistration: [''],
+  };
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(
@@ -62,55 +115,6 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     this.destroy$.complete();
   }
 
-  private initializeFormData(vehicle: VehicleInterface) {
-    this.vehicleData = {
-      vehicleCompany: vehicle?.company._id || '',
-      vehicleName: vehicle?.details.name || '',
-      vehicleModel: vehicle?.details.model || '',
-      vehicleSize: vehicle?.details.size || Size.Small,
-      vehicleCategory: vehicle?.details.category || CategoryEnum.Cars,
-      vehiclePricePerDay: vehicle?.details.pricePerDay || 0,
-      vehiclePricePerKm: vehicle?.details.pricePerKm || 0,
-      vehicleYear: vehicle?.details.year || new Date().getFullYear(),
-      vehicleEngine: vehicle?.details.engine || '',
-      vehiclePower: vehicle?.details.power || '',
-      vehicleGvw: vehicle?.details.gvw || 0,
-      vehicleFuelTank: vehicle?.details.fuelTank || 0,
-      vehicleTyres: vehicle?.details.tyres || 4,
-      vehicleMileage: vehicle?.details.mileage || 0,
-      vehicleChassisType: vehicle?.details.chassisType || '',
-      vehicleCapacity: vehicle?.details.capacity || 0,
-      identificationNumber: vehicle?.details.identificationNumber || '',
-      vehicleImages: [...vehicle.details.images],
-      vehicleRegistration: [...vehicle.details.vehicleRegistration],
-    };
-  }
-
-  vehicleData: VehicleForCreate = {
-    vehicleCompany: '',
-    vehicleName: '',
-    vehicleModel: '',
-    vehicleSize: Size.Small,
-    vehicleCategory: CategoryEnum.Cars,
-    vehiclePricePerDay: 0,
-    vehiclePricePerKm: 0,
-    vehicleYear: new Date().getFullYear(),
-    vehicleEngine: '',
-    vehiclePower: '',
-    vehicleGvw: 0,
-    vehicleFuelTank: 0,
-    vehicleTyres: 4,
-    vehicleMileage: 0,
-    vehicleChassisType: '',
-    vehicleCapacity: 0,
-    identificationNumber: '',
-    vehicleImages: [''],
-    vehicleRegistration: [''],
-  };
-
-  sizes = Object.values(Size);
-  categories = Object.values(CategoryEnum);
-
   addImage() {
     this.vehicleData.vehicleImages.push('');
   }
@@ -131,18 +135,38 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     }
   }
 
+  onImagesSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files) {
+      this.selectedImages = Array.from(files);
+    }
+  }
+
+  onRegistrationSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files) {
+      this.selectedRegistrations = Array.from(files);
+    }
+  }
+
   onSubmit(form: NgForm) { 
     if (form.invalid || this.isSubmitting || !this.vehicle?._id) return;
 
     this.isSubmitting = true;
 
-    this.vehicleData.vehicleImages = this.vehicleData.vehicleImages
-      .filter((url: string) => url.trim() !== '');
+    const formData = new FormData();
+    
+    formData.append('vehicleData', JSON.stringify(this.vehicleData));
 
-    this.vehicleData.vehicleRegistration = this.vehicleData.vehicleRegistration
-      .filter((url: string) => url.trim() !== '');
+    this.selectedImages.forEach(file => {
+      formData.append('vehicleImages', file);
+    });
 
-    this.vehicleService.updateVehicle(this.vehicle?._id,this.vehicleData).subscribe({
+    this.selectedRegistrations.forEach(file => {
+      formData.append('vehicleRegistration', file);
+    });
+
+    this.vehicleService.updateVehicle(this.vehicle?._id, this.vehicleData).subscribe({
       next: (res) => {
         this.isSubmitting = false;
         this.toastr.success('Vehicle updated successfully!', "Success");

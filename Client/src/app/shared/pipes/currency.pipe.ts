@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Pipe, PipeTransform, ChangeDetectorRef, OnDestroy, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CurrencyService } from '../../currency/currency.service';
 
@@ -7,15 +7,14 @@ import { CurrencyService } from '../../currency/currency.service';
   pure: false 
 })
 export class CurrencyConverterPipe implements PipeTransform, OnDestroy {
+  
+  private currencyService = inject(CurrencyService);
+  private ref = inject(ChangeDetectorRef);
+
   private currentCurrency!: string;
   private subscription: Subscription | null = null;
 
-  constructor(
-    private currencyService: CurrencyService,
-    private ref: ChangeDetectorRef
-  ) {}
-
-  transform(price: number): number {
+  transform(price: number): string {
     if (!this.subscription) {
       this.subscription = this.currencyService.getCurrency().subscribe(currency => {
         this.currentCurrency = currency;
@@ -25,11 +24,18 @@ export class CurrencyConverterPipe implements PipeTransform, OnDestroy {
     }
 
     if (!this.currentCurrency) {
-      return price;
+      return price.toString();
     }
 
     const convertedPrice = this.currencyService.convertPrice(price, this.currentCurrency);
-    return parseFloat(convertedPrice.toFixed(2));
+    
+    const locale = this.currentCurrency === 'INR' ? 'en-IN' : 'en-US';
+
+    return convertedPrice.toLocaleString(locale, {
+      style: 'currency',
+      currency: this.currentCurrency,
+      maximumFractionDigits: 2
+    });
   }
 
   ngOnDestroy() {

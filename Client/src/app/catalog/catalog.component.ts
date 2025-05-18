@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ProductCardComponent } from '../vehicle/product-card/product-card.component';
 import { VehicleService } from '../vehicle/vehicle.service';
 import { VehicleInterface } from '../../types/vehicle-types';
@@ -14,6 +14,9 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CatalogComponent implements OnInit {
 
+  private vehicleService = inject(VehicleService);
+  private route = inject(ActivatedRoute);
+
   vehicles: VehicleInterface[] = [];
   mainCategory: string = "vehicles";
   sort: string = 'Most popular';
@@ -23,10 +26,9 @@ export class CatalogComponent implements OnInit {
 
   queryCategory: string | null = null;
 
-  constructor(
-    private vehicleService: VehicleService,
-    private route: ActivatedRoute
-  ) {}
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
 
   ngOnInit(): void {
 
@@ -39,14 +41,41 @@ export class CatalogComponent implements OnInit {
       
     })
 
-    this.vehicleService.getAll();
+    this.fetchVehicles();
     
+    this.vehicleService.totalCount$.subscribe(count => {
+      this.totalCount = count;
+    });
+
     this.vehicleService.filteredVehicles$.subscribe(filtered => {
       this.vehicles = filtered;
     });
   }
 
+  fetchVehicles(): void {
+    const offset = (this.currentPage - 1) * this.pageSize;
+
+    this.vehicleService.getAll({
+      limit: this.pageSize,
+      offset,
+      sortByLikes: this.sort === 'Most popular',
+      // promoted: this.mainCategory !== 'vehicles' ? true : undefined
+      promoted: false,
+    }).subscribe()
+  }
+
+  onPageChange(newPage: number): void {
+    this.currentPage = newPage;
+    this.fetchVehicles();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
   onSortChange(sort: string): void {
+    this.sort = sort;
+
     switch(sort) {
       case 'Most popular':
         this.vehicleService.setSort('likes', 'desc');
@@ -66,6 +95,8 @@ export class CatalogComponent implements OnInit {
       default:
         this.vehicleService.setSort('none', 'asc');
     }
+
+    this.fetchVehicles();
   }
 
   onChangeMainCategory(mainCategory: string): void {

@@ -5,7 +5,6 @@ import { DatePipe } from '../../shared/pipes/date.pipe';
 import { RouterLink } from '@angular/router';
 import { RentService } from '../rent.service';
 import { ToastrService } from 'ngx-toastr';
-import { CurrencyPipe } from '@angular/common';
 import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
 import { CurrencyService } from '../../currency/currency.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,7 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-rent-card',
   standalone: true,
-  imports: [DatePipe, RouterLink, CurrencyPipe, CurrencyConverterPipe],
+  imports: [DatePipe, RouterLink, CurrencyConverterPipe],
   templateUrl: './rent-card.component.html',
   styleUrls: ['./rent-card.component.css']
 })

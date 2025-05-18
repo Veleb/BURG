@@ -7,7 +7,6 @@ import { DatepickerComponent } from "../../shared/components/datepicker/datepick
 import { SliderComponent } from '../../shared/components/slider/slider.component';
 import { ToastrService } from 'ngx-toastr';
 import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
-import { CurrencyPipe } from '@angular/common';
 import { CurrencyService } from '../../currency/currency.service';
 import { LocationPickerComponent } from "../../shared/components/location-picker/location-picker.component";
 import { UserService } from '../../user/user.service';
@@ -25,7 +24,6 @@ import { UserFromDB } from '../../../types/user-types';
     DatepickerComponent,
     SliderComponent,
     CurrencyConverterPipe,
-    CurrencyPipe,
     LocationPickerComponent,
     FormsModule,
     ImageCarouselComponent

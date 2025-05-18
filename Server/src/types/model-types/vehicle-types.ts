@@ -31,6 +31,7 @@ interface VehicleDetails {
   capacity: number;
   pricePerDay: number;
   pricePerKm: number;
+  isPromoted: boolean;
   images: string[];
   vehicleRegistration: string[];
 }
@@ -53,11 +54,16 @@ export interface VehicleForCreate {
     pricePerDay: number;
     pricePerKm: number;
     identificationNumber: string;
-    images: string[];
-    vehicleRegistration: string[];
+    isPromoted: boolean,
+    images: (string | Express.Multer.File)[];
+    vehicleRegistration: (string | Express.Multer.File)[];
   },
   company: Types.ObjectId,
   reserved: Types.ObjectId[],
   likes: Types.ObjectId[],
   available: boolean
 };
+
+export interface VehicleFilters {
+  isPromoted: boolean;
+}

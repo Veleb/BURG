@@ -33,6 +33,7 @@ interface VehicleDetails {
   pricePerKm: number;
   images: string[];
   vehicleRegistration: string[];
+  isPromoted: boolean,
 }
 
 export interface VehicleForCreate {
@@ -52,9 +53,10 @@ export interface VehicleForCreate {
   identificationNumber: string;
   vehiclePricePerDay: number;
   vehiclePricePerKm: number;
-  vehicleImages: string[];
-  vehicleRegistration: string[];
+  vehicleImages: (string | File)[];
+  vehicleRegistration: (string  | File)[];
   vehicleCompany: string,
+  isPromoted: boolean;
 };
 
 export interface FilterState {

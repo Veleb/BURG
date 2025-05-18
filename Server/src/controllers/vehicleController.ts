@@ -5,21 +5,25 @@ import { authenticatedRequest } from "../types/requests/authenticatedRequest";
 import mongoose, { Types } from "mongoose";
 import { CompanyInterface } from "../types/model-types/company-types";
 import companyService from "../services/companyService";
+import upload from "../middlewares/upload";
 
 const vehicleController = Router();
 
 vehicleController.get('', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
+    // const promoted = req.query.promoted === 'true' ? true : req.query.promoted === 'false' ? false : undefined;
+    const promoted = false;
+    const sortByLikes = req.query.sortByLikes === 'true';
 
-    const vehicles: VehicleInterface[] = await vehicleService.getAllVehicles();
+    const result = await vehicleService.getVehicles({ limit, offset, promoted, sortByLikes });
 
-    res.status(200).json(vehicles);
-    return;
-
+    res.status(200).json(result);
   } catch (err) {
     next(err);
   }
-})
+});
 
 vehicleController.get('/company/:companyId', async (req: Request, res: Response, next: NextFunction) => {
   const companyId = req.params.companyId;
@@ -192,7 +196,12 @@ vehicleController.put('/unlike/:vehicleId', async (req: Request, res: Response, 
   }
 });
 
-vehicleController.post('/', async (req: Request, res: Response, next: NextFunction) => {
+vehicleController.post('/', 
+  upload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'registrations', maxCount: 10 }
+  ]), async (req: Request, res: Response, next: NextFunction) => {
+
   const modifiedReq = req as authenticatedRequest;
   
   const userId: Types.ObjectId | undefined = modifiedReq.user?._id;
@@ -204,7 +213,11 @@ vehicleController.post('/', async (req: Request, res: Response, next: NextFuncti
 
   try {
 
-    const vehicleData = req.body;
+    const vehicleData = JSON.parse(req.body.vehicleData);
+
+    const files = req.files as {
+        [fieldname: string]: Express.Multer.File[];
+    };
 
     const company: CompanyInterface | null = await companyService.getCompanyById(vehicleData.vehicleCompany);
 
@@ -213,32 +226,33 @@ vehicleController.post('/', async (req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    const vehicleDataWithOwner : VehicleForCreate = {
+    const vehicleDataWithOwner: VehicleForCreate = {
       details: {
         name: vehicleData.vehicleName,
         model: vehicleData.vehicleModel,
         size: vehicleData.vehicleSize,
         category: vehicleData.vehicleCategory,
-        pricePerDay: vehicleData.vehiclePricePerDay,
-        pricePerKm: vehicleData.vehiclePricePerKm,
-        year: vehicleData.vehicleYear,
+        pricePerDay: Number(vehicleData.vehiclePricePerDay),
+        pricePerKm: Number(vehicleData.vehiclePricePerKm),
+        year: Number(vehicleData.vehicleYear),
         engine: vehicleData.vehicleEngine,
         power: vehicleData.vehiclePower,
-        gvw: vehicleData.vehicleGvw,
-        fuelTank: vehicleData.vehicleFuelTank,
-        tyres: vehicleData.vehicleTyres,
-        mileage: vehicleData.vehicleMileage,
+        gvw: Number(vehicleData.vehicleGvw),
+        fuelTank: Number(vehicleData.vehicleFuelTank),
+        tyres: Number(vehicleData.vehicleTyres),
+        mileage: Number(vehicleData.vehicleMileage),
         chassisType: vehicleData.vehicleChassisType,
-        capacity: vehicleData.vehicleCapacity,
+        capacity: Number(vehicleData.vehicleCapacity),
         identificationNumber: vehicleData.identificationNumber,
-        images: vehicleData.vehicleImages,
-        vehicleRegistration: vehicleData.vehicleRegistration,
+        isPromoted: vehicleData.isPromoted,
+        images: files?.images ?? [],
+        vehicleRegistration: files?.registrations ?? [],
       },
       company: vehicleData.vehicleCompany,
       reserved: [],
       likes: [],
       available: true
-    }
+    };
 
     const vehicle: VehicleInterface | null = await vehicleService.createVehicle(vehicleDataWithOwner);
     
@@ -355,6 +369,7 @@ vehicleController.put('/', async (req: Request, res: Response, next: NextFunctio
         mileage: vehicleData.vehicleMileage,
         chassisType: vehicleData.vehicleChassisType,
         capacity: vehicleData.vehicleCapacity,
+        isPromoted: vehicleData.isPromoted,
         identificationNumber: vehicleData.identificationNumber,
         images: vehicleData.vehicleImages,
         vehicleRegistration: vehicleData.vehicleRegistration,

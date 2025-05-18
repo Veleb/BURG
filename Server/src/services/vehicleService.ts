@@ -3,21 +3,67 @@ import CompanyModel from "../models/company";
 import RentModel from "../models/rent";
 import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle"
-import { VehicleForCreate, VehicleInterface } from "../types/model-types/vehicle-types"
+import type { VehicleFilters, VehicleForCreate, VehicleInterface } from "../types/model-types/vehicle-types"
+import { uploadFilesToCloudinary } from "../utils/uploadFileToCloudinary";
 
-async function getAllVehicles(): Promise<VehicleInterface[]> {
-  const vehicles: VehicleInterface[] = await VehicleModel.find().lean();
+async function getVehicles(options: {
+  limit?: number;
+  offset?: number;
+  promoted?: boolean;
+  sortByLikes?: boolean;
+} = {}): Promise<{ vehicles: VehicleInterface[], totalCount: number }> {
 
-  for (const vehicle of vehicles) {
-    vehicle.available = await checkAvailabilityToday(vehicle._id.toString());
+  const { limit = 20, offset = 0, promoted, sortByLikes } = options;
 
-    await VehicleModel.findByIdAndUpdate(vehicle._id, { available: vehicle.available }, { new: true });
+  const filter: VehicleFilters = {
+    isPromoted: false
+  };
+
+  if (promoted !== undefined) {
+    filter.isPromoted = promoted;
   }
 
-  return vehicles;
+  // add the filter in the future
+
+  const totalCount = await VehicleModel.countDocuments();
+
+  let query = VehicleModel.find()
+    .skip(offset)
+    .limit(limit)
+    .lean();
+
+  if (sortByLikes) {
+    query = query.sort({ likes: -1 }); 
+  }
+
+  const vehicles = await query;
+
+  await Promise.all(
+    vehicles.map(async (vehicle) => {
+      vehicle.available = await checkAvailabilityToday(vehicle._id.toString());
+      await VehicleModel.findByIdAndUpdate(vehicle._id, { available: vehicle.available }, { new: true });
+    })
+  );
+
+  return { vehicles, totalCount };
 }
 
+
 async function createVehicle(vehicleData: VehicleForCreate): Promise<VehicleInterface> {
+
+  const { images, vehicleRegistration } = vehicleData.details;
+
+  if (images && images.length > 0) {
+    const uploadedImages = await uploadFilesToCloudinary(images as Express.Multer.File[], 'vehicles/images');
+    vehicleData.details.images = uploadedImages.map((img) => img.secureUrl);
+  }
+
+  if (vehicleRegistration && vehicleRegistration.length > 0) {
+    const uploadedRegistrations = await uploadFilesToCloudinary(vehicleRegistration as Express.Multer.File[], 'vehicles/registrations');
+    vehicleData.details.vehicleRegistration = uploadedRegistrations.map((reg) => reg.secureUrl);
+  }
+
+
   const newVehicle = await VehicleModel.create(vehicleData);
 
   await CompanyModel.findByIdAndUpdate(
@@ -30,7 +76,18 @@ async function createVehicle(vehicleData: VehicleForCreate): Promise<VehicleInte
 }
 
 async function createBulk(vehiclesData: VehicleForCreate[]): Promise<VehicleInterface[]> {
-  const createdVehicles = await VehicleModel.insertMany(vehiclesData, { ordered: false });
+
+  const processedVehiclesData = await Promise.all(
+    vehiclesData.map(async (vehicle) => {
+      if (vehicle.details.images?.length && typeof vehicle.details.images[0] !== 'string') {
+        const uploadedImages = await uploadFilesToCloudinary(vehicle.details.images as Express.Multer.File[], 'vehicles/images');
+        vehicle.details.images = uploadedImages.map(img => img.secureUrl);
+      }
+      return vehicle;
+    })
+  );
+
+  const createdVehicles = await VehicleModel.insertMany(processedVehiclesData, { ordered: false });
 
   const companyUpdates: { [key: string]: Types.ObjectId[] } = {};
 
@@ -222,7 +279,7 @@ async function isReferralValid(referralCode: string, userId: Types.ObjectId): Pr
 }
 
 const vehicleService = {
-  getAllVehicles,
+  getVehicles,
   getCompanyVehicles,
   getVehicleById,
   checkAvailability,

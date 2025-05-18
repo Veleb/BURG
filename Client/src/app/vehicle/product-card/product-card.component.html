@@ -47,7 +47,7 @@
     <div class="vehicle-details-upper">
       <h4 class="vehicle-name">{{ vehicle?.details?.name }}</h4>
       <h4 class="vehicle-price">
-        {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter | currency: selectedCurrency }} day
+        {{ (vehicle?.details?.pricePerDay ?? 0) | currencyConverter }} day
       </h4>
     </div>
 
