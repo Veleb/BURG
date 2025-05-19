@@ -19,6 +19,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('OK');
+});
+
 const port = (process.env.PROD === "true" ? process.env.PORT : 3030);
 
 app.listen(port, () => {
