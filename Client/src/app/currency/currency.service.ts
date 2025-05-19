@@ -52,8 +52,8 @@ export class CurrencyService {
 
   private fetchExchangeRate(targetCurrency: string) {
     if (!this.rates[targetCurrency]) {
-      this.http.get(`/api/currency/`)
-        .subscribe((data: any) => {
+      this.http.get<{ [key: string]: number }>(`/api/currency/`)
+        .subscribe((data) => {
           this.rates = data;
         });
     }

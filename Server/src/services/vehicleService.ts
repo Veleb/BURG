@@ -2,21 +2,26 @@ import { Types } from "mongoose";
 import CompanyModel from "../models/company";
 import RentModel from "../models/rent";
 import UserModel from "../models/user";
-import VehicleModel from "../models/vehicle"
-import type { VehicleFilters, VehicleForCreate, VehicleInterface } from "../types/model-types/vehicle-types"
-import { uploadFilesToCloudinary } from "../utils/uploadFileToCloudinary";
+import VehicleModel from "../models/vehicle";
+import type {
+  VehicleFilters,
+  VehicleForCreate,
+  VehicleInterface,
+} from "../types/model-types/vehicle-types";
+import { uploadFilesToCloudinary } from "../utils/uploadFilesToCloudinary";
 
-async function getVehicles(options: {
-  limit?: number;
-  offset?: number;
-  promoted?: boolean;
-  sortByLikes?: boolean;
-} = {}): Promise<{ vehicles: VehicleInterface[], totalCount: number }> {
-
+async function getVehicles(
+  options: {
+    limit?: number;
+    offset?: number;
+    promoted?: boolean;
+    sortByLikes?: boolean;
+  } = {}
+): Promise<{ vehicles: VehicleInterface[] }> {
   const { limit = 20, offset = 0, promoted, sortByLikes } = options;
 
   const filter: VehicleFilters = {
-    isPromoted: false
+    isPromoted: false,
   };
 
   if (promoted !== undefined) {
@@ -25,15 +30,10 @@ async function getVehicles(options: {
 
   // add the filter in the future
 
-  const totalCount = await VehicleModel.countDocuments();
-
-  let query = VehicleModel.find()
-    .skip(offset)
-    .limit(limit)
-    .lean();
+  let query = VehicleModel.find().skip(offset).limit(limit).lean();
 
   if (sortByLikes) {
-    query = query.sort({ likes: -1 }); 
+    query = query.sort({ likes: -1 });
   }
 
   const vehicles = await query;
@@ -41,28 +41,49 @@ async function getVehicles(options: {
   await Promise.all(
     vehicles.map(async (vehicle) => {
       vehicle.available = await checkAvailabilityToday(vehicle._id.toString());
-      await VehicleModel.findByIdAndUpdate(vehicle._id, { available: vehicle.available }, { new: true });
+      await VehicleModel.findByIdAndUpdate(
+        vehicle._id,
+        { available: vehicle.available },
+        { new: true }
+      );
     })
   );
 
-  return { vehicles, totalCount };
+  return { vehicles };
 }
 
+async function getCount() {
+  const totalCount = await VehicleModel.countDocuments();
 
-async function createVehicle(vehicleData: VehicleForCreate): Promise<VehicleInterface> {
+  if (!totalCount) {
+    throw new Error("Error occurred while getting total count of vehicles.");
+  }
 
+  return totalCount;
+}
+
+async function createVehicle(
+  vehicleData: VehicleForCreate
+): Promise<VehicleInterface> {
   const { images, vehicleRegistration } = vehicleData.details;
 
   if (images && images.length > 0) {
-    const uploadedImages = await uploadFilesToCloudinary(images as Express.Multer.File[], 'vehicles/images');
+    const uploadedImages = await uploadFilesToCloudinary(
+      images as Express.Multer.File[],
+      "vehicles/images"
+    );
     vehicleData.details.images = uploadedImages.map((img) => img.secureUrl);
   }
 
   if (vehicleRegistration && vehicleRegistration.length > 0) {
-    const uploadedRegistrations = await uploadFilesToCloudinary(vehicleRegistration as Express.Multer.File[], 'vehicles/registrations');
-    vehicleData.details.vehicleRegistration = uploadedRegistrations.map((reg) => reg.secureUrl);
+    const uploadedRegistrations = await uploadFilesToCloudinary(
+      vehicleRegistration as Express.Multer.File[],
+      "vehicles/registrations"
+    );
+    vehicleData.details.vehicleRegistration = uploadedRegistrations.map(
+      (reg) => reg.secureUrl
+    );
   }
-
 
   const newVehicle = await VehicleModel.create(vehicleData);
 
@@ -75,19 +96,28 @@ async function createVehicle(vehicleData: VehicleForCreate): Promise<VehicleInte
   return newVehicle;
 }
 
-async function createBulk(vehiclesData: VehicleForCreate[]): Promise<VehicleInterface[]> {
-
+async function createBulk(
+  vehiclesData: VehicleForCreate[]
+): Promise<VehicleInterface[]> {
   const processedVehiclesData = await Promise.all(
     vehiclesData.map(async (vehicle) => {
-      if (vehicle.details.images?.length && typeof vehicle.details.images[0] !== 'string') {
-        const uploadedImages = await uploadFilesToCloudinary(vehicle.details.images as Express.Multer.File[], 'vehicles/images');
-        vehicle.details.images = uploadedImages.map(img => img.secureUrl);
+      if (
+        vehicle.details.images?.length &&
+        typeof vehicle.details.images[0] !== "string"
+      ) {
+        const uploadedImages = await uploadFilesToCloudinary(
+          vehicle.details.images as Express.Multer.File[],
+          "vehicles/images"
+        );
+        vehicle.details.images = uploadedImages.map((img) => img.secureUrl);
       }
       return vehicle;
     })
   );
 
-  const createdVehicles = await VehicleModel.insertMany(processedVehiclesData, { ordered: false });
+  const createdVehicles = await VehicleModel.insertMany(processedVehiclesData, {
+    ordered: false,
+  });
 
   const companyUpdates: { [key: string]: Types.ObjectId[] } = {};
 
@@ -96,38 +126,43 @@ async function createBulk(vehiclesData: VehicleForCreate[]): Promise<VehicleInte
 
     if (!companyUpdates[companyId]) {
       companyUpdates[companyId] = [];
-    
     }
     companyUpdates[companyId].push(vehicle._id);
   }
 
   await Promise.all(
     Object.entries(companyUpdates).map(([companyId, vehicleIds]) =>
-      CompanyModel.findByIdAndUpdate(companyId, { $addToSet: { carsAvailable: { $each: vehicleIds } } })
+      CompanyModel.findByIdAndUpdate(companyId, {
+        $addToSet: { carsAvailable: { $each: vehicleIds } },
+      })
     )
   );
 
   return createdVehicles;
 }
 
+const updateVehicle = async (
+  vehicleId: Types.ObjectId,
+  data: VehicleForCreate
+) => {
+  try {
+    const vehicle = await VehicleModel.findByIdAndUpdate(vehicleId, data);
 
-const updateVehicle = async (vehicleId: Types.ObjectId, data: VehicleForCreate) => {
-   try {
-     const vehicle = await VehicleModel.findByIdAndUpdate(vehicleId, data);
-
-     if (!vehicle) {
+    if (!vehicle) {
       throw new Error(`Error occurred while updating vehicle`);
-     }
+    }
 
-     return vehicle;
-   } catch (err) {
-     throw new Error('Error updating vehicle');
-   }
- };
+    return vehicle;
+  } catch (err) {
+    throw new Error("Error updating vehicle");
+  }
+};
 
-async function getCompanyVehicles(companyId: string): Promise<VehicleInterface[]> {
+async function getCompanyVehicles(
+  companyId: string
+): Promise<VehicleInterface[]> {
   const company = await CompanyModel.findById(companyId)
-    .populate('carsAvailable') 
+    .populate("carsAvailable")
     .lean();
 
   if (!company || !Array.isArray(company.carsAvailable)) {
@@ -137,21 +172,24 @@ async function getCompanyVehicles(companyId: string): Promise<VehicleInterface[]
   return company.carsAvailable;
 }
 
-
 async function getVehicleById(vehicleId: string): Promise<VehicleInterface> {
   const vehicle = await VehicleModel.findById(vehicleId)
-    .populate('company')
-    .populate('likes')
+    .populate("company")
+    .populate("likes")
     .lean();
-  
+
   if (!vehicle) {
-    throw new Error('Vehicle not found'); 
+    throw new Error("Vehicle not found");
   }
 
   return vehicle;
 }
 
-async function checkAvailability(vehicleId: Types.ObjectId, startDate: Date, endDate: Date): Promise<boolean> {
+async function checkAvailability(
+  vehicleId: Types.ObjectId,
+  startDate: Date,
+  endDate: Date
+): Promise<boolean> {
   const utcStart = new Date(startDate.toISOString());
   const utcEnd = new Date(endDate.toISOString());
 
@@ -159,11 +197,8 @@ async function checkAvailability(vehicleId: Types.ObjectId, startDate: Date, end
 
   const conflict = await RentModel.findOne({
     vehicle: vehicleId,
-    status: { $in: ['confirmed', 'pending', 'active'] },
-    $nor: [
-      { end: { $lte: utcStart } },
-      { start: { $gte: utcEnd } }
-    ]
+    status: { $in: ["confirmed", "pending", "active"] },
+    $nor: [{ end: { $lte: utcStart } }, { start: { $gte: utcEnd } }],
   }).lean();
 
   return !conflict;
@@ -178,16 +213,17 @@ async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {
 
   const existingReservation = await RentModel.findOne({
     vehicle: vehicleId,
-    status: { $in: ['confirmed', 'pending'] },
+    status: { $in: ["confirmed", "pending"] },
     $or: [
       { start: { $lt: tomorrow }, end: { $gt: today } },
-      { start: { $lte: today }, end: { $gte: tomorrow } }
+      { start: { $lte: today }, end: { $gte: tomorrow } },
     ],
   }).lean();
 
   const isAvailable = !existingReservation;
 
-  await VehicleModel.findByIdAndUpdate(vehicleId,
+  await VehicleModel.findByIdAndUpdate(
+    vehicleId,
     { $set: { available: isAvailable } },
     { new: true }
   );
@@ -196,11 +232,10 @@ async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {
 }
 
 async function likeVehicle(vehicleId: string, userId: Types.ObjectId) {
-
   const updatedVehicle = await VehicleModel.findByIdAndUpdate(
     vehicleId,
     { $addToSet: { likes: userId } },
-    { new: true, select: "likes" } 
+    { new: true, select: "likes" }
   );
 
   await UserModel.findByIdAndUpdate(
@@ -225,12 +260,12 @@ async function removeLikeVehicle(vehicleId: string, userId: Types.ObjectId) {
     { new: true }
   );
 
-
   return updatedVehicle;
 }
 
-
-async function deleteVehicleById(vehicleId: string): Promise<VehicleInterface | null> {
+async function deleteVehicleById(
+  vehicleId: string
+): Promise<VehicleInterface | null> {
   const vehicle = await VehicleModel.findById(vehicleId);
   if (!vehicle) {
     throw new Error("Vehicle not found");
@@ -255,7 +290,10 @@ async function deleteVehicleById(vehicleId: string): Promise<VehicleInterface | 
   return deletedVehicle;
 }
 
-async function isReferralValid(referralCode: string, userId: Types.ObjectId): Promise<boolean> {
+async function isReferralValid(
+  referralCode: string,
+  userId: Types.ObjectId
+): Promise<boolean> {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error("User not found");
 
@@ -289,7 +327,8 @@ const vehicleService = {
   createVehicle,
   createBulk,
   updateVehicle,
-  isReferralValid
-}
+  isReferralValid,
+  getCount,
+};
 
-export default vehicleService
+export default vehicleService;

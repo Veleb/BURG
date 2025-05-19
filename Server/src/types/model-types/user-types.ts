@@ -23,6 +23,9 @@ export interface UserInterface {
   disallowedReferralCodes: string[];
   credits: number;
 
+  profilePicture: string;
+  bannerImage: string,
+
   _id: Types.ObjectId;
   created_at: Date;
   updated_at: Date;
@@ -38,6 +41,8 @@ export interface UserForAuth {
   email: string;
   phoneNumber?: string;
   password?: string;
+  profilePicture?: string;
+  bannerImage?: string,
   isGoogleUser: Boolean;
   tokenVersion?: number;
 }

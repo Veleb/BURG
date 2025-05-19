@@ -90,7 +90,6 @@ export class AddVehicleComponent implements OnInit {
     vehicleSize: this.vehicleData.vehicleSize.toString(),
     vehicleCategory: this.vehicleData.vehicleCategory.toString()
   };
-  console.log(vehicleDataToSend);
   
     formData.append('vehicleData', JSON.stringify(vehicleDataToSend));
 

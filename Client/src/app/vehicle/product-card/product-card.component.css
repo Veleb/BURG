@@ -49,10 +49,16 @@
   position: relative;
   right: 12px;
   font-size: 18px;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .heart-icon:hover {
   cursor: pointer;
+  transform: scale(1.2);
+}
+
+.heart-icon.liked {
+  animation: popLiked 0.3s ease;
 }
 
 .liked {
@@ -99,14 +105,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 0.2s ease;
 }
 
 .arrow-button:hover {
   cursor: pointer;
+  transform: scale(1.1);
+  background-color: #ffffff80;
 }
 
 .arrow {
   font-size: 18px;
+  transition: transform 0.2s ease;
   color: #00000080;
 }
 
@@ -118,6 +128,14 @@
 .left {
   position: relative;
   left: 12px;
+}
+
+.arrow-button:active .arrow {
+  transform: scale(1.2) translateX(-1px);
+}
+
+.arrow-button.right:active .arrow {
+  transform: scale(1.2) translateX(1px);
 }
 
 .dots-container {
@@ -280,4 +298,16 @@ button:hover {
 
 .vehicle-characteristic {
   font-size: clamp(0.75rem, 1.5cqi, 0.9rem);
+}
+
+@keyframes popLiked {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

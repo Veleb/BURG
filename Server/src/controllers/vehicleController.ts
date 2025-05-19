@@ -25,6 +25,21 @@ vehicleController.get('', async (req: Request, res: Response, next: NextFunction
   }
 });
 
+vehicleController.get('/count', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const count = await vehicleService.getCount();
+
+    if (!count) {
+      res.status(400).json({ message: 'Error occurred getting total vehicle count.' });
+      return;
+    }
+
+    res.status(200).json(count);
+  } catch (err) {
+    next(err);
+  }
+});
+
 vehicleController.get('/company/:companyId', async (req: Request, res: Response, next: NextFunction) => {
   const companyId = req.params.companyId;
   

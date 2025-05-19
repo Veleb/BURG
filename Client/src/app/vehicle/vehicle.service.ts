@@ -116,11 +116,10 @@ export class VehicleService {
   }
 
 
-  getAll(options: { limit?: number; offset?: number; promoted?: boolean; sortByLikes?: boolean } = {}): Observable<{ vehicles: VehicleInterface[], totalCount: number }> {
+  getAll(options: { limit?: number; offset?: number; promoted?: boolean; sortByLikes?: boolean } = {}): Observable<{ vehicles: VehicleInterface[] }> {
     return this.getVehicles(options).pipe(
       tap({
-        next: ({ vehicles, totalCount }) => {
-          this.totalCount$$.next(totalCount);
+        next: ({ vehicles }) => {
           this.vehicles$$.next(vehicles);
           this.availableVehicles$$.next(vehicles.filter(v => v.available));
         },
@@ -128,6 +127,21 @@ export class VehicleService {
           console.error('Sync failed:', err);
           this.vehicles$$.next([]);
           this.availableVehicles$$.next([]);
+        }
+      })
+    );
+  }
+
+  getTotalCount(): Observable<number> {
+    return this.http.get<number>(`/api/vehicles/count`)
+    .pipe(
+      tap({
+        next: (count) => {
+          this.totalCount$$.next(count);
+        },
+        error: (err) => {
+          console.log(`Error occurred while getting total count!`, err);
+          this.totalCount$$.next(0);
         }
       })
     );
@@ -141,10 +155,10 @@ export class VehicleService {
     return this.http.post<VehicleInterface>(`/api/vehicles`, vehicleData);
   }
 
-  bulkCreateVehicles(vehicles: any[]) {
+  bulkCreateVehicles(vehicles: VehicleInterface[]) {
     return this.http.post('/api/vehicles/bulk', { vehicles }).pipe(
       tap(() => {
-        this.getAll().subscribe(); // Refresh the vehicles after bulk creation
+        this.getAll().subscribe(); // we refresh the vehicles after bulk creation
       })
     );
   }  

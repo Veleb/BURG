@@ -221,7 +221,7 @@ export class UserService {
     );
   }
 
-  updateProfile(updatedData: Partial<UserFromDB>): Observable<{ message: string, user: UserFromDB}> {
+  updateProfile(updatedData: FormData): Observable<{ message: string, user: UserFromDB}> {
     return this.http.put<{ message: string, user: UserFromDB}>('/api/users/update', updatedData).pipe(
       tap(updatedUser => {
         this.user$$.next(updatedUser.user)

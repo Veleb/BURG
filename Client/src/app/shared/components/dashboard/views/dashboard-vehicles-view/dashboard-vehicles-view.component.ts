@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
-import { VehicleInterface } from '../../../../../../types/vehicle-types';
+import { VehicleForCreate, VehicleInterface } from '../../../../../../types/vehicle-types';
 import { VehicleService } from '../../../../../vehicle/vehicle.service';
 import { UserFromDB } from '../../../../../../types/user-types';
 import { ToastrService } from 'ngx-toastr';

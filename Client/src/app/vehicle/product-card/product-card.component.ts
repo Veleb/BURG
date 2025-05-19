@@ -102,7 +102,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
           this.vehicle.likes = this.vehicle.likes.filter(id => id !== this.userId);
         }
 
-        this.toastr.success(`${data.message}`, `Success`);
+        // this.toastr.success(`${data.message}`, `Success`);
       });
       
     } else {
@@ -113,7 +113,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
           this.vehicle.likes = [...this.vehicle.likes, this.userId];
         }
 
-        this.toastr.success(`${data.message}`, `Success`);
+        // this.toastr.success(`${data.message}`, `Success`);
       });
     }
   }

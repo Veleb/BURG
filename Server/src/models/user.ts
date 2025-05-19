@@ -80,6 +80,14 @@ const UserSchema = new Schema<UserInterface>({
   credits: {
     type: Number,
     default: 0,
+  },
+  profilePicture: {
+    type: String,
+    required: false,
+  },
+  bannerImage: {
+    type: String,
+    required: false,
   }
 }, { 
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 

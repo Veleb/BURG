@@ -35,12 +35,16 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
   isUpdating: boolean = false;
   isLoading: boolean = true;
 
-  // user: UserFromDB | null = null;
   user: UserFromDB | null = inject(ActivatedRoute).snapshot.data['user'];
   userRents: RentInterface[] = [];
   rentVehicles: VehicleInterface[] = [];
   editModel: Partial<UserFromDB> = {};
   likedVehicles: VehicleInterface[] = [];
+
+  previewProfileImage: string | ArrayBuffer | null = null;
+  previewBannerImage: string | ArrayBuffer | null = null;
+  selectedProfileFile: File | null = null;
+  selectedBannerFile: File | null = null;
 
   ngOnInit(): void {
   if (!this.user) {
@@ -87,46 +91,64 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
     this.destroy$.complete();
   }
 
-  private loadUserData(): void {
-    this.userService.getProfile().pipe(
-      takeUntil(this.destroy$),
-      switchMap(user => {
+  // private loadUserData(): void {
+  //   this.userService.getProfile().pipe(
+  //     takeUntil(this.destroy$),
+  //     switchMap(user => {
 
-        if (!user) {
-          this.router.navigate(['/auth/login']);
-          return of([]);
-        }
+  //       if (!user) {
+  //         this.router.navigate(['/auth/login']);
+  //         return of([]);
+  //       }
 
-        this.user = user;
-        this.editModel = { ...user };
+  //       this.user = user;
+  //       this.editModel = { ...user };
         
-        return forkJoin([
-          this.userService.getLikedVehicles()
-          .pipe(
-            catchError(error => {
-              return of([]);
-            })
-          ),
-          this.userService.getRents().pipe(
-            catchError(error => {
-              return of([]);
-            })
-          )
-        ]);
-      }),
-      catchError(error => {
-        this.toastr.error('Failed to load profile data', 'Error Occurred');
-        return of([]);
-      })
-    ).subscribe(([vehicles, rents]) => {
-      this.likedVehicles = vehicles;
-      this.userRents = rents;
-      this.rentVehicles = rents.map(rent => rent.vehicle as VehicleInterface);
-      this.isLoading = false;
-    });
+  //       return forkJoin([
+  //         this.userService.getLikedVehicles()
+  //         .pipe(
+  //           catchError(error => {
+  //             return of([]);
+  //           })
+  //         ),
+  //         this.userService.getRents().pipe(
+  //           catchError(error => {
+  //             return of([]);
+  //           })
+  //         )
+  //       ]);
+  //     }),
+  //     catchError(error => {
+  //       this.toastr.error('Failed to load profile data', 'Error Occurred');
+  //       return of([]);
+  //     })
+  //   ).subscribe(([vehicles, rents]) => {
+  //     this.likedVehicles = vehicles;
+  //     this.userRents = rents;
+  //     this.rentVehicles = rents.map(rent => rent.vehicle as VehicleInterface);
+  //     this.isLoading = false;
+  //   });
+  // }
+
+  onFileSelect(event: Event, type: 'profile' | 'banner'): void {
+    const input = event.target as HTMLInputElement;
+    
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (type === 'profile') {
+          this.previewProfileImage = reader.result;
+          this.selectedProfileFile = file;
+        } else {
+          this.previewBannerImage = reader.result;
+          this.selectedBannerFile = file;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   }
-
-
+  
   toggleEditMode() {
     if (this.editMode) {
       this.editModel = {};
@@ -148,7 +170,22 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
     const phoneNumber = this.iti?.getNumber();
     this.editModel.phoneNumber = phoneNumber;
 
-    this.userService.updateProfile(this.editModel).pipe(
+
+    const formData = new FormData();
+
+    formData.append('fullName', this.editModel.fullName ?? '');
+    formData.append('email', this.editModel.email ?? '');
+    formData.append('phoneNumber', form.value.phoneNumber ?? '');
+
+    if (this.selectedProfileFile) {
+      formData.append('profilePicture', this.selectedProfileFile);
+    }
+   
+    if (this.selectedBannerFile) {
+      formData.append('bannerImage', this.selectedBannerFile);
+    }
+
+    this.userService.updateProfile(formData).pipe(
         takeUntil(this.destroy$),
         catchError(error => {
             this.toastr.error('Failed to update profile', 'Error Occurred');
@@ -163,7 +200,7 @@ export class UserProfileComponent implements OnInit, AfterViewChecked, OnDestroy
         }
         this.isUpdating = false;
     });
-}
+  }
 
   confirmLogout(): void {
     if (confirm('Are you sure you want to logout?')) {

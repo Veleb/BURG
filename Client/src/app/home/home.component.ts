@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { UppercasePipe } from '../shared/pipes/uppercase.pipe';
 import { Category } from '../../types/enums';
 import { RouterLink } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 import { ProductCardComponent } from '../vehicle/product-card/product-card.component';
 
 @Component({
@@ -25,14 +25,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     categories: Category[] = environment.categories;
 
     ngOnInit(): void {
-        this.vehicleService.getAll()
 
-        this.vehicleService.vehicles$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(vehicles => {
-            this.vehicles = vehicles.slice(0, 3);
+    this.vehicleService.getTotalCount().subscribe();
+
+    this.vehicleService.totalCount$
+        .pipe(
+            takeUntil(this.destroy$),
+            switchMap((totalCount) => {
+                const maxOffset = Math.max(0, totalCount - 3);
+
+                const offset = Math.floor(Math.random() * (maxOffset + 1));
+                return this.vehicleService.getVehicles({ limit: 3, offset, promoted: false, sortByLikes: false });
+            })
+        )
+        .subscribe(vehicleResponse => {
+            this.vehicles = vehicleResponse.vehicles;
         });
-    }
+}
 
     ngOnDestroy(): void {
         this.destroy$.next();

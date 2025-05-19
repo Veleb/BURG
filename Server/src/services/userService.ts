@@ -151,12 +151,27 @@ async function getUserRents(userId: Types.ObjectId): Promise<RentInterface[]> {
 
 async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAuth>): Promise<UserFromDB> {
   const user = await UserModel.findById(userId);
+
   if (!user) throw new Error('User not found');
 
-  if (updatedData.fullName) user.fullName = updatedData.fullName;
-  if (updatedData.email) user.email = updatedData.email;
-  if (updatedData.phoneNumber) user.phoneNumber = updatedData.phoneNumber;
+  // we list all of the fields that will be updated
+  const updatableFields: (keyof UserForAuth)[] = [
+    'fullName',
+    'email',
+    'phoneNumber',
+    'profilePicture',
+    'bannerImage',
+  ];
 
+  // we then loop through them and check if there is a value in the updatedData - if there is then we assign it to the existing user
+  for (const field of updatableFields) {
+
+    if (updatedData[field] !== undefined) {
+      (user[field] as any) = updatedData[field];
+    }
+    
+  }
+  
   if (!user.isGoogleUser && updatedData.password) {
     user.password = updatedData.password;
   } else if (user.isGoogleUser && updatedData.password) {
@@ -166,7 +181,6 @@ async function updateUser(userId: Types.ObjectId, updatedData: Partial<UserForAu
   await user.save();
   return user.toObject() as UserFromDB;
 }
-
 
 async function deleteUser(userId: Types.ObjectId): Promise<void> {
   const user = await UserModel.findById(userId);

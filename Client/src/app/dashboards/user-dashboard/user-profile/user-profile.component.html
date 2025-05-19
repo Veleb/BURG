@@ -3,8 +3,11 @@
   <section class="user-section">
     <div class="user-header">
       <div class="user-welcome-wrapper">
-        <h2 class="welcome-text">Hi, {{ user?.fullName }}!</h2>
-        <p class="user-email">{{ user?.email }}</p>
+        <img [src]="user?.profilePicture" alt="User profile picture" class="profile-picture">
+        <div class="user-greeting-wrapper">
+          <h2 class="welcome-text">Hi, {{ user?.fullName }}!</h2>
+          <p class="user-email">{{ user?.email }}</p>
+        </div>
       </div>
       @if (!editMode) {
         <button (click)="toggleEditMode()" class="edit-profile-button">
@@ -16,6 +19,7 @@
     
     @if (editMode) {
       <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" class="edit-form">
+
         <div class="form-group">
           <label>Full Name</label>
           <input
@@ -25,7 +29,7 @@
             required
             #fullName="ngModel"
             appFullname
-          />
+        />
     
         @if (fullName.touched && fullName.errors) {
         <ul class="errors">
@@ -85,6 +89,22 @@
         />
       </div>
     
+      <div class="form-group">
+          <label for="profilePicture">Profile Picture</label>
+          <input type="file" id="profilePicture" (change)="onFileSelect($event, 'profile')" accept="image/*"/>
+
+      </div>
+
+      @if (user?.role === 'host') {
+
+        <div class="form-group">
+          <label for="bannerImage">Banner Image</label>
+          <input type="file" id="bannerImage" (change)="onFileSelect($event, 'banner')" accept="image/*"/>
+        </div>
+
+      }
+
+
       <div class="form-buttons">
         <button type="button" class="btn-cancel" (click)="toggleEditMode()">
           Cancel

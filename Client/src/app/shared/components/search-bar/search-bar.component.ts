@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { VehicleInterface } from '../../../../types/vehicle-types';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
@@ -11,7 +11,9 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.css'
 })
-export class SearchBarComponent {
+export class SearchBarComponent implements OnInit {
+  private vehicleService = inject(VehicleService);
+  
   @Output() selectedVehicle = new EventEmitter<VehicleInterface>();
   searchTerm: string = '';
   suggestions: VehicleInterface[] = [];
@@ -20,21 +22,23 @@ export class SearchBarComponent {
 
   private searchTerm$ = new BehaviorSubject<string>('');
 
-  constructor(private vehicleService: VehicleService) {
-    this.searchTerm$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(term => this.vehicleService.filteredVehicles$.pipe(
-        map(vehicles => this.filterVehicles(term as string, vehicles))
-      ))
-    ).subscribe({
-      next: (filtered) => {
-        this.suggestions = filtered;
-        this.showDropdown = filtered.length > 0;
-        this.activeIndex = -1;
-      }
-    });
-  }
+    ngOnInit(): void {
+      this.vehicleService.getAll().subscribe();
+    
+      this.searchTerm$.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(term => this.vehicleService.filteredVehicles$.pipe(
+          map(vehicles => this.filterVehicles(term as string, vehicles))
+        ))
+      ).subscribe({
+        next: (filtered) => {
+          this.suggestions = filtered;
+          this.showDropdown = filtered.length > 0;
+          this.activeIndex = -1;
+        }
+      });
+    }
 
   private filterVehicles(term: string, vehicles: VehicleInterface[]): VehicleInterface[] {
     if (!term) return [];
@@ -49,6 +53,10 @@ export class SearchBarComponent {
 
   onSearchInput(): void {
     this.searchTerm$.next(this.searchTerm);
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
   }
 
   selectVehicle(vehicle: VehicleInterface): void {

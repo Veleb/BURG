@@ -23,7 +23,6 @@ export class RedeemCertificateComponent {
         this.toastr.success(res.message, 'Success');
       }),
       error: ((err) => {
-        console.log(err);
         this.toastr.error('Error occurred while redeeming certificate!', 'Error Occurred');
       })
     })

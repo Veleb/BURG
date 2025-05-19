@@ -1,5 +1,7 @@
 <div class="search-container">
+
   <div class="input-wrapper">
+
     <i class="fa-solid fa-magnifying-glass icon"></i>
     <input 
       type="text"
@@ -10,9 +12,11 @@
       (focus)="onSearchInput()"
       placeholder="Search vehicles..."
       class="search-input"
-    >
+      >
+      <i class="fa-solid fa-xmark clear-icon" (click)="clearSearch()"></i>
   </div>
 
+  
   @if (showDropdown) {
     <div class="suggestions-dropdown">
       @if (suggestions.length) {
