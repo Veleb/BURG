@@ -1,6 +1,7 @@
 name: Ping Render Backend
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '30-59/5 2 * * *'
     - cron: '*/5 3-8 * * *'
