@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 const maxOffset = Math.max(0, totalCount - 3);
 
                 const offset = Math.floor(Math.random() * (maxOffset + 1));
-                return this.vehicleService.getVehicles({ limit: 3, offset, promoted: false, sortByLikes: false });
+                return this.vehicleService.getVehicles({ limit: 3, offset });
             })
         )
         .subscribe(vehicleResponse => {

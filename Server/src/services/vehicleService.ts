@@ -4,7 +4,6 @@ import RentModel from "../models/rent";
 import UserModel from "../models/user";
 import VehicleModel from "../models/vehicle";
 import type {
-  VehicleFilters,
   VehicleForCreate,
   VehicleInterface,
 } from "../types/model-types/vehicle-types";
@@ -14,27 +13,11 @@ async function getVehicles(
   options: {
     limit?: number;
     offset?: number;
-    promoted?: boolean;
-    sortByLikes?: boolean;
   } = {}
 ): Promise<{ vehicles: VehicleInterface[] }> {
-  const { limit = 20, offset = 0, promoted, sortByLikes } = options;
-
-  const filter: VehicleFilters = {
-    isPromoted: false,
-  };
-
-  if (promoted !== undefined) {
-    filter.isPromoted = promoted;
-  }
-
-  // add the filter in the future
+  const { limit = 20, offset = 0 } = options;
 
   let query = VehicleModel.find().skip(offset).limit(limit).lean();
-
-  if (sortByLikes) {
-    query = query.sort({ likes: -1 });
-  }
 
   const vehicles = await query;
 
@@ -205,20 +188,19 @@ async function checkAvailability(
 }
 
 async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const now = new Date();
 
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const tomorrowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
 
   const existingReservation = await RentModel.findOne({
     vehicle: vehicleId,
-    status: { $in: ["confirmed", "pending"] },
-    $or: [
-      { start: { $lt: tomorrow }, end: { $gt: today } },
-      { start: { $lte: today }, end: { $gte: tomorrow } },
-    ],
-  }).lean();
+    status: { $in: ["confirmed", "pending", "active"] },
+    start: { $lt: tomorrowUTC },
+    end: { $gt: todayUTC },
+  });
+
+
 
   const isAvailable = !existingReservation;
 

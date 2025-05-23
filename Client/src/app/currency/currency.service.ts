@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
@@ -9,18 +9,31 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 
 export class CurrencyService {
+
+  private http = inject(HttpClient)
+  private cookieService = inject(CookieService)
+  private platformId = inject(PLATFORM_ID)
+
   private rates: { [key: string]: number } = {};
   
+  private rate$$ = new BehaviorSubject<number>(1);
+  rate$ = this.rate$$.asObservable();
+
   private currency$$ = new BehaviorSubject<string>('USD');
   public currency$ = this.currency$$.asObservable();
 
-  constructor(
-    private http: HttpClient,
-    private cookieService: CookieService,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
+  constructor() {
     this.initializeCurrency();
   }
+
+  symbols: { [key: string]: string } = {
+    USD: '$',
+    EUR: '€',
+    INR: '₹',
+    GBP: '£',
+    JPY: '¥',
+    CAD: 'C$',
+  };
 
   private initializeCurrency() {
     const savedCurrency = this.getCurrencyFromCookie();
@@ -35,6 +48,10 @@ export class CurrencyService {
     this.currency$$.next(currency);
     this.saveCurrencyToCookie(currency);
     this.fetchExchangeRate(currency);
+  }
+
+  getCurrencySymbol(code: string): string {
+    return this.symbols[code] || code;
   }
 
   private getCurrencyFromCookie(): string {
@@ -55,9 +72,15 @@ export class CurrencyService {
       this.http.get<{ [key: string]: number }>(`/api/currency/`)
         .subscribe((data) => {
           this.rates = data;
+          const rate = data[targetCurrency] ?? 1;
+          this.rate$$.next(rate);
         });
+    } else {
+      const rate = this.rates[targetCurrency] ?? 1;
+      this.rate$$.next(rate);
     }
   }
+
 
   convertPrice(price: number, targetCurrency: string): number {
     const rate = this.rates[targetCurrency];

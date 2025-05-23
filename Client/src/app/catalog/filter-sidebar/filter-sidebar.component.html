@@ -47,5 +47,38 @@
 
     <hr class="section-break">
 
+    <div class="price-filter-wrapper">
+      <div class="heading-wrapper">
+        <h5 class="category-heading">Price:</h5>
+    
+        <select id="priceFilterType" [(ngModel)]="priceFilterMode" class="filter-select">
+          <option value="manual">Manual</option>
+          <option value="slider">Slider (Library)</option>
+        </select>
+    
+      </div>
+      
+    @if (priceFilterMode === 'manual') {
+      <div class="manual-price-filter">
+        <input type="number" class="min-input" [(ngModel)]="minPrice" [min]="priceMin" [max]="maxPrice" placeholder="min" (change)="onMinRangeChange()">
+        <span class="separator">&gt;</span>
+        <input type="number" class="max-input" [(ngModel)]="maxPrice" [min]="minPrice" [max]="priceMax" placeholder="max" (change)="onMaxRangeChange()">
+      </div>
+    } @else if (priceFilterMode === 'slider' && isBrowser()) {
+      <div class="ngx-price-filter">
+        @if (showSlider) {
+          <div class="custom-slider">
+          <ngx-slider
+            [(value)]="logMinPrice"
+            [(highValue)]="logMaxPrice"
+            [options]="priceSliderOptions"
+            (userChangeEnd)="onPriceChange()"
+          ></ngx-slider>
+        </div>
+       }
+      </div>
+    }
 
-</div>
+    
+    </div>
+

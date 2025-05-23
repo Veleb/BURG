@@ -11,7 +11,7 @@ export interface RentInterface {
   dropoffLocation: string;
   referralCode: string | null;
   useCredits: boolean;
-  status: 'pending' | 'confirmed' | 'canceled';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
   total: number;
   calculatedPrice: number; 
   appliedDiscounts: { 
@@ -29,7 +29,7 @@ export interface RentForCreate {
   user: string | null;
   referralCode: string | null;
   useCredits: boolean;
-  status: 'pending' | 'confirmed' | 'canceled';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
   total: number;
   calculatedPrice: number; 
   appliedDiscounts: { 

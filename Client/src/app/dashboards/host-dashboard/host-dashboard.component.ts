@@ -6,7 +6,7 @@ import { DashboardSidebarComponent } from "../../shared/components/dashboard/das
   selector: 'app-host-dashboard',
   imports: [RouterOutlet, DashboardSidebarComponent],
   templateUrl: './host-dashboard.component.html',
-  styleUrls: ['./host-dashboard.component.css']
+  styleUrl: './host-dashboard.component.css'
 })
 export class HostDashboardComponent {
 }

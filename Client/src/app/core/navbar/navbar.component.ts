@@ -14,7 +14,7 @@ import { UserFromDB } from '../../../types/user-types';
   standalone: true,
   imports: [RouterLink, AsyncPipe, CurrencyComponent, SearchBarComponent],
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css'],
+  styleUrl: './navbar.component.css',
   animations: [
     trigger('iconAnimation', [
       transition('closed => open', [

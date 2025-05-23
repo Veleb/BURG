@@ -16,22 +16,25 @@ export class VehicleService {
   private availableVehicles$$: BehaviorSubject<VehicleInterface[]> = new BehaviorSubject<VehicleInterface[]>([]);
   availableVehicles$ = this.availableVehicles$$.asObservable();
 
+  private totalCount$$ = new BehaviorSubject<number>(0);
+  totalCount$ = this.totalCount$$.asObservable();
+
   private filters$$ = new BehaviorSubject<FilterState>({
     categories: [],
     year: undefined,
     sort: { key: 'none', direction: 'asc' },
+    priceMin: undefined,
+    priceMax: undefined,
   });
 
-  private totalCount$$ = new BehaviorSubject<number>(0);
-  totalCount$ = this.totalCount$$.asObservable();
 
   filteredVehicles$: Observable<VehicleInterface[]> = combineLatest([
-    this.availableVehicles$$,
+    this.vehicles$$,
     this.filters$$
   ]).pipe(
     map(([availableVehicles, filters]) => {
 
-      let filtered = availableVehicles.filter(vehicle => { // we filter the cars
+        let filtered = availableVehicles.filter(vehicle => { // we filter the cars
 
         const matchesCategory = filters.categories.length === 0 || 
         filters.categories.includes(vehicle.details?.category);
@@ -39,7 +42,15 @@ export class VehicleService {
         const matchesYear = !filters.year || 
         vehicle.details.year === filters.year;
 
-        return matchesCategory && matchesYear;
+        const matchesMinPrice = filters.priceMin === undefined || 
+        vehicle.details.pricePerDay >= filters.priceMin;
+
+
+        const matchesMaxPrice = filters.priceMax === undefined || 
+        vehicle.details.pricePerDay <= filters.priceMax;
+
+
+        return matchesCategory && matchesYear && matchesMinPrice && matchesMaxPrice;
 
       })
 
@@ -102,21 +113,39 @@ export class VehicleService {
     this.updateFilters({ sort: { key, direction } });
   }
 
+  setPriceRange(min: number, max: number): void {
+    this.updateFilters({ priceMin: min, priceMax: max });
+  }
+
+  priceData$: Observable<{ min: number; max: number; mid: number }> = this.availableVehicles$$
+  .pipe(
+  map(vehicles => {
+      const prices = vehicles
+        .map(v => v.details?.pricePerDay)
+        .filter((p): p is number => typeof p === 'number');
+
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      const mid = Math.floor((min + max) / 2);
+
+      return { min, max, mid };
+    })
+  );
+
+
+
   // main functions
 
-  getVehicles(options: { limit?: number; offset?: number; promoted?: boolean; sortByLikes?: boolean }) {
+  getVehicles(options: { limit?: number; offset?: number}) {
     let params = new HttpParams();
 
     if (options.limit !== undefined) params = params.set('limit', options.limit.toString());
     if (options.offset !== undefined) params = params.set('offset', options.offset.toString());
-    if (options.promoted !== undefined) params = params.set('promoted', options.promoted.toString());
-    if (options.sortByLikes !== undefined) params = params.set('sortByLikes', options.sortByLikes.toString());
 
     return this.http.get<{ vehicles: VehicleInterface[], totalCount: number }>('/api/vehicles', { params });
   }
 
-
-  getAll(options: { limit?: number; offset?: number; promoted?: boolean; sortByLikes?: boolean } = {}): Observable<{ vehicles: VehicleInterface[] }> {
+  getAll(options: { limit?: number; offset?: number} = {}): Observable<{ vehicles: VehicleInterface[] }> {
     return this.getVehicles(options).pipe(
       tap({
         next: ({ vehicles }) => {
@@ -217,6 +246,7 @@ export class VehicleService {
   }
 
   updateAvailableVehicles(startDate: Date | null, endDate: Date | null): void {
+
     if (!startDate || !endDate) {
       this.availableVehicles$$.next(this.vehicles$$.value);
       return;

@@ -66,4 +66,6 @@ export interface FilterState {
     key: 'price' | 'year' | "likes" | 'none';
     direction: 'asc' | 'desc';
   };
+  priceMin?: number;
+  priceMax?: number;
 }

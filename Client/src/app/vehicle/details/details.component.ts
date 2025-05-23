@@ -29,7 +29,7 @@ import { UserFromDB } from '../../../types/user-types';
     ImageCarouselComponent
   ],
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.css']
+  styleUrl: './details.component.css'
 })
 export class DetailsComponent implements OnInit, OnDestroy {
 

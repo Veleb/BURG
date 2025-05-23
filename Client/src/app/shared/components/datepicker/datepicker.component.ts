@@ -1,44 +1,44 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Inject, Input, ViewEncapsulation, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, PLATFORM_ID, Input, Output, EventEmitter, OnChanges, SimpleChanges, inject} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import flatpickr from "flatpickr";
+import flatpickr from 'flatpickr';
 import { Instance } from 'flatpickr/dist/types/instance';
+import { DateOption } from 'flatpickr/dist/types/options';
 import { VehicleService } from '../../../vehicle/vehicle.service';
 import { ToastrService } from 'ngx-toastr';
-import { DateOption } from 'flatpickr/dist/types/options';
 import { RentService } from '../../../rents/rent.service';
 
 @Component({
-    selector: 'app-datepicker',
-    imports: [  ],
-    templateUrl: './datepicker.component.html',
-    styleUrl: './datepicker.component.css',
+  selector: 'app-datepicker',
+  templateUrl: './datepicker.component.html',
+  styleUrl: './datepicker.component.css'
 })
 export class DatepickerComponent implements AfterViewInit, OnChanges {
-  @Input() functionality!: [string, string | null | undefined];
-  @Input() isPricePerDay = true;
-  @Input() kilometers?: number;
-  @Input() vehicleId?: string;
-  @Input() layoutType: string = "default"
 
+  private vehicleService = inject(VehicleService);
+  private rentService = inject(RentService);
+  private toastr = inject(ToastrService);
+  private platformId = inject(PLATFORM_ID);
+
+  @Input() functionality!: [string, string | null | undefined];
+  // @Input() isPricePerDay = true;
+  // @Input() kilometers?: number;
+  @Input() vehicleId?: string;
+  @Input() layoutType: string = 'default';
   @Input() startDateInput: Date | null = null;
   @Input() endDateInput: Date | null = null;
 
-  @ViewChild('startDate') startDate!: ElementRef;
-  @ViewChild('endDate') endDate!: ElementRef;
+  @ViewChild('startDate') startDate!: ElementRef<HTMLInputElement>;
+  @ViewChild('endDate') endDate!: ElementRef<HTMLInputElement>;
+
+  @Output() dateSelected = new EventEmitter<{ startDate: Date | null; endDate: Date | null }>();
+  @Output() startDateChange = new EventEmitter<Date | null>();
+  @Output() endDateChange = new EventEmitter<Date | null>();
 
   startDateInstance: Instance | null = null;
   endDateInstance: Instance | null = null;
 
-  @Output() dateSelected = new EventEmitter<{ startDate: Date | null; endDate: Date | null }>();
-  @Output() startDateChange = new EventEmitter<Date>();
-  @Output() endDateChange = new EventEmitter<Date>();
-
-  constructor(
-    private vehicleService: VehicleService,
-    private rentService: RentService,
-    private toastr: ToastrService,
-    @Inject(PLATFORM_ID) private platformId: Object,
-  ) {}
+  unavailableDateRanges: { start: string; end: string }[] = [];
+  unavailableDateRangesTimestamps: { start: number; end: number }[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['startDateInput'] && this.startDateInstance) {
@@ -47,131 +47,186 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
     if (changes['endDateInput'] && this.endDateInstance) {
       this.endDateInstance.setDate(this.endDateInput as DateOption);
     }
-  }
-
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.initializeFlatpickr();
+    if (changes['vehicleId'] && this.vehicleId) {
+      this.loadUnavailableDates(this.vehicleId);
     }
   }
 
-  openCalendar(inputElement: HTMLInputElement) {
-    inputElement.focus(); 
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    this.initializeFlatpickr();
+
+    if (this.vehicleId) {
+      this.loadUnavailableDates(this.vehicleId);
+    }
   }
- 
+
   private initializeFlatpickr(): void {
     const commonConfig = {
       dateFormat: 'd-m-Y H:i',
       enableTime: true,
       time_24hr: true,
       minDate: new Date(),
-      onOpen: (selectedDates: Date[], dateStr: string, instance: Instance) => {
-        if (this.vehicleId) {
-          this.rentService.getUnavailableDates(this.vehicleId).subscribe({
-            next: (unavailableDates) => {
-              
-              const disableFunction = (date: Date) => {
-                const now = new Date();
-  
-                for (const rental of unavailableDates) {
-                  const start = new Date(rental.start);
-                  const end = new Date(rental.end);
-  
-                  if (date >= start && date <= end) {
-                    return true;
-                  }
-  
-                  if (date.toDateString() === start.toDateString()) {
-                    
-                    const disableFrom = new Date(start.getTime() - 3 * 60 * 60 * 1000); // change buffer time
-
-                    if (date >= disableFrom && date <= end) {
-                      return true;
-                    }
-  
-                    if (now.toDateString() === start.toDateString() && now >= disableFrom) {
-                      return true;
-                    }
-                  }
-                }
-                return false;
-              };
-  
-              instance.set('disable', [disableFunction]);
-            },
-            error: (err) =>
-              console.error('Error fetching unavailable dates:', err),
-          });
-        }
-      },
-      onChange: (selectedDates: Date[], dateStr: string, instance: Instance) => {
-        if (instance === this.startDateInstance) {
-          this.startDateChange.emit(selectedDates[0] || null);
-        } else if (instance === this.endDateInstance) {
-          this.endDateChange.emit(selectedDates[0] || null);
-        }
-      }
     };
-  
+
     this.startDateInstance = flatpickr(this.startDate.nativeElement, {
       ...commonConfig,
-      onChange: (selectedDates, dateStr, instance) => {
-        if (selectedDates[0]) {
-
-          const maxEndDate = new Date(selectedDates[0]);
-          maxEndDate.setDate(maxEndDate.getDate() + 15);
-          
-          this.endDateInstance?.set('minDate', selectedDates[0]);
-          this.endDateInstance?.set('maxDate', maxEndDate);
-
-        }
-        this.startDateChange.emit(selectedDates[0] || null);
-        this.dateSelected.emit({ 
-          startDate: selectedDates[0] || null, 
-          endDate: this.endDateInstance?.selectedDates[0] || null 
-        });
-        commonConfig.onChange(selectedDates, dateStr, instance);
-      }
+      onChange: (selectedDates) => this.handleStartDateChange(selectedDates)
     });
 
     this.endDateInstance = flatpickr(this.endDate.nativeElement, {
       ...commonConfig,
-      onChange: (selectedDates, dateStr, instance) => {
-        if (selectedDates[0]) {
-          this.startDateInstance?.set('maxDate', selectedDates[0]);
-        }
-        this.endDateChange.emit(selectedDates[0] || null);
-        this.dateSelected.emit({ 
-          startDate: this.startDateInstance?.selectedDates[0] || null, 
-          endDate: selectedDates[0] || null 
-        });
-        commonConfig.onChange(selectedDates, dateStr, instance);
+      onChange: (selectedDates) => this.handleEndDateChange(selectedDates)
+    });
+  }
+
+  private handleStartDateChange(selectedDates: Date[]) {
+    const startDate = selectedDates[0] ?? null;
+
+    if (startDate && this.endDateInstance) {
+      const maxEndDate = new Date(startDate);
+      maxEndDate.setDate(maxEndDate.getDate() + 15); // Change this whether the company has an option for long term leasing
+
+      this.endDateInstance.set('minDate', startDate);
+      this.endDateInstance.set('maxDate', maxEndDate);
+    }
+
+    this.startDateChange.emit(startDate ? this.toUTCDate(startDate) : null);
+
+    this.emitDateSelected();
+
+    const endDate = this.endDateInstance?.selectedDates[0];
+
+    if (endDate && startDate && (endDate < startDate || endDate > new Date(startDate.getTime() + 15 * 86400000))) {
+      this.endDateInstance?.clear();
+      this.endDateChange.emit(null);
+      this.emitDateSelected();
+    }
+  }
+
+  private handleEndDateChange(selectedDates: Date[]) {
+    const endDate = selectedDates[0] ?? null;
+    const startDate = this.startDateInstance?.selectedDates[0] ?? null;
+
+    if (startDate && endDate && this.isOverlappingWithUnavailableDates(startDate, endDate)) {
+      this.toastr.error(
+        'Selected range overlaps with an existing rental. Please choose different dates.',
+        'Overlap Error'
+      );
+      this.startDateInstance?.clear();
+      this.endDateInstance?.clear();
+
+      this.startDateChange.emit(null);
+      this.endDateChange.emit(null);
+
+      this.dateSelected.emit({ startDate: null, endDate: null });
+
+      return;
+    }
+
+    if (endDate && this.startDateInstance) {
+      this.startDateInstance.set('maxDate', endDate);
+    }
+
+    this.endDateChange.emit(endDate ? this.toUTCDate(endDate) : null);
+    this.emitDateSelected();
+  }
+
+  private emitDateSelected() {
+    const startDate = this.startDateInstance?.selectedDates[0] ?? null;
+    const endDate = this.endDateInstance?.selectedDates[0] ?? null;
+
+    this.dateSelected.emit({
+      startDate: startDate ? this.toUTCDate(startDate) : null,
+      endDate: endDate ? this.toUTCDate(endDate) : null
+    });
+
+  }
+
+  private loadUnavailableDates(vehicleId: string): void {
+    this.rentService.getUnavailableDates(vehicleId).subscribe({
+      next: (unavailableRents) => {
+        this.unavailableDateRanges = unavailableRents.map(rent => ({
+          start: rent.start instanceof Date ? rent.start.toISOString() : rent.start,
+          end: rent.end instanceof Date ? rent.end.toISOString() : rent.end
+        }));
+        this.unavailableDateRangesTimestamps = this.unavailableDateRanges.map(r => ({
+          start: new Date(r.start).getTime(),
+          end: new Date(r.end).getTime(),
+        }));
+
+        this.updateFlatpickrDisableDates();
+      },
+      error: (err) => {
+        console.error('Error fetching unavailable dates:', err);
       }
     });
   }
 
+  private updateFlatpickrDisableDates(): void {
+    const disableFunc = (date: Date) => this.isDateUnavailable(date);
+
+    this.startDateInstance?.set('disable', [disableFunc]);
+    this.endDateInstance?.set('disable', [disableFunc]);
+  }
+
+  private isDateUnavailable(date: Date): boolean {
+    const time = date.getTime();
+    return this.unavailableDateRangesTimestamps.some(({ start, end }) => time >= start && time < end);
+  }
+
+  private isOverlappingWithUnavailableDates(start: Date, end: Date): boolean {
+    const startTime = start.getTime();
+    const endTime = end.getTime();
+    return this.unavailableDateRangesTimestamps.some(({ start, end }) => !(endTime <= start || startTime >= end));
+  }
+
+  openCalendar(inputElement: HTMLInputElement) {
+    inputElement.focus();
+  }
+
   search(): void {
     if (!this.startDateInstance || !this.endDateInstance) {
-      this.toastr.error('Date pickers are not initialized.', "Error Occurred");
+      this.toastr.error('Date pickers are not initialized.', 'Error Occurred');
       return;
     }
-  
-    const startDateTime = this.startDateInstance?.selectedDates[0];
-    const endDateTime = this.endDateInstance?.selectedDates[0];
-  
+
+    const startDateTime = this.startDateInstance.selectedDates[0];
+    const endDateTime = this.endDateInstance.selectedDates[0];
+
     if (!startDateTime || !endDateTime) {
-      this.toastr.error('Please select both start and end dates.', "Error Occurred");
+      this.toastr.error('Please select both start and end dates.', 'Error Occurred');
       return;
     }
-  
-    const differenceInTime = endDateTime.getTime() - startDateTime.getTime();
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-  
+
+    const differenceInDays = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 3600 * 24);
+
     if (differenceInDays > 15) {
-      this.toastr.error('The maximum rental period is 15 days.', "Error Occurred");
+      this.toastr.error('The maximum rental period is 15 days.', 'Error Occurred');
+      return;
+    } // potentially remove this
+
+    if (this.isOverlappingWithUnavailableDates(startDateTime, endDateTime)) {
+      this.toastr.error('The selected dates overlap with an existing rental. Please choose different dates.', 'Overlap Error');
       return;
     }
-  
-    this.vehicleService.updateAvailableVehicles(startDateTime, endDateTime);
+
+    this.vehicleService.updateAvailableVehicles(
+      this.toUTCDate(startDateTime),
+      this.toUTCDate(endDateTime)
+    );
   }
+
+  private toUTCDate(localDate: Date): Date {
+    return new Date(Date.UTC(
+      localDate.getFullYear(),
+      localDate.getMonth(),
+      localDate.getDate(),
+      localDate.getHours(),
+      localDate.getMinutes(),
+      localDate.getSeconds()
+    ));
+  }
+
 }

@@ -9,9 +9,9 @@ const currencyController = Router();
 const hardcodedRates: { [key: string]: number } = {
   EUR: 0.88,
   GBP: 0.75,
-  CAD: 1.38,
-  JPY: 142.83,
-  INR: 85.17,
+  CAD: 1.39,
+  JPY: 143.73,
+  INR: 85.59,
 };
 
 currencyController.get("", (req: Request, res: Response, next: NextFunction) => {

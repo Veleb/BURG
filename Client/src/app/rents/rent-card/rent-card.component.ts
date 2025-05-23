@@ -14,7 +14,7 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [DatePipe, RouterLink, CurrencyConverterPipe],
   templateUrl: './rent-card.component.html',
-  styleUrls: ['./rent-card.component.css']
+  styleUrl: './rent-card.component.css',
 })
 export class RentCardComponent implements OnInit, OnDestroy {
   

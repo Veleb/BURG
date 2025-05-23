@@ -13,7 +13,7 @@ export interface RentInterface {
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
-  status: 'pending' | 'confirmed' | 'canceled';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
   total: number;
 
   referralCode: string | null;
@@ -35,7 +35,7 @@ export interface RentForCreate {
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
-  status: 'pending' | 'confirmed' | 'canceled';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
   total: number;
 
   referralCode: string | null;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 interface FAQ {
   number: number;
@@ -11,7 +11,7 @@ interface FAQ {
 @Component({
   selector: 'app-faq',
   templateUrl: './faq.component.html',
-  styleUrls: ['./faq.component.css']
+  styleUrl: './faq.component.css'
 })
 export class FaqComponent implements OnInit {
 

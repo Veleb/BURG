@@ -13,11 +13,8 @@ vehicleController.get('', async (req: Request, res: Response, next: NextFunction
   try {
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
-    // const promoted = req.query.promoted === 'true' ? true : req.query.promoted === 'false' ? false : undefined;
-    const promoted = false;
-    const sortByLikes = req.query.sortByLikes === 'true';
 
-    const result = await vehicleService.getVehicles({ limit, offset, promoted, sortByLikes });
+    const result = await vehicleService.getVehicles({ limit, offset });
 
     res.status(200).json(result);
   } catch (err) {

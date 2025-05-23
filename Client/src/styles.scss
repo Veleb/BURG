@@ -13,4 +13,43 @@ body {
   background-color: #FFFDFD;
 }
 
+.custom-slider .ngx-slider .ngx-slider-bar {
+  background: #110A08;
+  height: 4px;
+}
 
+.custom-slider .ngx-slider .ngx-slider-pointer {
+  background-color: #FFFDFD;
+  border: 3px solid #110A08;
+}
+
+.custom-slider .ngx-slider .ngx-slider-pointer:after {
+  display: none;
+}
+
+.custom-slider .ngx-slider .ngx-slider-bubble {
+  top: 20px;
+}
+
+.custom-slider .ngx-slider .ngx-slider-bubble.ngx-slider-limit {
+  font-weight: bold;
+  color: #110A08;
+}
+
+.custom-slider .ngx-slider .ngx-slider-tick {
+  width: 3px;
+  height: 10px;
+  border-radius: 0;
+  background: #110A08;
+  top: -1px;
+  
+}
+
+.custom-slider .ngx-slider .ngx-slider-tick-value {
+  position: relative;
+  // bottom: 55px;
+}
+
+.custom-slider .ngx-slider .ngx-slider-tick.ngx-slider-selected {
+  background: #110A08;
+}
