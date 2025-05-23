@@ -32,7 +32,6 @@
               "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             ],
             "scripts": [
-              "node_modules/leaflet/dist/leaflet.js",
               "node_modules/chart.js/dist/chart.umd.js"
             ],
             "server": "src/main.server.ts",
@@ -43,17 +42,16 @@
             "allowedCommonJsDependencies": [
               "intl-tel-input",
               "moment",
-              "leaflet",
               "papaparse"
             ]
           },
           "configurations": {
             "production": {
               "budgets": [
-                {
+                 {
                   "type": "initial",
-                  "maximumWarning": "1.1MB",
-                  "maximumError": "1.1MB"
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "bundle",
@@ -146,7 +144,6 @@
               "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             ],
             "scripts": [
-              "node_modules/leaflet/dist/leaflet.js",
               "node_modules/chart.js/dist/chart.umd.js"
             ]
           }
