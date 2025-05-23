@@ -20,8 +20,8 @@ export class DatepickerComponent implements AfterViewInit, OnChanges {
   private platformId = inject(PLATFORM_ID);
 
   @Input() functionality!: [string, string | null | undefined];
-  // @Input() isPricePerDay = true;
-  // @Input() kilometers?: number;
+  @Input() isPricePerDay = true;
+  @Input() kilometers?: number;
   @Input() vehicleId?: string;
   @Input() layoutType: string = 'default';
   @Input() startDateInput: Date | null = null;
