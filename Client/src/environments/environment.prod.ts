@@ -4,9 +4,13 @@ export const environment: Environment = {
   production: true,
   apiUrl: 'https://burg-uu6y.onrender.com', 
   categories: [
+    // {
+    //   name: "cars",
+    //   description: "General category for personal and passenger vehicles designed for everyday transportation.",
+    // },
     {
-      name: "cars",
-      description: "General category for personal and passenger vehicles designed for everyday transportation.",
+      name: "equipment",
+      description: "Vehicles and machinery designed for construction, agriculture, and industrial tasks.",
     },
     {
       name: "trucks",

@@ -19,6 +19,8 @@ export interface CompanyInterface {
   totalEarnings: number;
   companyType: string;
   stateRegistration: string;
+
+  isPromoted: boolean;
 }
 
 export interface CompanyForCreate {

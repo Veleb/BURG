@@ -7,7 +7,7 @@ export interface UserFromDB {
   email: string;
   phoneNumber?: string;
   rents: string[];
-  companies: CompanyInterface[] | string[] ;
+  companies: CompanyInterface[] ;
   role: "user" | "host" | "admin";
   referralCode: string;
   disallowedReferralCodes: string[];

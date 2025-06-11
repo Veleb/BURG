@@ -1,4 +1,5 @@
 import { TransactionInterface } from "./transaction-types";
+import { UserFromDB } from "./user-types";
 import { VehicleInterface } from "./vehicle-types";
 
 export interface CompanyInterface {
@@ -11,7 +12,7 @@ export interface CompanyInterface {
   phoneNumber: string;
   location: string;
   vehicles: number;
-  owner: string;
+  owner: UserFromDB;
   status: 'pending' | 'confirmed' | 'canceled';
   carsAvailable: VehicleInterface[],
   totalEarnings: number,
@@ -19,5 +20,6 @@ export interface CompanyInterface {
 
   companyType: string;
   stateRegistration: string;
+  isPromoted: boolean;
 
 }

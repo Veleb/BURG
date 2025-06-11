@@ -18,7 +18,9 @@ const CompanySchema = new Schema<CompanyInterface>({
 
   carsAvailable: [{ type: Types.ObjectId, ref: 'Vehicle' }], 
 
-  totalEarnings: { type: Number, required: true, default: 0 }
+  totalEarnings: { type: Number, required: true, default: 0 },
+  
+  isPromoted: { type: Boolean, required: false, default: false },
   
   
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });

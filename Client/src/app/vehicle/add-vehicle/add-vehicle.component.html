@@ -203,7 +203,7 @@
         @for (size of sizes; track size) {
           <option [value]="size">{{size}}</option>
         }
-      </select>\
+      </select>
       @if (size.invalid && (size.dirty || size.touched)) {
         <div class="validation-error">Size is required</div>
       }

@@ -180,10 +180,13 @@
 }
 
 .company-profile-picture {
-  height: 45px;
   width: 45px;
+  height: 45px;
+  object-fit: cover;
   border-radius: 50%;
-  background-color: royalblue;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-right: 1rem;
 }
 
 .company-name {
