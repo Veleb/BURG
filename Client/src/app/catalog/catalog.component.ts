@@ -90,6 +90,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   ]).subscribe({
     next: ([vehiclesResponse, totalCount]) => {
       this.totalCount = totalCount;
+      
     },
     error: err => console.error('Fetch error', err)
   });
@@ -142,6 +143,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   onChangeMainCategory(mainCategory: string): void {
     this.mainCategory = mainCategory;
+    this.currentPage = 1;
     this.fetchVehicles();
   }
 }

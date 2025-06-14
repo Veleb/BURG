@@ -4,14 +4,14 @@ const currencyController = Router();
 
 // const CURRENCY_API_KEY = process.env.CURRENCY_API_KEY;
 
-// const baseUrl = `https://apilayer.net/api/live?access_key=${CURRENCY_API_KEY}&currencies=EUR,GBP,CAD,JPY,INR&source=USD`;
+// const baseUrl = `https://apilayer.net/api/live?access_key=${CURRENCY_API_KEY}&currencies=EUR,GBP,CAD,JPY,USD&source=INR`;
 
 const hardcodedRates: { [key: string]: number } = {
-  EUR: 0.88,
-  GBP: 0.75,
-  CAD: 1.39,
-  JPY: 143.73,
-  INR: 85.59,
+  USD: 0.01169,
+  EUR: 0.01029,
+  GBP: 0.00876,
+  CAD: 0.01624,
+  JPY: 1.67943
 };
 
 currencyController.get("", (req: Request, res: Response, next: NextFunction) => {

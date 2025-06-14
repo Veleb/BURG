@@ -6,6 +6,7 @@ import {
   EventEmitter,
   Output,
   Input,
+  inject,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +21,9 @@ import { catchError, Subscription, of } from 'rxjs';
   styleUrl: './location-picker.component.css',
 })
 export class LocationPickerComponent implements OnDestroy {
+
+  private http = inject(HttpClient);
+
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
   @Output() locationSelected = new EventEmitter<string>();
 
@@ -33,9 +37,7 @@ export class LocationPickerComponent implements OnDestroy {
   private blurTimeout: any;
   private searchSub?: Subscription;
   private reverseGeocodeSub?: Subscription;
-
-  constructor(private http: HttpClient) {}
-
+  
   onBlur(): void {
     this.blurTimeout = setTimeout(() => {
       this.isInputFocused = false;
@@ -56,6 +58,12 @@ export class LocationPickerComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
     this.reverseGeocodeSub?.unsubscribe();
+  }
+
+  selectSuggestion(suggestion: NominatimResponse): void {
+    this.searchQuery = suggestion.display_name;
+    this.suggestions = [];
+    this.locationSelected.emit(suggestion.display_name);
   }
 
   onSearch(query: string): void {
