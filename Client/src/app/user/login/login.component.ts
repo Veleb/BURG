@@ -1,4 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
@@ -6,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EmailDirective } from '../../directives/email.directive';
 import { PasswordDirective } from '../../directives/password.directive';
 
-declare var google: any; 
+declare const google: any; // Declare the global 'google' object for TypeScript
 
 @Component({
   selector: 'app-login',
@@ -18,24 +19,44 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('googleButtonContainer', { static: true }) googleButtonContainer!: ElementRef;
 
-  constructor(private userService: UserService, private toastr: ToastrService, private router: Router) {}
+  private userService = inject(UserService);
+  private toastr = inject(ToastrService);
+  private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
-    google.accounts.id.initialize({
-      client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
-      callback: (response: { credential: string }) => this.handleCredentialResponse(response)
-    });
+    // google.accounts.id.initialize({
+    //   client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
+    //   callback: (response: { credential: string }) => this.handleCredentialResponse(response)
+    // });
 
-    google.accounts.id.renderButton(
-      this.googleButtonContainer.nativeElement,
-      { 
-        type: 'icon', 
-        shape: 'circle', 
-        theme: 'outline', 
-        size: 'large',
-        text: 'signin_with'
+    // google.accounts.id.renderButton(
+    //   this.googleButtonContainer.nativeElement,
+    //   { 
+    //     type: 'icon', 
+    //     shape: 'circle', 
+    //     theme: 'outline', 
+    //     size: 'large',
+    //     text: 'signin_with'
+    //   }
+    // );
+      if (isPlatformBrowser(this.platformId)) {
+        google.accounts.id.initialize({
+          client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
+          callback: (response: { credential: string }) => this.handleCredentialResponse(response)
+        });
+
+        google.accounts.id.renderButton(
+          this.googleButtonContainer.nativeElement,
+          { 
+            type: 'icon', 
+            shape: 'circle', 
+            theme: 'outline', 
+            size: 'large',
+            text: 'signin_with'
+          }
+        );
       }
-    );
   }
   
   handleCredentialResponse(response: { credential: string }): void {

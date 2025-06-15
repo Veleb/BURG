@@ -68,43 +68,15 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
       showTicksValues: true,
   }
 
+  isBrowserFlag: boolean = false;
+
   ngOnInit() {
-  combineLatest([
-    this.vehicleService.priceData$,
-    this.currencyService.rate$,
-  ])
-  .pipe(takeUntil(this.destroy$))
-  .subscribe(([data, rate]) => {
-    this.latestExchangeRate = rate;
-
-    const convertedMin = data.min * rate;
-    const convertedMid = data.mid * rate;
-    const convertedMax = data.max * rate;
-
-    this.minPrice = convertedMin;
-    this.median = convertedMid;
-    this.maxPrice = convertedMax;
-
-    this.logMinPrice = this.log10(convertedMin);
-    this.logMaxPrice = this.log10(convertedMax);
-
-    this.priceSliderOptions = {
-      floor: this.logMinPrice,
-      ceil: this.logMaxPrice,
-      step: 0.000001,
-      showTicks: false,
-      translate: (value: number): string => {
-        const actualPrice = Math.round(this.pow10(value));
-        return `${this.currencySymbol}${actualPrice}`;
-      }
-    };
-
-    this.onPriceChange()
-
-    // force slider rerender
-    this.showSlider = false;
-    setTimeout(() => this.showSlider = true, 0);
-  });
+    
+    this.isBrowserFlag = isPlatformBrowser(this.platformId);
+    
+    if (this.isBrowserFlag) {
+      this.setUpPriceSlider();
+    }
 
   this.currencyService.getCurrency()
     .pipe(takeUntil(this.destroy$))
@@ -132,6 +104,45 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private setUpPriceSlider() {
+    combineLatest([
+      this.vehicleService.priceData$,
+      this.currencyService.rate$,
+    ])
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(([data, rate]) => {
+      this.latestExchangeRate = rate;
+    
+      const convertedMin = data.min * rate;
+      const convertedMid = data.mid * rate;
+      const convertedMax = data.max * rate;
+    
+      this.minPrice = convertedMin;
+      this.median = convertedMid;
+      this.maxPrice = convertedMax;
+    
+      this.logMinPrice = this.log10(convertedMin);
+      this.logMaxPrice = this.log10(convertedMax);
+    
+      this.priceSliderOptions = {
+        floor: this.logMinPrice,
+        ceil: this.logMaxPrice,
+        step: 0.000001,
+        showTicks: false,
+        translate: (value: number): string => {
+          const actualPrice = Math.round(this.pow10(value));
+          return `${this.currencySymbol}${actualPrice}`;
+        }
+    };
+
+      this.onPriceChange()
+
+      // force slider rerender
+      this.showSlider = false;
+      setTimeout(() => this.showSlider = true, 0);
+    });
   }
 
   onMinRangeChange() {
@@ -200,7 +211,7 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
     this.vehicleService.updateAvailableVehicles(this.startDateFilter, this.endDateFilter);
   }
 
-   isBrowser(): boolean {
+  isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
   

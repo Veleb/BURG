@@ -49,6 +49,8 @@ export class LocationPickerComponent implements OnDestroy {
     this.isInputFocused = true;
   }
 
+  
+
   cancelBlurTimeout(): void {
     if (this.blurTimeout) {
       clearTimeout(this.blurTimeout);

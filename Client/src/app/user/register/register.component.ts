@@ -10,7 +10,7 @@ import { RepassDirective } from '../../directives/repass.directive';
 import { EmailDirective } from '../../directives/email.directive';
 import { FullnameDirective } from '../../directives/fullname.directive';
 
-declare var google: any; 
+declare const google: any; // Declare google globally to avoid TypeScript errors
 
 @Component({
     selector: 'app-register',
@@ -45,21 +45,38 @@ export class RegisterComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    google.accounts.id.initialize({
-      client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
-      callback: (response: any) => this.handleCredentialResponse(response)
-    });
+    // google.accounts.id.initialize({
+    //   client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
+    //   callback: (response: any) => this.handleCredentialResponse(response)
+    // });
 
-    google.accounts.id.renderButton(
-      this.googleRegisterButtonContainer.nativeElement,
-      { 
-        type: 'icon', 
-        shape: 'circle', 
-        theme: 'outline', 
-        size: 'large',
-        text: 'signup_with'
-      }
-    );
+    // google.accounts.id.renderButton(
+    //   this.googleRegisterButtonContainer.nativeElement,
+    //   { 
+    //     type: 'icon', 
+    //     shape: 'circle', 
+    //     theme: 'outline', 
+    //     size: 'large',
+    //     text: 'signup_with'
+    //   }
+    // );
+    if (isPlatformBrowser(this.platformId)) {
+      google.accounts.id.initialize({
+        client_id: '1055909539687-a20hs61fm65nsahmtln1lnedji4v7e1e.apps.googleusercontent.com',
+        callback: (response: any) => this.handleCredentialResponse(response)
+      });
+
+      google.accounts.id.renderButton(
+        this.googleRegisterButtonContainer.nativeElement,
+        { 
+          type: 'icon', 
+          shape: 'circle', 
+          theme: 'outline', 
+          size: 'large',
+          text: 'signup_with'
+        }
+      );
+    }
   }
 
   handleCredentialResponse(response: any): void {
