@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
@@ -17,6 +17,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout'
 import { ImageCarouselComponent } from '../../shared/components/image-carousel/image-carousel.component';
 import { RentService } from '../../rents/rent.service';
 import { UserFromDB } from '../../../types/user-types';
+import { PhonepeService } from '../../services/phonepe.service';
 
 @Component({
   selector: 'app-details',
@@ -26,7 +27,8 @@ import { UserFromDB } from '../../../types/user-types';
     CurrencyConverterPipe,
     LocationPickerComponent,
     FormsModule,
-    ImageCarouselComponent
+    ImageCarouselComponent,
+    RouterLink
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.css'
@@ -40,6 +42,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private rentService = inject(RentService);
   private stripeService = inject(StripeService);
+  private phonepeService = inject(PhonepeService);
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
 
@@ -281,6 +284,42 @@ export class DetailsComponent implements OnInit, OnDestroy {
       },
       error: () => {
       }
+    });
+  }
+
+  rentVehicleViaPhonePe(): void {
+    if (!this.startDate || !this.endDate || !this.vehicleId || !this.user) {
+      this.toastr.error("Missing rental details", "Error");
+      return;
+    }
+
+    const rentalData = {
+      vehicleId: this.vehicleId,
+      start: this.startDate,
+      end: this.endDate,
+      pickupLocation: this.pickupLocation,
+      dropoffLocation: this.dropoffLocation,
+      isPricePerDay: this.isPricePerDay,
+      kilometers: this.kilometers || 0,
+      referralCode: this.referralCode || '',
+      useCredits: this.useCredits || false,
+      userId: this.user?._id || '',
+      calculatedPrice: this.totalPrice || 0,
+      appliedDiscounts: {
+        creditsUsed: this.actualCreditUsed,
+        referral: this.referralDiscount || 0
+      }
+    };
+
+    this.phonepeService.initiatePayment(rentalData).subscribe({
+      next: (response) => {
+        if (response.redirectUrl) {
+          window.location.href = response.redirectUrl;  // Redirect to PhonePe hosted page
+        } else {
+          this.toastr.error("No redirect URL provided", "PhonePe Error");
+        }
+      },
+      error: () => this.toastr.error("PhonePe payment initiation failed", "Error")
     });
   }
 

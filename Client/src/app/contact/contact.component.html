@@ -1,56 +1,58 @@
 <section class="contact-page">
   <div class="contact-hero">
-      <h1>Get in Touch</h1>
-      <p>We're here to help with your commercial vehicle rental needs</p>
+    <h1>Get in Touch</h1>
+    <p>We're here to help with your commercial vehicle rental needs</p>
   </div>
 
   <div class="contact-container">
-      <div class="contact-info">
-
-          <div class="info-card">
-              <i class="fas fa-phone"></i>
-              <h3>Call Us</h3>
-              <p>General Inquiries: +91 877 857 9209<br>Support: +91 877 857 9209</p>
-          </div>
-
-          <div class="info-card">
-              <i class="fas fa-envelope"></i>
-              <h3>Email Us</h3>
-              <p>General: burpleinfodesk&#64;gmail.com<br>Support: burpleinfodesk&#64;gmail.com</p>
-          </div>
-
-          <div class="social-section">
-              <h3>Connect With Us</h3>
-              <div class="social-links">
-                  <a href="https://www.instagram.com/burgrental"><i class="fab fa-instagram"></i></a>
-              </div>
-          </div>
+    <div class="contact-info">
+      <div class="info-card">
+        <i class="fas fa-phone"></i>
+        <h3>Call Us</h3>
+        <p>
+          General Inquiries: +91 877 857 9209<br />Support: +91 877 857 9209
+        </p>
       </div>
 
-      <form class="contact-form" (ngSubmit)="onSubmit()">
-          <h2>Send a Message</h2>
-          <div class="form-group">
-              <label for="name">Full Name</label>
-              <input type="text" id="name" name="name" required>
-          </div>
+      <div class="info-card">
+        <i class="fas fa-envelope"></i>
+        <h3>Email Us</h3>
+        <p>General: hello&#64;burgrental.com<br />Support: hello&#64;burgrental.com</p>
+      </div>
 
-          <div class="form-group">
-              <label for="email">Email Address</label>
-              <input type="email" id="email" name="email" required>
-          </div>
+      <div class="social-section">
+        <h3>Connect With Us</h3>
+        <div class="social-links">
+          <a href="https://www.instagram.com/burgrental"
+            ><i class="fab fa-instagram"></i
+          ></a>
+        </div>
+      </div>
+    </div>
 
-          <div class="form-group">
-              <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" name="phone">
-          </div>
+    <form class="contact-form" (ngSubmit)="onSubmit()">
+      <h2>Send a Message</h2>
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required />
+      </div>
 
-          <div class="form-group">
-              <label for="message">Your Message</label>
-              <textarea id="message" name="message" rows="5" required></textarea>
-          </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required />
+      </div>
 
-          <button type="submit" class="submit-button">Send Message</button>
-      </form>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" />
+      </div>
+
+      <div class="form-group">
+        <label for="message">Your Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+
+      <button type="submit" class="submit-button">Send Message</button>
+    </form>
   </div>
-
 </section>

@@ -205,8 +205,11 @@
         </label>
         }
       </div>
+      
+      <p class="consent-paragraph">By proceeding to checkout I agree with the <span class="link-span"  routerLink="/terms">Terms and Conditions</span> and <span class="link-span"  routerLink="/refund">Refund Policy</span></p>
 
-      <button class="cta-button" (click)="rentVehicle()">Rent Now</button>
+      <button class="cta-button" (click)="rentVehicleViaPhonePe()">Rent Now</button>
+
 
       @if (user?.role === 'admin' || (user?.role === 'host' &&
       user?.companies?.[0]?.isPromoted)) {

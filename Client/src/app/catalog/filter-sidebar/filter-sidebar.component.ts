@@ -176,11 +176,8 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
     const usdMin = Math.round(actualConvertedMin / rate);
     const usdMax = Math.round(actualConvertedMax / rate);
 
-    // this.vehicleService.setPriceRange(this.minPrice, this.maxPrice);
     this.vehicleService.setPriceRange(usdMin, usdMax);
     
-    // console.log('Filtering cars from', this.minPrice, 'to', this.maxPrice);
-    console.log('Filtering cars from', usdMin, 'to', usdMax);
   }
 
   private log10(value: number): number {

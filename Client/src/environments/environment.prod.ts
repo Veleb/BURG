@@ -4,14 +4,14 @@ export const environment: Environment = {
   production: true,
   apiUrl: 'https://burg-uu6y.onrender.com', 
   categories: [
-    {
-      name: "cars",
-      description: "General category for personal and passenger vehicles designed for everyday transportation.",
-    },
-    {
-      name: "equipment",
-      description: "Vehicles and machinery designed for construction, agriculture, and industrial tasks.",
-    },
+    // {
+    //   name: "cars",
+    //   description: "General category for personal and passenger vehicles designed for everyday transportation.",
+    // },
+    // {
+    //   name: "equipment",
+    //   description: "Vehicles and machinery designed for construction, agriculture, and industrial tasks.",
+    // },
     {
       name: "trucks",
       description: "Larger vehicles built for carrying heavy loads, often used for transport and construction.",

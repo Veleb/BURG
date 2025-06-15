@@ -158,7 +158,7 @@ export class FaqComponent implements OnInit {
       number: 18,
       question: 'How do I contact BURG support?',
       answer:
-        'You can reach our support team through: In-app chat support, Email: burpleinfodesk@gmail.com, Phone: +91 877 857 9209 (Available 24/7).',
+        'You can reach our support team through: In-app chat support, Email: hello@burgrental.com, Phone: +91 877 857 9209 (Available 24/7).',
       active: false,
     },
   ];

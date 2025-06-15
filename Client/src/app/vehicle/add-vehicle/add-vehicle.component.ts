@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { VehicleService } from '../vehicle.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Size, CategoryEnum } from '../../../types/enums';
 import { VehicleForCreate } from '../../../types/vehicle-types';
 import { ActivatedRoute } from '@angular/router';
@@ -41,16 +41,20 @@ export class AddVehicleComponent implements OnInit {
     vehicleRegistration: [],
   };
 
+  @ViewChild('form') form!: NgForm;
+  formSubmitted = false;
+  
   companyId: string | null = null;
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
 
   sizes = Object.values(Size);
   categories = Object.values(CategoryEnum);
 
   selectedImages: File[] = [];
   selectedRegistrations: File[] = [];
+
+  currentYear = new Date().getFullYear();
+  maxYear = this.currentYear + 1;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
@@ -103,14 +107,12 @@ export class AddVehicleComponent implements OnInit {
 
     this.vehicleService.createVehicle(formData).subscribe({
       next: () => {
-        this.successMessage = 'Vehicle successfully created!';
-        this.errorMessage = '';
+        this.toastr.success('Vehicle created successfully!');
         this.isSubmitting = false;
         this.resetForm();
       },
       error: (err) => {
-        this.errorMessage = 'Error creating vehicle.';
-        this.successMessage = '';
+        this.toastr.error('Error creating vehicle. Please try again.');
         this.isSubmitting = false;
         console.error(err);
       }
@@ -118,6 +120,9 @@ export class AddVehicleComponent implements OnInit {
   }
 
   resetForm() {
+    this.form.resetForm();
+    this.formSubmitted = false;
+    
     this.vehicleData = {
       ...this.vehicleData,
       vehicleName: '',
@@ -134,6 +139,8 @@ export class AddVehicleComponent implements OnInit {
       vehicleImages: [],
       vehicleRegistration: [],
       isPromoted: false,
+      vehiclePricePerDay: 0,
+      vehiclePricePerKm: 0
     };
     this.selectedImages = [];
     this.selectedRegistrations = [];

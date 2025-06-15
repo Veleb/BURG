@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
-import { VehicleForCreate, VehicleInterface } from '../../../../../../types/vehicle-types';
+import { VehicleInterface } from '../../../../../../types/vehicle-types';
 import { VehicleService } from '../../../../../vehicle/vehicle.service';
 import { UserFromDB } from '../../../../../../types/user-types';
 import { ToastrService } from 'ngx-toastr';
@@ -15,6 +15,7 @@ import Papapa from 'papaparse';
   templateUrl: './dashboard-vehicles-view.component.html',
   styleUrl: './dashboard-vehicles-view.component.css'
 })
+
 export class DashboardVehiclesViewComponent {
   private vehicleService = inject(VehicleService);
   private userService = inject(UserService);
