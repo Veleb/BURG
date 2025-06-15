@@ -28,7 +28,6 @@
             ],
             "styles": [
               "src/styles.scss",
-              
               "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             ],
             "scripts": [
@@ -48,7 +47,7 @@
           "configurations": {
             "production": {
               "budgets": [
-                 {
+                {
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "3mb"
@@ -146,6 +145,14 @@
             "scripts": [
               "node_modules/chart.js/dist/chart.umd.js"
             ]
+          }
+        },
+        "prerender": {
+          "builder": "@angular-devkit/build-angular:prerender",
+          "options": {
+            "browserTarget": "client:build:production",
+            "serverTarget": "client:server:production",
+            "routesFile": "src/routes.txt"
           }
         }
       }

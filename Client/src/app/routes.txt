@@ -1,0 +1,15 @@
+/  
+/home  
+/contact  
+/terms  
+/cookies-policy  
+/eula  
+/privacy  
+/about  
+/faq  
+/become-host  
+/certificate  
+/404  
+/catalog  
+/payments/success  
+/payments/cancel  
