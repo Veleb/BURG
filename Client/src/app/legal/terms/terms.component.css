@@ -105,6 +105,13 @@
   }
 }
 
+.acknowledgement-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
 .terms-container a[href^="mailto:"] {
   color: #3498db;
   text-decoration: none;
