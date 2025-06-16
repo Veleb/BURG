@@ -211,7 +211,8 @@ vehicleController.put('/unlike/:vehicleId', async (req: Request, res: Response, 
 vehicleController.post('/', 
   upload.fields([
     { name: 'images', maxCount: 10 },
-    { name: 'registrations', maxCount: 10 }
+    { name: 'registrations', maxCount: 10 },
+    { name: 'summaryPdf', maxCount: 1 }
   ]), async (req: Request, res: Response, next: NextFunction) => {
 
   const modifiedReq = req as authenticatedRequest;
@@ -259,6 +260,7 @@ vehicleController.post('/',
         isPromoted: vehicleData.isPromoted,
         images: files?.images ?? [],
         vehicleRegistration: files?.registrations ?? [],
+        summaryPdf: files?.summaryPdf ? files.summaryPdf[0] : ''
       },
       company: vehicleData.vehicleCompany,
       reserved: [],
@@ -273,7 +275,8 @@ vehicleController.post('/',
       return; 
     }
 
-    res.status(201).json({message: 'Vehicle created successfully!', vehicle});
+    // res.status(201).json({message: 'Vehicle created successfully!', vehicle});
+    res.status(201).json(vehicle);
     return;
 
   } catch (err) {
@@ -385,6 +388,7 @@ vehicleController.put('/', async (req: Request, res: Response, next: NextFunctio
         identificationNumber: vehicleData.identificationNumber,
         images: vehicleData.vehicleImages,
         vehicleRegistration: vehicleData.vehicleRegistration,
+        summaryPdf: vehicleData.summaryPdf,
       },
       company: vehicleData.vehicleCompany,
       reserved: [],

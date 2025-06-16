@@ -34,13 +34,14 @@ interface VehicleDetails {
   images: string[];
   vehicleRegistration: string[];
   isPromoted: boolean,
+  summaryPdf: string
 }
 
 export interface VehicleForCreate {
   vehicleName: string;
   vehicleModel: string;
   vehicleYear: number;
-  vehicleSize: Size;
+  vehicleSize: Size | string;
   vehicleEngine: string;
   vehiclePower: string;
   vehicleGvw: number;
@@ -48,13 +49,14 @@ export interface VehicleForCreate {
   vehicleTyres: number;
   vehicleMileage: number;
   vehicleChassisType: string;
-  vehicleCategory: CategoryEnum;
+  vehicleCategory: CategoryEnum | string;
   vehicleCapacity: number;
   identificationNumber: string;
   vehiclePricePerDay: number;
   vehiclePricePerKm: number;
   vehicleImages: (string | File)[];
   vehicleRegistration: (string  | File)[];
+  summaryPdf: (string  | File);
   vehicleCompany: string,
   isPromoted: boolean;
 };

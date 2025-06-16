@@ -67,38 +67,39 @@
 
   <div class="form-group">
     <label for="vehiclePower">Vehicle Power</label>
+    <!-- pattern="^\d+\s*[a-zA-Z]*$" -->
     <input type="text" id="vehiclePower" name="vehiclePower" 
            [(ngModel)]="vehicleData.vehiclePower" required 
-           pattern="^\d+\s*[a-zA-Z]*$" #power="ngModel">
+            #power="ngModel">
     @if (power.invalid && (power.dirty || power.touched)) {
       <div class="validation-error">
         @if (power.errors?.['required']) {
           <div>Power is required</div>
         }
-        @if (power.errors?.['pattern']) {
+        <!-- @if (power.errors?.['pattern']) {
           <div>Format: 100 HP or similar</div>
-        }
+        } -->
       </div>
     }
   </div>
 
   <div class="form-group">
     <label for="identificationNumber">Vehicle VIN (Identification Number)</label>
+    <!-- minlength="17" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}"  -->
     <input type="text" id="identificationNumber" name="identificationNumber" 
            [(ngModel)]="vehicleData.identificationNumber" required 
-           minlength="17" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}" 
            #idn="ngModel" (input)="vehicleData.identificationNumber = vehicleData.identificationNumber.toUpperCase()">
     @if (idn.invalid && (idn.dirty || idn.touched)) {
       <div class="validation-error">
         @if (idn.errors?.['required']) {
           <div>VIN is required</div>
         }
-        @if (idn.errors?.['minlength'] || idn.errors?.['maxlength']) {
+        <!-- @if (idn.errors?.['minlength'] || idn.errors?.['maxlength']) {
           <div>Must be exactly 17 characters</div>
-        }
-        @if (idn.errors?.['pattern']) {
+        } -->
+        <!-- @if (idn.errors?.['pattern']) {
           <div>Invalid VIN format (alphanumeric, no I/O/Q)</div>
-        }
+        } -->
       </div>
     }
   </div>
@@ -303,3 +304,22 @@
     }
   </button>
 </form>
+
+@if (showSummaryModal) {
+  <div class="modal-backdrop">
+    <div class="modal">
+      <h2>Vehicle Listing Summary</h2>
+      <p><strong>Name:</strong> {{ submittedVehicle?.details?.name }}</p>
+      <p><strong>Model:</strong> {{ submittedVehicle?.details?.model }}</p>
+      <p><strong>Year:</strong> {{ submittedVehicle?.details?.year }}</p>
+      <p><strong>Price/Day:</strong> ₹{{ submittedVehicle?.details?.pricePerDay }}</p>
+    
+      <a [href]="submittedVehicle?.details?.summaryPdf" target="_blank" download>
+        <button>Download Summary PDF</button>
+      </a>
+
+      <button (click)="closeModal()">Close</button>
+    </div>
+  </div>
+
+}

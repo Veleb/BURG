@@ -42,3 +42,25 @@ export async function uploadSingleFileToCloudinary(
   const [result] = await uploadFilesToCloudinary([file], folder);
   return result;
 }
+
+export const uploadSummaryPdf = async (file: Express.Multer.File, folder: string) => {
+  if (!file || !file.buffer || !file.mimetype) {
+    throw new Error("Invalid file");
+  }
+
+  if (file.mimetype !== 'application/pdf') {
+    throw new Error("Only PDF files allowed for summary upload");
+  }
+
+  const base64DataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+
+  const uploadResult = await cloudinary.uploader.upload(base64DataUri, {
+    folder,
+    resource_type: 'raw',
+  });
+
+  return {
+    secureUrl: uploadResult.secure_url,
+    publicId: uploadResult.public_id,
+  };
+};

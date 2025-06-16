@@ -7,7 +7,7 @@ import type {
   VehicleForCreate,
   VehicleInterface,
 } from "../types/model-types/vehicle-types";
-import { uploadFilesToCloudinary } from "../utils/uploadFilesToCloudinary";
+import { uploadFilesToCloudinary, uploadSingleFileToCloudinary, uploadSummaryPdf } from "../utils/uploadFilesToCloudinary";
 
 async function getVehicles(
   options: {
@@ -48,7 +48,7 @@ async function getCount() {
 async function createVehicle(
   vehicleData: VehicleForCreate
 ): Promise<VehicleInterface> {
-  const { images, vehicleRegistration } = vehicleData.details;
+  const { images, vehicleRegistration, summaryPdf } = vehicleData.details;
 
   if (images && images.length > 0) {
     const uploadedImages = await uploadFilesToCloudinary(
@@ -66,6 +66,17 @@ async function createVehicle(
     vehicleData.details.vehicleRegistration = uploadedRegistrations.map(
       (reg) => reg.secureUrl
     );
+  }
+
+  if (
+    summaryPdf &&
+    typeof summaryPdf !== "string"
+  ) {
+    const uploadedSummary = await uploadSummaryPdf(
+      summaryPdf as Express.Multer.File,
+      "vehicles/summaries"
+    );
+    vehicleData.details.summaryPdf = uploadedSummary.secureUrl;
   }
 
   const newVehicle = await VehicleModel.create(vehicleData);

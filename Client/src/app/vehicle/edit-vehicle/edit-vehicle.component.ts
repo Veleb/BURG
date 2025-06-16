@@ -37,7 +37,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
       vehicleName: vehicle?.details.name || '',
       vehicleModel: vehicle?.details.model || '',
       vehicleSize: vehicle?.details.size || Size.Small,
-      vehicleCategory: vehicle?.details.category || CategoryEnum.Cars,
+      vehicleCategory: vehicle?.details.category || CategoryEnum.Travel,
       vehiclePricePerDay: vehicle?.details.pricePerDay || 0,
       vehiclePricePerKm: vehicle?.details.pricePerKm || 0,
       vehicleYear: vehicle?.details.year || new Date().getFullYear(),
@@ -53,6 +53,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
       isPromoted: false,
       vehicleImages: [...vehicle.details.images],
       vehicleRegistration: [...vehicle.details.vehicleRegistration],
+      summaryPdf: vehicle?.details.summaryPdf || ''
     };
   }
 
@@ -61,7 +62,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     vehicleName: '',
     vehicleModel: '',
     vehicleSize: Size.Small,
-    vehicleCategory: CategoryEnum.Cars,
+    vehicleCategory: CategoryEnum.Travel,
     vehiclePricePerDay: 0,
     vehiclePricePerKm: 0,
     vehicleYear: new Date().getFullYear(),
@@ -77,6 +78,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     isPromoted: false,
     vehicleImages: [''],
     vehicleRegistration: [''],
+    summaryPdf: ''
   };
 
   ngOnInit(): void {

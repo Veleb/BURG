@@ -34,6 +34,7 @@ interface VehicleDetails {
   isPromoted: boolean;
   images: string[];
   vehicleRegistration: string[];
+  summaryPdf: string
 }
 
 export interface VehicleForCreate {
@@ -57,6 +58,7 @@ export interface VehicleForCreate {
     isPromoted: boolean,
     images: (string | Express.Multer.File)[];
     vehicleRegistration: (string | Express.Multer.File)[];
+    summaryPdf: (string | Express.Multer.File);
   },
   company: Types.ObjectId,
   reserved: Types.ObjectId[],

@@ -41,7 +41,9 @@
             "allowedCommonJsDependencies": [
               "intl-tel-input",
               "moment",
-              "papaparse"
+              "papaparse",
+              "pdfmake",
+              "pdfmake/build/vfs_fonts"
             ]
           },
           "configurations": {
