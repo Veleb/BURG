@@ -112,6 +112,14 @@
         </div>
       </div>
   }
+
+  <app-paginator
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalCount]="totalCount"
+    (pageChange)="onPageChange($event)"
+  ></app-paginator>
+
     
   <div>
          

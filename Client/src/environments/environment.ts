@@ -28,10 +28,10 @@ export const environment: Environment = {
       name: "travel",
       description: "Vehicles and accessories related to long-distance journeys, vacations, and road trips.",
     },
-    {
-      name: "busses",
-      description: "Large passenger vehicles designed for public and private transportation services.",
-    }
+    // {
+    //   name: "busses",
+    //   description: "Large passenger vehicles designed for public and private transportation services.",
+    // }
   ],
   publishable_key: "pk_test_51QkrzYBDR55Xtnmwiwb7kpyNFnRQeBE1I8gbrNqwXElfxYEvFNBu3hlxgMsDUG3em8qC89cWCbhjX6d9XxZ286Rm00E6F5uKot"
 };

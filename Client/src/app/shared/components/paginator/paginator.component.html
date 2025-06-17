@@ -1,0 +1,32 @@
+@if (totalCount > pageSize) {
+  <div class="pagination-controls">
+    <button 
+        class="pagination-button"
+        (click)="onPageChange(currentPage - 1)" 
+        [disabled]="currentPage === 1"
+        aria-label="Previous page"
+      >
+      <svg class="pagination-icon" viewBox="0 0 24 24">
+        <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+      </svg>
+    </button>
+    
+  
+    <div class="page-indicator">
+      <span class="current-page">{{ currentPage }}</span>
+      <span class="page-separator">of</span>
+      <span class="total-pages">{{ totalPages }}</span>
+    </div>
+  
+    <button 
+        class="pagination-button"
+        (click)="onPageChange(currentPage + 1)" 
+        [disabled]="currentPage === totalPages"
+        aria-label="Next page"
+      >
+      <svg class="pagination-icon" viewBox="0 0 24 24">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+      </svg>
+    </button>
+  </div>
+}

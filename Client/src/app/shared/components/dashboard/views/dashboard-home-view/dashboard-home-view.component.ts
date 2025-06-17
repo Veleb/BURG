@@ -33,16 +33,21 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   user?: UserFromDB;
   company?: CompanyInterface;
+
   allCompanies: CompanyInterface[] = [];
   activeRents: RentInterface[] = [];
+
   totalVehicles = 0;
+  totalRents = 0 ;
   totalEarnings = 0;
+
   selectedCurrency: string = 'USD';
 
   ngOnInit(): void {
 
-    this.rentService.getAll();
-    this.vehicleService.getAll()
+    // this.rentService.getAll(5, 0).subscribe();
+    // this.rentService.getTotalCount().subscribe();
+    // this.vehicleService.getTotalCount().subscribe();
 
     this.currencyService.getCurrency()
     .pipe(takeUntil(this.destroy$))
@@ -72,12 +77,13 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
   private loadAdminData(): void {
     combineLatest([
       this.route.queryParamMap,
-      this.rentService.rents$,
-      this.vehicleService.vehicles$
+      this.rentService.getAll(5, 0),
+      this.rentService.getTotalCount(),
+      this.vehicleService.getTotalCount()
     ]).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: ([params, rents, vehicles]) => {
+      next: ([params, rents, totalRents, totalVehicles]) => {
 
         const companyId = params.get('companyId');
 
@@ -93,10 +99,12 @@ export class DashboardHomeViewComponent implements OnInit, OnDestroy {
 
         this.activeRents = rents;
         
-        this.totalEarnings = rents.reduce((sum, rent) => sum + (rent.total || 0), 0);
+        // this.totalEarnings = rents.reduce((sum, rent) => sum + (rent.total || 0), 0);
         
-        this.totalVehicles = vehicles.length
+        this.totalVehicles = totalVehicles; 
         
+        this.totalRents = totalRents;
+
         this.loading = false;
       },
       error: (err) => {

@@ -15,6 +15,9 @@ export class RentService {
   private rents$$: BehaviorSubject<RentInterface[]> = new BehaviorSubject<RentInterface[]>([]);
   rents$ = this.rents$$.asObservable();
 
+  private totalRentsCount$$ = new BehaviorSubject<number>(0);
+  totalRentsCount$ = this.totalRentsCount$$.asObservable();
+  
   private filters$$ = new BehaviorSubject<RentFilterState>({
     status: 'all',
     sort: { key: 'none', direction: 'asc' },
@@ -98,12 +101,26 @@ export class RentService {
 
   // main functions
 
-  getAll(): void {
-    this.http.get<RentInterface[]>(`/api/rents/`).subscribe(
-      rents => {
-        this.rents$$.next(rents);
-      }
-    );
+  getAll(limit?: number, offset?: number): Observable<RentInterface[]> {
+    return this.http.get<RentInterface[]>(`/api/rents?limit=${limit}&offset=${offset}`)
+    .pipe(
+      tap({
+        next: (rents) => {
+          this.rents$$.next(rents);
+        }
+      })
+    )
+    }
+
+  getTotalCount(): Observable<number> {
+    return this.http.get<number>(`/api/rents/count`)
+    .pipe(
+      tap({
+        next: (count) => {
+          this.totalRentsCount$$.next(count);
+        }
+      })
+    )
   }
 
   getRentsByCompany(companyId: string): Observable<RentInterface[]> {

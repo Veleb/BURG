@@ -110,58 +110,6 @@
   animation: float 3s ease-in-out infinite;
 }
 
-.pagination-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.pagination-button {
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-}
-
-.pagination-button:hover:not(:disabled) {
-  background: #f8f9fa;
-  border-color: #4A90E2;
-}
-
-.pagination-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination-icon {
-  width: 24px;
-  height: 24px;
-  fill: #333;
-}
-
-.page-indicator {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  font-size: 1.1rem;
-}
-
-.current-page {
-  font-weight: 600;
-  color: #4A90E2;
-}
-
-.total-pages {
-  color: #666;
-}
-
-
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-20px); }

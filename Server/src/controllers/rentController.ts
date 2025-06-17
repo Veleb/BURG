@@ -4,18 +4,35 @@ import UserService from "../services/userService";
 import rentService from "../services/rentService";
 import { RentInterface } from "../types/model-types/rent-types";
 import vehicleService from "../services/vehicleService";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 
 const rentController = Router();
 
 rentController.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
 
-    const rents = await rentService.getAllRents();
+    const rents = await rentService.getAllRentsPaginated(limit, offset);
 
     res.status(200).json(rents);
   } catch (error) {
     next(error);
+  }
+});
+
+rentController.get('/count', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const count = await rentService.getTotalRentCount();
+
+    if (!count) {
+      res.status(400).json({ message: 'Error occurred getting total rent count.' });
+      return;
+    }
+
+    res.status(200).json(count);
+  } catch (err) {
+    next(err);
   }
 });
 

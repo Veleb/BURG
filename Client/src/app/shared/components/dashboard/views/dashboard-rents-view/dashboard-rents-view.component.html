@@ -38,7 +38,7 @@
     </div>
   }
 
-  @if (!loading && !error) {
+  @if (!loading && !error && totalCount > 0) {
     <div class="rent-list">
       @for (rent of filteredRents; track rent._id) {
         <app-rent-card [rent]="rent"></app-rent-card>
@@ -49,5 +49,12 @@
         </div>
       }
     </div>
+
+    <app-paginator
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalCount]="totalCount"
+      (pageChange)="onPageChange($event)"
+    />
   }
 </div>

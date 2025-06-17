@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { combineLatest, forkJoin, Subject, takeUntil } from 'rxjs';
 import { VehicleInterface } from '../../../../../../types/vehicle-types';
 import { VehicleService } from '../../../../../vehicle/vehicle.service';
 import { UserFromDB } from '../../../../../../types/user-types';
@@ -8,10 +8,11 @@ import { ToastrService } from 'ngx-toastr';
 import { ProductCardComponent } from '../../../../../vehicle/product-card/product-card.component';
 import { UserService } from '../../../../../user/user.service';
 import Papapa from 'papaparse';
+import { PaginatorComponent } from '../../../paginator/paginator.component';
 
 @Component({
   selector: 'app-dashboard-vehicles-view',
-  imports: [RouterLink, ProductCardComponent],
+  imports: [RouterLink, ProductCardComponent, PaginatorComponent],
   templateUrl: './dashboard-vehicles-view.component.html',
   styleUrl: './dashboard-vehicles-view.component.css'
 })
@@ -26,6 +27,10 @@ export class DashboardVehiclesViewComponent {
   private destroy$ = new Subject<void>();
   
   vehicles: VehicleInterface[] = [];
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   loading = true;
   error: string | null = null;
   currentCompanyId?: string;
@@ -72,19 +77,46 @@ export class DashboardVehiclesViewComponent {
     });
   }
 
+  // loadAllVehicles(): void {
+  //   this.loading = true;
+  //   this.vehicleService.getAll();
+
+  //   this.vehicleService.vehicles$.subscribe({
+  //     next: (vehicles) => {
+  //       this.vehicles = vehicles;
+  //       // console.log(vehicles);
+        
+  //       this.loading = false;
+  //     },
+  //     error: (err) => {
+  //       this.error = 'Failed to load vehicles';
+  //       this.loading = false;
+  //       this.toastr.error(this.error, `Error Occurred`);
+  //     }
+  //   });
+  // }
+
   loadAllVehicles(): void {
     this.loading = true;
-    this.vehicleService.getAll();
+    this.error = null;
 
-    this.vehicleService.vehicles$.subscribe({
-      next: (vehicles) => {
-        this.vehicles = vehicles;
+    const offset = (this.currentPage - 1) * this.pageSize;
+
+    forkJoin([
+      this.vehicleService.getAll({ limit: this.pageSize, offset }),
+      this.vehicleService.getTotalCount()
+    ])
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: ([vehiclesResponse, count]) => {
+        this.vehicles = vehiclesResponse.vehicles;
+        this.totalCount = count;
         this.loading = false;
       },
-      error: (err) => {
+      error: err => {
         this.error = 'Failed to load vehicles';
         this.loading = false;
-        this.toastr.error(this.error, `Error Occurred`);
+        this.toastr.error(this.error, 'Error Occurred');
       }
     });
   }
@@ -100,11 +132,10 @@ export class DashboardVehiclesViewComponent {
     if (confirmation?.toUpperCase() === 'I AM SURE') {
       this.vehicleService.deleteVehicle(vehicleId).subscribe({
         next: () => {
-          if (this.user?.role === 'host' && this.currentCompanyId) {
-            this.loadCompanyVehicles(); 
-          } else {
-            this.loadAllVehicles();
-          }
+          this.currentPage = 1;
+          
+          this.user?.role === 'host' ? this.loadCompanyVehicles() : this.loadAllVehicles();
+          
           this.toastr.success('Vehicle deleted successfully', 'Success');
         },
         error: (err) => {
@@ -178,6 +209,22 @@ export class DashboardVehiclesViewComponent {
       error: () => this.toastr.error('Failed to upload vehicles', "Error Occurred")
     });
   }
+
+  onPageChange(newPage: number): void {
+    if (newPage < 1) newPage = 1;
+    else if (newPage > this.totalPages) newPage = this.totalPages;
+
+    if (newPage === this.currentPage) return;
+
+    this.currentPage = newPage;
+    this.loadAllVehicles();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
+
 
   ngOnDestroy(): void {
     this.destroy$.next();

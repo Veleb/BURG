@@ -6,18 +6,17 @@ import { FilterSidebarComponent } from './filter-sidebar/filter-sidebar.componen
 import { SortDropdownComponent } from "../shared/components/sort-dropdown/sort-dropdown.component";
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
-import { CurrencyService } from '../currency/currency.service';
+import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 
 @Component({
     selector: 'app-catalog',
-    imports: [ProductCardComponent, FilterSidebarComponent, SortDropdownComponent],
+    imports: [ProductCardComponent, FilterSidebarComponent, SortDropdownComponent, PaginatorComponent],
     templateUrl: './catalog.component.html',
     styleUrl: './catalog.component.css'
 })
 export class CatalogComponent implements OnInit, OnDestroy {
 
   private vehicleService = inject(VehicleService);
-  // private currencyService = inject(CurrencyService);
   private route = inject(ActivatedRoute);
 
   private destroy$ = new Subject<void>();
