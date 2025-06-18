@@ -6,7 +6,7 @@ import VehicleModel from "../models/vehicle";
 import { CompanyInterface } from "../types/model-types/company-types";
 import { RentForCreate, RentInterface } from "../types/model-types/rent-types";
 
-async function getAllRentsPaginated(limit: number, offset: number): Promise<RentInterface[]> {
+async function getAllRents(limit: number, offset: number): Promise<RentInterface[]> {
   try {
     const rents = await RentModel.find()
       .skip(offset)
@@ -35,60 +35,6 @@ async function getTotalRentCount(): Promise<number> {
     return await RentModel.countDocuments();
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : 'Error counting rents');
-  }
-}
-
-async function getRentsByCompanyIdPaginated(companyId: string, limit: number, offset: number): Promise<{ rents: RentInterface[]; totalCount: number }> {
-  try {
-    const company = await CompanyModel.findById(companyId).select('carsAvailable');
-    if (!company) throw new Error('Company not found');
-
-    const totalCount = await RentModel.countDocuments({ vehicle: { $in: company.carsAvailable } });
-
-    const rents = await RentModel.find({
-      vehicle: { $in: company.carsAvailable }
-    })
-      .skip(offset)
-      .limit(limit)
-      .populate({
-        path: 'user',
-        select: '-password',
-      })
-      .populate({
-        path: 'vehicle',
-        populate: {
-          path: 'company',
-          model: 'Company'
-        }
-      })
-      .lean();
-
-    return { rents: rents ?? [], totalCount };
-  } catch (error) {
-    throw new Error(error instanceof Error ? error.message : 'Error fetching paginated rents by company ID');
-  }
-}
-
-async function getAllRents(): Promise<RentInterface[]> {
-  try {
-
-    const rents = await RentModel.find()
-    .populate({
-      path: 'user',
-      select: '-password',
-    })
-    .populate({
-      path: 'vehicle',
-      populate: {
-        path: 'company',
-        model: 'Company'
-      }
-    })
-    .lean();
-
-    return rents ?? [];
-  } catch (error) {
-    throw new Error(error instanceof Error ? error.message : 'Error fetching rents by company ID');
   }
 }
 
@@ -261,8 +207,6 @@ const rentService = {
   getUnavailableDates,
   changeRentStatus,
   rentWithoutPaying,
-  getAllRentsPaginated,
-  getRentsByCompanyIdPaginated,
   getTotalRentCount
 }
 

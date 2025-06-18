@@ -13,7 +13,7 @@ rentController.get('/', async (req: Request, res: Response, next: NextFunction) 
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
 
-    const rents = await rentService.getAllRentsPaginated(limit, offset);
+    const rents = await rentService.getAllRents(limit, offset);
 
     res.status(200).json(rents);
   } catch (error) {
