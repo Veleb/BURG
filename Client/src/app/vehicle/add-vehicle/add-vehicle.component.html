@@ -1,325 +1,520 @@
-<form #form="ngForm" (ngSubmit)="onSubmit()" class="vehicle-form">
+<form #form="ngForm" (ngSubmit)="onSubmit()" class="vehicle-form" novalidate>
 
   <div class="form-group">
     <label for="vehicleName">Vehicle Name</label>
-    <input type="text" id="vehicleName" name="vehicleName" 
-           [(ngModel)]="vehicleData.vehicleName" required minlength="2" #name="ngModel">
+    <input
+      type="text"
+      id="vehicleName"
+      name="vehicleName"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleName"
+      required minlength="2"
+      #name="ngModel"
+      [class]="{
+        'error': name.invalid && (name.dirty || name.touched),
+        'success': name.valid && (name.dirty || name.touched)
+      }"
+    />
     @if (name.invalid && (name.dirty || name.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (name.errors?.['required']) {
-          <div>Name is required</div>
+          <li class="error-msg">Name is required</li>
         }
         @if (name.errors?.['minlength']) {
-          <div>Minimum 2 characters required</div>
+          <li class="error-msg">Minimum 2 characters required</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
     <label for="vehicleModel">Vehicle Model</label>
-    <input type="text" id="vehicleModel" name="vehicleModel" 
-           [(ngModel)]="vehicleData.vehicleModel" required minlength="2" #model="ngModel">
+    <input
+      type="text"
+      id="vehicleModel"
+      name="vehicleModel"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleModel"
+      required minlength="2"
+      #model="ngModel"
+      [class]="{
+        'error': model.invalid && (model.dirty || model.touched),
+        'success': model.valid && (model.dirty || model.touched)
+      }"
+    />
     @if (model.invalid && (model.dirty || model.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (model.errors?.['required']) {
-          <div>Model is required</div>
+          <li class="error-msg">Model is required</li>
         }
         @if (model.errors?.['minlength']) {
-          <div>Minimum 2 characters required</div>
+          <li class="error-msg">Minimum 2 characters required</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
     <label for="vehicleYear">Vehicle Year</label>
-    <input type="number" id="vehicleYear" name="vehicleYear" 
-           [(ngModel)]="vehicleData.vehicleYear" required 
-           min="1886" [max]="maxYear" #year="ngModel">
+    <input
+      type="number"
+      id="vehicleYear"
+      name="vehicleYear"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleYear"
+      required
+      min="1886"
+      [max]="maxYear"
+      #year="ngModel"
+      [class]="{
+        'error': year.invalid && (year.dirty || year.touched),
+        'success': year.valid && (year.dirty || year.touched)
+      }"
+    />
     @if (year.invalid && (year.dirty || year.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (year.errors?.['required']) {
-          <div>Year is required</div>
+          <li class="error-msg">Year is required</li>
         }
         @if (year.errors?.['min'] || year.errors?.['max']) {
-          <div>Must be between 1886 and {{maxYear}}</div>
+          <li class="error-msg">Must be between 1886 and {{ maxYear }}</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
     <label for="vehicleEngine">Vehicle Engine</label>
-    <input type="text" id="vehicleEngine" name="vehicleEngine" 
-           [(ngModel)]="vehicleData.vehicleEngine" required minlength="2" #engine="ngModel">
+    <input
+      type="text"
+      id="vehicleEngine"
+      name="vehicleEngine"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleEngine"
+      required minlength="2"
+      #engine="ngModel"
+      [class]="{
+        'error': engine.invalid && (engine.dirty || engine.touched),
+        'success': engine.valid && (engine.dirty || engine.touched)
+      }"
+    />
     @if (engine.invalid && (engine.dirty || engine.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (engine.errors?.['required']) {
-          <div>Engine is required</div>
+          <li class="error-msg">Engine is required</li>
         }
         @if (engine.errors?.['minlength']) {
-          <div>Minimum 2 characters required</div>
+          <li class="error-msg">Minimum 2 characters required</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
     <label for="vehiclePower">Vehicle Power</label>
-    <!-- pattern="^\d+\s*[a-zA-Z]*$" -->
-    <input type="text" id="vehiclePower" name="vehiclePower" 
-           [(ngModel)]="vehicleData.vehiclePower" required 
-            #power="ngModel">
+    <input
+      type="text"
+      id="vehiclePower"
+      name="vehiclePower"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehiclePower"
+      required
+      #power="ngModel"
+      [class]="{
+        'error': power.invalid && (power.dirty || power.touched),
+        'success': power.valid && (power.dirty || power.touched)
+      }"
+    />
+
     @if (power.invalid && (power.dirty || power.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (power.errors?.['required']) {
-          <div>Power is required</div>
+          <li class="error-msg">Power is required</li>
         }
-        <!-- @if (power.errors?.['pattern']) {
-          <div>Format: 100 HP or similar</div>
-        } -->
-      </div>
+        @if (power.errors?.['pattern']) {
+          <li class="error-msg">Format: e.g., “100HP” or “75 kW”</li>
+        }
+      </ul>
     }
   </div>
 
   <div class="form-group">
-    <label for="identificationNumber">Vehicle VIN (Identification Number)</label>
-    <!-- minlength="17" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}"  -->
-    <input type="text" id="identificationNumber" name="identificationNumber" 
-           [(ngModel)]="vehicleData.identificationNumber" required 
-           #idn="ngModel" (input)="vehicleData.identificationNumber = vehicleData.identificationNumber.toUpperCase()">
+    <label for="identificationNumber">Vehicle ID number</label>
+    <input
+      type="text"
+      id="identificationNumber"
+      name="identificationNumber"
+      class="form-input"
+      [(ngModel)]="vehicleData.identificationNumber"
+      required
+      minlength="10"
+      maxlength="10"
+      #idn="ngModel"
+      pattern="^[A-Z0-9]{10}$"
+      (input)="vehicleData.identificationNumber = vehicleData.identificationNumber.toUpperCase()"
+      [class]="{
+        'error': idn.invalid && (idn.dirty || idn.touched),
+        'success': idn.valid && (idn.dirty || idn.touched)
+      }"
+    />
+
     @if (idn.invalid && (idn.dirty || idn.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (idn.errors?.['required']) {
-          <div>VIN is required</div>
+          <li class="error-msg">VIN is required</li>
         }
-        <!-- @if (idn.errors?.['minlength'] || idn.errors?.['maxlength']) {
-          <div>Must be exactly 17 characters</div>
-        } -->
-        <!-- @if (idn.errors?.['pattern']) {
-          <div>Invalid VIN format (alphanumeric, no I/O/Q)</div>
-        } -->
-      </div>
+        @if (idn.errors?.['minlength'] || idn.errors?.['maxlength']) {
+          <li class="error-msg">Must be exactly 10 characters</li>
+        }
+        @if (idn.errors?.['pattern']) {
+          <li class="error-msg">Invalid VIN format (alphanumeric - 10 symbol sequence)</li>
+        }
+      </ul>
     }
   </div>
 
   <div class="form-group">
-    <label for="vehicleGVW">Vehicle GVW (Gross Vehicle Weight)</label>
-    <input type="number" id="vehicleGVW" name="vehicleGVW" 
-           [(ngModel)]="vehicleData.vehicleGvw" required min="0" #gvw="ngModel">
+    <label for="vehicleGVW">Vehicle GVW</label>
+    <input
+      type="number"
+      id="vehicleGVW"
+      name="vehicleGVW"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleGvw"
+      required min="0"
+      #gvw="ngModel"
+      [class]="{
+        'error': gvw.invalid && (gvw.dirty || gvw.touched),
+        'success': gvw.valid && (gvw.dirty || gvw.touched)
+      }"
+    />
     @if (gvw.invalid && (gvw.dirty || gvw.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (gvw.errors?.['required']) {
-          <div>GVW is required</div>
+          <li class="error-msg">GVW is required</li>
         }
         @if (gvw.errors?.['min']) {
-          <div>Must be ≥ 0</div>
+          <li class="error-msg">Must be ≥ 0</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
-    <label for="fuelTank">Vehicle Fuel Tank Capacity</label>
-    <input type="number" id="fuelTank" name="fuelTank" 
-           [(ngModel)]="vehicleData.vehicleFuelTank" required min="0" #fuelTank="ngModel">
+    <label for="fuelTank">Fuel Tank Capacity</label>
+    <input
+      type="number"
+      id="fuelTank"
+      name="fuelTank"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleFuelTank"
+      required min="0"
+      #fuelTank="ngModel"
+      [class]="{
+        'error': fuelTank.invalid && (fuelTank.dirty || fuelTank.touched),
+        'success': fuelTank.valid && (fuelTank.dirty || fuelTank.touched)
+      }"
+    />
     @if (fuelTank.invalid && (fuelTank.dirty || fuelTank.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (fuelTank.errors?.['required']) {
-          <div>Fuel tank capacity is required</div>
+          <li class="error-msg">Fuel tank capacity is required</li>
         }
         @if (fuelTank.errors?.['min']) {
-          <div>Must be ≥ 0</div>
+          <li class="error-msg">Must be ≥ 0</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
     <label for="tyres">Number of Tyres</label>
-    <input type="number" id="tyres" name="tyres" 
-           [(ngModel)]="vehicleData.vehicleTyres" required min="2" #tyres="ngModel">
+    <input
+      type="number"
+      id="tyres"
+      name="tyres"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleTyres"
+      required min="2"
+      #tyres="ngModel"
+      [class]="{
+        'error': tyres.invalid && (tyres.dirty || tyres.touched),
+        'success': tyres.valid && (tyres.dirty || tyres.touched)
+      }"
+    />
     @if (tyres.invalid && (tyres.dirty || tyres.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (tyres.errors?.['required']) {
-          <div>Number of tyres is required</div>
+          <li class="error-msg">Number of tyres is required</li>
         }
         @if (tyres.errors?.['min']) {
-          <div>Minimum 2 tyres required</div>
+          <li class="error-msg">Minimum 2 tyres required</li>
         }
-      </div>
-    }
-  </div>
-  
-  <div class="form-group">
-    <label for="mileage">Vehicle Mileage</label>
-    <input type="number" id="mileage" name="mileage" 
-           [(ngModel)]="vehicleData.vehicleMileage" required min="0" #mileage="ngModel">
-    @if (mileage.invalid && (mileage.dirty || mileage.touched)) {
-      <div class="validation-error">
-        @if (mileage.errors?.['required']) {
-          <div>Mileage is required</div>
-        }
-        @if (mileage.errors?.['min']) {
-          <div>Must be ≥ 0</div>
-        }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
-    <label for="chassis">Vehicle Chassis Type</label>
-    <input type="text" id="chassis" name="chassis" 
-           [(ngModel)]="vehicleData.vehicleChassisType" required minlength="2" #chassisType="ngModel">
+    <label for="mileage">Vehicle Mileage</label>
+    <input
+      type="number"
+      id="mileage"
+      name="mileage"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleMileage"
+      required min="0"
+      #mileage="ngModel"
+      [class]="{
+        'error': mileage.invalid && (mileage.dirty || mileage.touched),
+        'success': mileage.valid && (mileage.dirty || mileage.touched)
+      }"
+    />
+    @if (mileage.invalid && (mileage.dirty || mileage.touched)) {
+      <ul class="errors">
+        @if (mileage.errors?.['required']) {
+          <li class="error-msg">Mileage is required</li>
+        }
+        @if (mileage.errors?.['min']) {
+          <li class="error-msg">Must be ≥ 0</li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="chassis">Chassis Type</label>
+    <input
+      type="text"
+      id="chassis"
+      name="chassis"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleChassisType"
+      required minlength="2"
+      #chassisType="ngModel"
+      [class]="{
+        'error': chassisType.invalid && (chassisType.dirty || chassisType.touched),
+        'success': chassisType.valid && (chassisType.dirty || chassisType.touched)
+      }"
+    />
     @if (chassisType.invalid && (chassisType.dirty || chassisType.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (chassisType.errors?.['required']) {
-          <div>Chassis type is required</div>
+          <li class="error-msg">Chassis type is required</li>
         }
         @if (chassisType.errors?.['minlength']) {
-          <div>Minimum 2 characters required</div>
+          <li class="error-msg">Minimum 2 characters required</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group">
     <label for="capacity">Vehicle Capacity</label>
-    <input type="number" id="capacity" name="capacity" 
-           [(ngModel)]="vehicleData.vehicleCapacity" required min="0" #capacity="ngModel">
+    <input
+      type="number"
+      id="capacity"
+      name="capacity"
+      class="form-input"
+      [(ngModel)]="vehicleData.vehicleCapacity"
+      required min="0"
+      #capacity="ngModel"
+      [class]="{
+        'error': capacity.invalid && (capacity.dirty || capacity.touched),
+        'success': capacity.valid && (capacity.dirty || capacity.touched)
+      }"
+    />
     @if (capacity.invalid && (capacity.dirty || capacity.touched)) {
-      <div class="validation-error">
+      <ul class="errors">
         @if (capacity.errors?.['required']) {
-          <div>Capacity is required</div>
+          <li class="error-msg">Capacity is required</li>
         }
         @if (capacity.errors?.['min']) {
-          <div>Must be ≥ 0</div>
+          <li class="error-msg">Must be ≥ 0</li>
         }
-      </div>
+      </ul>
     }
   </div>
 
   <div class="form-group isPromotedCheckbox">
-    <label class="promotedLabel" for="isPromoted">Is Promoted?</label>
-    <input type="checkbox" id="isPromoted" name="isPromoted" class="promotedCheckbox"
-           [(ngModel)]="vehicleData.isPromoted" #isPromoted="ngModel">
+    <label for="isPromoted" class="promotedLabel">Is Promoted?</label>
+    <input
+      type="checkbox"
+      id="isPromoted"
+      name="isPromoted"
+      class="promotedCheckbox"
+      [(ngModel)]="vehicleData.isPromoted"
+      #isPromoted="ngModel"
+    />
   </div>
 
   <div class="form-row">
     <div class="form-group">
       <label for="vehicleSize">Size</label>
-      <select id="vehicleSize" name="vehicleSize" 
-              [(ngModel)]="vehicleData.vehicleSize" required #size="ngModel">
-        @for (size of sizes; track size) {
-          <option [value]="size">{{size}}</option>
-        }
+      <select
+        id="vehicleSize"
+        name="vehicleSize"
+        class="form-input"
+        [(ngModel)]="vehicleData.vehicleSize"
+        required
+        #size="ngModel"
+        [class]="{
+          'error': size.invalid && (size.dirty || size.touched),
+          'success': size.valid && (size.dirty || size.touched)
+        }"
+      >
+        <option value="" disabled selected>Select size…</option>
+        @for (s of sizes; track s) { <option [value]="s">{{ s }}</option> }
       </select>
       @if (size.invalid && (size.dirty || size.touched)) {
-        <div class="validation-error">Size is required</div>
+        <div class="error-msg">Size is required</div>
       }
     </div>
 
     <div class="form-group">
       <label for="vehicleCategory">Category</label>
-      <select id="vehicleCategory" name="vehicleCategory" 
-              [(ngModel)]="vehicleData.vehicleCategory" required #category="ngModel">
-        @for (cat of categories; track cat) {
-          <option [value]="cat">{{cat}}</option>
-        }
+      <select
+        id="vehicleCategory"
+        name="vehicleCategory"
+        class="form-input"
+        [(ngModel)]="vehicleData.vehicleCategory"
+        required
+        #category="ngModel"
+        [class]="{
+          'error': category.invalid && (category.dirty || category.touched),
+          'success': category.valid && (category.dirty || category.touched)
+        }"
+      >
+        <option value="" disabled selected>Select category…</option>
+        @for (c of categories; track c) { <option [value]="c">{{ c }}</option> }
       </select>
       @if (category.invalid && (category.dirty || category.touched)) {
-        <div class="validation-error">Category is required</div>
+        <div class="error-msg">Category is required</div>
       }
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group">
-      <label for="vehiclePricePerDay">Price/Day</label>
-      <input type="number" id="vehiclePricePerDay" name="vehiclePricePerDay" 
-             [(ngModel)]="vehicleData.vehiclePricePerDay" required min="0" #priceDay="ngModel">
+      <label for="vehiclePricePerDay">Price / Day</label>
+      <input
+        type="number"
+        id="vehiclePricePerDay"
+        name="vehiclePricePerDay"
+        class="form-input"
+        [(ngModel)]="vehicleData.vehiclePricePerDay"
+        required min="0"
+        #priceDay="ngModel"
+        [class]="{
+          'error': priceDay.invalid && (priceDay.dirty || priceDay.touched),
+          'success': priceDay.valid && (priceDay.dirty || priceDay.touched)
+        }"
+      />
       @if (priceDay.invalid && (priceDay.dirty || priceDay.touched)) {
-        <div class="validation-error">
+        <ul class="errors">
           @if (priceDay.errors?.['required']) {
-            <div>Required</div>
+            <li class="error-msg">Price per day is required</li>
           }
           @if (priceDay.errors?.['min']) {
-            <div>Must be ≥ 0</div>
+            <li class="error-msg">Must be ≥ 0</li>
           }
-        </div>
+        </ul>
       }
     </div>
 
     <div class="form-group">
-      <label for="vehiclePricePerKm">Price/KM</label>
-      <input type="number" id="vehiclePricePerKm" name="vehiclePricePerKm" 
-             [(ngModel)]="vehicleData.vehiclePricePerKm" required min="0" #priceKm="ngModel">
+      <label for="vehiclePricePerKm">Price / KM</label>
+      <input
+        type="number"
+        id="vehiclePricePerKm"
+        name="vehiclePricePerKm"
+        class="form-input"
+        [(ngModel)]="vehicleData.vehiclePricePerKm"
+        required min="0"
+        #priceKm="ngModel"
+        [class]="{
+          'error': priceKm.invalid && (priceKm.dirty || priceKm.touched),
+          'success': priceKm.valid && (priceKm.dirty || priceKm.touched)
+        }"
+      />
       @if (priceKm.invalid && (priceKm.dirty || priceKm.touched)) {
-        <div class="validation-error">
+        <ul class="errors">
           @if (priceKm.errors?.['required']) {
-            <div>Required</div>
+            <li class="error-msg">Price per KM is required</li>
           }
           @if (priceKm.errors?.['min']) {
-            <div>Must be ≥ 0</div>
+            <li class="error-msg">Must be ≥ 0</li>
           }
-        </div>
+        </ul>
       }
     </div>
   </div>
 
-  <div class="form-group">
-    <label for="vehicleImages">Vehicle Images</label>
-    <input type="file" id="vehicleImages" (change)="onImagesSelected($event)" 
-           multiple accept="image/*" required>
-    @if (formSubmitted && (!selectedImages || selectedImages.length === 0)) {
-      <div class="validation-error">At least one image is required</div>
-    }
-    <ul>
-      @for (file of selectedImages; track $index) {
-        <li>{{ file.name }}</li>
+    <div class="form-group">
+      <label for="vehicleImages">Vehicle Images (at least 5 required)</label>
+      <input
+        type="file"
+        id="vehicleImages"
+        name="vehicleImages"
+        multiple
+        accept="image/*"
+        (change)="onVehicleImagesSelected($event)"
+        #vehicleImages
+        required
+        [class.error]="vehicleImagesError"
+      />
+
+      @if (vehicleImagesError) {
+        <div class="error-msg">
+          Please upload at least 5 vehicle images.
+        </div>
       }
-    </ul>
+
   </div>
 
   <div class="form-group">
-    <label for="vehicleRegistration">Vehicle Registration</label>
-    <input type="file" id="vehicleRegistration" (change)="onRegistrationSelected($event)" 
-           multiple accept="image/*" required>
-    @if (formSubmitted && (!selectedRegistrations || selectedRegistrations.length === 0)) {
-      <div class="validation-error">Registration document is required</div>
-    }
-    <ul>
-      @for (file of selectedRegistrations; track $index) {
-        <li>{{ file.name }}</li>
+    <label for="registrationImage">Registration Image (at least 1 required)</label>
+    <input
+      type="file"
+      id="registrationImage"
+      name="registrationImage"
+      accept="image/*"
+      (change)="onRegistrationImageSelected($event)"
+      #registrationImage
+      required
+      [class.error]="registrationImageError"
+    />
+      @if (registrationImageError) {
+        <div class="error-msg">
+          Please upload at least 1 registration image.
+        </div>
       }
-    </ul>
   </div>
 
-  <button type="submit" [disabled]="isSubmitting" class="submit-btn">
+  @if (showSummaryModal) {
+    <div class="modal-backdrop">
+      <div class="modal">
+        <h2>Vehicle Listing Summary</h2>
+        <p><strong>Name:</strong> {{ submittedVehicle?.details?.name }}</p>
+        <p><strong>Model:</strong> {{ submittedVehicle?.details?.model }}</p>
+        <p><strong>Year:</strong> {{ submittedVehicle?.details?.year }}</p>
+        <p><strong>Price/Day:</strong> ₹{{ submittedVehicle?.details?.pricePerDay }}</p>
+      
+        <a [href]="submittedVehicle?.details?.summaryPdf" target="_blank" download>
+          <button>Download Summary PDF</button>
+        </a>
+
+        <button (click)="closeModal()">Close</button>
+      </div>
+    </div>
+
+  }
+
+  <button type="submit" [disabled]="isSubmitting || form.invalid" class="submit-btn">
     @if (isSubmitting) {
-      Submitting...
+      <span class="spinner"></span> Submitting...
     } @else {
       Create Vehicle
     }
   </button>
+
 </form>
-
-@if (showSummaryModal) {
-  <div class="modal-backdrop">
-    <div class="modal">
-      <h2>Vehicle Listing Summary</h2>
-      <p><strong>Name:</strong> {{ submittedVehicle?.details?.name }}</p>
-      <p><strong>Model:</strong> {{ submittedVehicle?.details?.model }}</p>
-      <p><strong>Year:</strong> {{ submittedVehicle?.details?.year }}</p>
-      <p><strong>Price/Day:</strong> ₹{{ submittedVehicle?.details?.pricePerDay }}</p>
-    
-      <a [href]="submittedVehicle?.details?.summaryPdf" target="_blank" download>
-        <button>Download Summary PDF</button>
-      </a>
-
-      <button (click)="closeModal()">Close</button>
-    </div>
-  </div>
-
-}

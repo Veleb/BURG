@@ -83,4 +83,11 @@ export class LocationPickerComponent implements OnDestroy {
       this.suggestions = [];
     }
   }
+
+  reset(): void {
+    this.searchQuery = '';
+    this.suggestions = [];
+    this.selectedLocation = null;
+  }
+
 }

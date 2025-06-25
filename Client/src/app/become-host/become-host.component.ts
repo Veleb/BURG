@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HostService } from '../services/host.service';
 import { ToastrService } from 'ngx-toastr';
@@ -20,7 +20,10 @@ export class BecomeHostComponent implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   
   iti: any;  
+
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef;
+  @ViewChild(LocationPickerComponent) locationPickerComponent!: LocationPickerComponent;
+
   location: string | undefined = undefined;
 
   ngAfterViewInit(): void {
@@ -42,12 +45,25 @@ export class BecomeHostComponent implements AfterViewInit {
 
   onSubmitCompany(companyForm: NgForm): void {
     if (companyForm.valid) {
-      const newCompanyData = { ...companyForm.value, companyLocation: this.location };
+
+      if (!isPlatformBrowser(this.platformId)) {
+        return;
+      }
+
+      if (!this.iti.isValidNumber()) {
+        this.toastr.error('Invalid phone number', 'Error');
+        return;
+      }
+
+      const formattedPhoneNumber = this.iti.getNumber(intlTelInputUtils.numberFormat.E164);
+      
+      const newCompanyData = { ...companyForm.value, companyLocation: this.location, phoneNumber: formattedPhoneNumber, };
 
       this.hostService.createCompany(newCompanyData).subscribe({
         next: () => {
           this.toastr.success(`Sent host application`, `Success`);
           companyForm.reset();
+          this.locationPickerComponent.reset();        
         },
         error: () => {
           this.toastr.error(`Error occurred while sending host application`, `Error Occurred`)

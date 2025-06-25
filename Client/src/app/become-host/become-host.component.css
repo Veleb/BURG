@@ -133,8 +133,8 @@
 }
 
 .form-group select:focus {
-  border-color: #E4B15A;
-  box-shadow: 0 0 0 3px rgba(228, 177, 90, 0.2);
+   border-color: #E4B15A; 
+   box-shadow: 0 0 0 3px rgba(228, 177, 90, 0.2); 
   outline: none;
 }
 
@@ -263,5 +263,39 @@ button[type="submit"] {
   
   button[type="submit"] {
     max-width: 100%;
+  }
+}
+
+.error-msg {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  animation: errorAppear 0.3s ease-out;
+}
+
+.error {
+  animation: inputErrorShake 0.4s ease;
+  border: 2px solid #d90429 !important;
+}
+
+.success {
+  border: 2px solid #8ac926 !important;
+}
+
+@keyframes inputErrorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(6px); }
+  50% { transform: translateX(-6px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes errorAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1; 
+    transform: translateY(0);
   }
 }

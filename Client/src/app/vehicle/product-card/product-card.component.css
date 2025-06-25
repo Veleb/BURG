@@ -42,13 +42,13 @@
   /* left: 12px; */
   color: #D31010;
   border: none;
-  font-size: 19px;
+  font-size: 17px;
 }
 
 .heart-icon {
   /* position: relative; */
   /* right: 12px; */
-  font-size: 17.5px;
+  font-size: 15px;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 

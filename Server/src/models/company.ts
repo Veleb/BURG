@@ -7,7 +7,7 @@ const CompanySchema = new Schema<CompanyInterface>({
   name: { type: String, required: true, unique: true },
   slug: { type: String, unique: true },
   email: { type: String, required: true, unique: true, match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
-  phoneNumber: { type: String, required: true },
+  phoneNumber: { type: String, required: true, match: [/^\+[1-9]\d{1,14}$/, 'Phone number must be in E.164 format'], },
   location: { type: String },
   companyType: { type: String, required: true },
   stateRegistration: { type: String, required: true },

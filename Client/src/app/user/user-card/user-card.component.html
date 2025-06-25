@@ -9,10 +9,10 @@
 
   @if (user?.certificates?.length) {
     <div class="certificate-section">
-      @for (cert of user?.certificates; track cert._id) {
+      <!-- @for (cert of user?.certificates; track cert._id) {
         <div class="user-detail">Certificate Code: {{ cert.code }}</div>
         <div class="user-detail">Download Link: {{ cert.downloadLink }}</div>
-      }
+      } -->
       @if (!isAddingCertificate) {
         <button class="btn btn-primary" (click)="startAddingCertificate()">Redeem New Certificate</button>
       }

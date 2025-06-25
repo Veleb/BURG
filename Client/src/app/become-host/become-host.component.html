@@ -15,41 +15,75 @@
         <div class="form-group">
           <label for="companyName">Company Name</label>
           <input
+            [class]="companyName.touched ? (companyName.errors ? 'error' : 'success') : '' "
             type="text"
             id="companyName"
             name="companyName"
             placeholder="John Doe's Company" 
+            #companyName="ngModel"
             ngModel
             required
           />
+
+          @if (companyName.touched && companyForm.controls['companyName'].invalid) {
+            <div class="error-msg">
+              Company name is required.
+            </div>
+          }
+
         </div>
         <div class="form-group">
           <label for="companyEmail">Email</label>
           <input
+            [class]="companyEmail.touched ? (companyEmail.errors ? 'error' : 'success') : '' "
             type="email"
             id="companyEmail"
             name="companyEmail" 
             placeholder="johndoecompany@example.com"
+            #companyEmail="ngModel"
             ngModel
             required
             appEmail
           />
+
+          @if (companyEmail.touched && companyForm.controls['companyEmail'].errors?.['required']) {
+            <div class="error-msg">
+              Email is required.
+            </div>
+          } @if (companyEmail?.errors?.['emailInvalid']) {
+              <div class="error-msg">
+                Invalid email format
+              </div>
+          }
+          
         </div>
         <div class="form-group phone-group">
 
           <label for="phoneNumber">Phone Number</label>
   
           <input 
-          class="form-input phone-input"
-          type="tel"
-          id="phoneNumber"
-          name="companyPhone"
-          #phoneInput
-          ngModel
-          placeholder=""
-          required
+            [class]="phoneModel.touched ? (phoneModel.errors ? 'form-input phone-input error' : 'form-input phone-input success') : '' "
+            type="tel"
+            id="phoneNumber"
+            name="companyPhone"
+            #phoneModel="ngModel"
+            ngModel
+            placeholder=""
+            required
+            #phoneInput
+            pattern="^\+[1-9]\d{7,14}$"
           >
-          
+
+          @if (phoneModel.touched && companyForm.controls['companyPhone'].errors?.['required']) {
+            <div class="error-msg">
+              Phone number is required.
+            </div>
+          } @else if (phoneModel.touched && companyForm.controls['companyPhone'].errors?.['pattern']) {
+            <div class="error-msg">
+              Phone number must be in international format (e.g., +1234567890).
+            </div>
+          }
+
         </div>
 
         <div class="form-group">
@@ -61,18 +95,36 @@
         <div class="form-group">
           <label for="stateRegistration">State Registration</label>
           <input
+            [class]="stateRegistration.touched ? (stateRegistration.errors ? 'error' : 'success') : '' "
             type="text"
             id="stateRegistration"
             name="stateRegistration" 
+            #stateRegistration="ngModel"
             ngModel
             required
             placeholder="Enter your official state registration"
           />
+          
+          @if (stateRegistration.touched && companyForm.controls['stateRegistration'].invalid) {
+            <div class="error-msg">
+              State registration is required.
+            </div>
+          }
+
         </div>
 
         <div class="form-group">
           <label for="companyType">Company Type</label>
-          <select id="companyType" name="companyType" ngModel required>
+
+          <select 
+            #companyType="ngModel" 
+            id="companyType" 
+            name="companyType" 
+            ngModel 
+            required
+            [class]="companyType.touched ? (companyType.errors ? 'error' : 'success') : '' "  
+            >
+
             <option value="" disabled selected>Select a company type</option>
             <option value="Private Limited Company (PLC)">Private Limited Company (PLC)</option>
             <option value="Public Limited Company (Ltd.)">Public Limited Company (Ltd.)</option>
@@ -92,6 +144,13 @@
             <option value="Cooperative Society">Cooperative Society</option>
             <option value="Broker">Broker</option>
           </select>
+
+          @if (companyType.touched && companyType.invalid) {
+            <div class="error-msg">
+              Please select a company type.
+            </div>
+          }
+          
         </div>
 
         <div class="button-container">

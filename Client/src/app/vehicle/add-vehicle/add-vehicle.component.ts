@@ -3,10 +3,12 @@ import { VehicleService } from '../vehicle.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Size, CategoryEnum } from '../../../types/enums';
 import { VehicleForCreate, VehicleInterface } from '../../../types/vehicle-types';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { CompanyService } from '../../company/company.service';
+import { EMPTY, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-add-vehicle',
@@ -17,9 +19,12 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 export class AddVehicleComponent implements OnInit {
   private vehicleService = inject(VehicleService);
+  private CompanyService = inject(CompanyService);
   private route = inject(ActivatedRoute);
   private toastr = inject(ToastrService);
 
+  private destroy$ = new Subject<void>();
+  
   vehicleData: VehicleForCreate = {
     vehicleCompany: '',
     vehicleName: '',
@@ -59,26 +64,70 @@ export class AddVehicleComponent implements OnInit {
   selectedImages: File[] = [];
   selectedRegistrations: File[] = [];
 
+  vehicleImagesError = false;
+  registrationImageError = false;
+
   currentYear = new Date().getFullYear();
   maxYear = this.currentYear + 1;
 
+  onVehicleImagesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.selectedImages = Array.from(input.files);
+      this.vehicleImagesError = this.selectedImages.length < 5;
+    } else {
+      this.selectedImages = [];
+      this.vehicleImagesError = true;
+    }
+  }
+
+  onRegistrationImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.selectedRegistrations = Array.from(input.files);
+      this.vehicleImagesError = this.selectedRegistrations.length < 5;
+    } else {
+      this.selectedRegistrations = [];
+      this.registrationImageError = true;
+    }
+  }
+
   ngOnInit(): void {
-    
-    this.route.queryParamMap.subscribe(params => {
-      this.companySlug = params.get("companySlug");
-      if (this.companySlug) {
-        this.vehicleData.vehicleCompany = this.companySlug;
+    this.route.queryParamMap.pipe(
+      takeUntil(this.destroy$),
+      switchMap((params: ParamMap) => {
+
+        this.companySlug = params.get('companySlug');
+
+        if (!this.companySlug) {
+          this.toastr.error('Company slug missing in query params');
+          return EMPTY;
+        }
+
+        return this.CompanyService.getCompanyBySlug(this.companySlug);
+      })
+    ).subscribe({
+      next: (company) => {
+        if (company) {
+          this.vehicleData.vehicleCompany = company._id;
+        } else {
+          this.toastr.error('Company not found');
+        }
+      },
+      error: (err) => {
+        this.toastr.error('Error fetching company details');
+        console.error(err);
       }
     });
-    
-    (pdfMake as any).default.vfs = pdfFonts.vfs;
 
+    (pdfMake as any).default.vfs = pdfFonts.vfs;
   }
 
   onImagesSelected(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files) {
       this.selectedImages = Array.from(files);
+      this.vehicleData.vehicleImages = this.selectedImages;
     }
   }
 
@@ -86,6 +135,7 @@ export class AddVehicleComponent implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (files) {
       this.selectedRegistrations = Array.from(files);
+      this.vehicleData.vehicleRegistration = this.selectedRegistrations;
     }
   }
 
@@ -121,7 +171,9 @@ export class AddVehicleComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
       pdfMake.createPdf(docDefinition).getBlob((blob: Blob | null) => {
-        if (blob) resolve(blob);
+        if (blob) {
+          resolve(blob);
+        }
         else reject(new Error('PDF generation failed'));
       });
     });
@@ -130,12 +182,23 @@ export class AddVehicleComponent implements OnInit {
 
 
   async onSubmit() {
+
+    this.vehicleImagesError = this.selectedImages.length < 5;
+    this.registrationImageError = !this.selectedRegistrations;
+
+    if (this.vehicleImagesError || this.registrationImageError) {
+      return; 
+    }
+
+    
     if (!this.vehicleData.vehicleCompany) {
       this.toastr.error("Company ID missing in query params");
       return;
     }
-
+    
     this.isSubmitting = true;
+
+    this.formSubmitted = true;
 
     const formData = new FormData();
 
@@ -209,3 +272,4 @@ export class AddVehicleComponent implements OnInit {
     this.showSummaryModal = false;
   }
 }
+
