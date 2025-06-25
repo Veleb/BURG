@@ -8,6 +8,7 @@ import companyController from "./controllers/companyController";
 import TransactionController from "./controllers/transactionController";
 import certificateController from "./controllers/certificateController";
 import phonepeController from "./controllers/phonepeController";
+import { rateLimiterMiddleware } from "./middlewares/rateLimiterMiddleware";
 
 const routes = Router();
 
@@ -19,7 +20,7 @@ routes.use('/currency', currencyController);
 routes.use('/companies', companyController);
 routes.use('/transactions', TransactionController);
 routes.use('/certificates', certificateController);
-routes.use('/phonepe', phonepeController);
+routes.use('/phonepe', rateLimiterMiddleware, phonepeController);
 
 
 export default routes;

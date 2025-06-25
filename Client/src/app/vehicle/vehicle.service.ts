@@ -179,6 +179,10 @@ export class VehicleService {
   getVehicleById(vehicleId: string): Observable<VehicleInterface> {
     return this.http.get<VehicleInterface>(`/api/vehicles/${vehicleId}`);
   }
+  
+  getVehicleBySlug(vehicleSlug: string): Observable<VehicleInterface> {
+    return this.http.get<VehicleInterface>(`/api/vehicles/slug/${vehicleSlug}`);
+  }
 
   createVehicle(vehicleData: FormData): Observable<VehicleInterface> {
     return this.http.post<VehicleInterface>(`/api/vehicles`, vehicleData);

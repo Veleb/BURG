@@ -13,7 +13,7 @@ export interface RentInterface {
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
-  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;
 
   referralCode: string | null;
@@ -24,7 +24,8 @@ export interface RentInterface {
     creditsUsed: number;
   };
 
-  paymentSessionId?: string;
+  // paymentSessionId?: string;
+  orderId: string;
 }
 
 
@@ -35,7 +36,7 @@ export interface RentForCreate {
   pickupLocation: string;
   dropoffLocation: string;
   user: UserFromDB;
-  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;
 
   referralCode: string | null;
@@ -46,7 +47,8 @@ export interface RentForCreate {
     creditsUsed: number;
   };
   
-  paymentSessionId?: string;
+  // paymentSessionId?: string;
+  orderId: string;
 }
 
 export type RentInterfaceWithoutUser = Omit<RentInterface, 'user'>;

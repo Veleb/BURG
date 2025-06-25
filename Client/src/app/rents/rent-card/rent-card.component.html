@@ -31,7 +31,7 @@
         </h3>
       } 
       
-      @if (rent.status !== 'canceled') {
+      @if (rent.status !== 'canceled' && rent.status !== 'failed') {
         <button class="cancel-btn" (click)="onCancel()">Cancel Rent</button>
       }
 

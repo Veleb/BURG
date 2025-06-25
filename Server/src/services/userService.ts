@@ -271,9 +271,8 @@ async function promoteUserStatus(userId: Types.ObjectId, userStatus: "user" | "h
 async function updateDataAfterPayment(
   userId: Types.ObjectId,
   rentalData: RentInterface,
-  sessionId: string,
   referralCode?: string
-): Promise<{ status: string; rental: RentInterface; user: any }> {
+): Promise<{ status: string; rental: RentInterface; updatedUser: UserFromDB }> {
   try {
 
     // fetch the user and the rental respectively
@@ -320,7 +319,6 @@ async function updateDataAfterPayment(
       rental._id,
       {
         status: 'confirmed',
-        paymentSessionId: sessionId,
         $inc: { 'appliedDiscounts.referral': referralBonus }
       },
       { new: true }
@@ -356,7 +354,7 @@ async function updateDataAfterPayment(
     return {
       status: 'success',
       rental: updatedRental,
-      user: updatedUser
+      updatedUser
     };
 
   } catch (error) {
@@ -365,6 +363,64 @@ async function updateDataAfterPayment(
   }
 }
 
+async function updateDataAfterFailedPayment(
+  userId: Types.ObjectId,
+  rentalData: RentInterface,
+): Promise<{ status: string; rental: RentInterface; updatedUser: UserFromDB }> {
+  try {
+    
+    const [user, rental] = await Promise.all([
+      UserModel.findById(userId),
+      RentModel.findById(rentalData._id)
+    ]);
+
+    if (!user) throw new Error(`User ${userId} not found`);
+    if (!rental) throw new Error(`Rental ${rentalData._id} not found`);
+
+    if (!rental.user._id.equals(userId)) {
+      throw new Error('User does not own this rental');
+    }
+    if (rental.status !== 'pending') {
+      throw new Error(`Rental already in ${rental.status} state`);
+    }
+
+    const updatedRental = await RentModel.findByIdAndUpdate(
+      rental._id,
+      { status: 'failed' },
+      { new: true }
+    );
+
+    if (!updatedRental) {
+      throw new Error('Updated rental not found');
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $inc: { 
+          credits: rentalData.appliedDiscounts.creditsUsed || 0,
+          creditsUsed: -(rentalData.appliedDiscounts.creditsUsed || 0)
+        },
+        $pull: { disallowedReferralCodes: rentalData.referralCode || '' }
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      throw new Error('Updated user not found');
+    }
+
+    return {
+      status: 'failed',
+      rental: updatedRental,
+      updatedUser
+    };
+
+  } catch (error) {
+    console.error('Error in updateDataAfterPaymentFailed:', error);
+    throw new Error('Failed payment update failed');
+  }
+}
 
 const UserService = {
   loginUser,
@@ -383,6 +439,7 @@ const UserService = {
   promoteUserStatus,
   updateDataAfterPayment,
   getUsers,
+  updateDataAfterFailedPayment,
   
 }
 

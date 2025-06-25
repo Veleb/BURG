@@ -1,28 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { PhonepeService } from '../../services/phonepe.service';
 
 @Component({
-    selector: 'app-payment-cancel',
-    imports: [ RouterLink ],
-    templateUrl: './payment-cancel.component.html',
-    styleUrl: './payment-cancel.component.css'
+  selector: 'app-payment-cancel',
+  imports: [RouterLink],
+  templateUrl: './payment-cancel.component.html',
+  styleUrl: './payment-cancel.component.css'
 })
 export class PaymentCancelComponent implements OnInit {
 
-  rentId: string | null = null;
-
-  constructor(
-    private route: ActivatedRoute,
-    private toastr: ToastrService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private phonepeService = inject(PhonepeService);
 
   ngOnInit(): void {
-    this.rentId = this.route.snapshot.queryParamMap.get('rentId');
+    this.route.queryParams.subscribe(params => {
+      const orderId = params['orderId'];
 
-    if (!this.rentId) {
-      this.toastr.error('No rent ID found in the URL.', "Error Occurred");
-    }
+      if (orderId) {
+        this.phonepeService.verifyPayment(orderId).subscribe();
+      }
+    });
   }
 
 }

@@ -1,12 +1,12 @@
 <div class="rents-view">
   <div class="header">
     <h2>Manage Rents</h2>
-    <app-datepicker 
+    <!-- <app-datepicker 
         layoutType="default-wrap" 
         [functionality]="['search', null]"
         (startDateChange)="onStartDateChange($event)" 
         (endDateChange)="onEndDateChange($event)"
-    />
+    /> -->
     <select (change)="onSortChange($event)" class="rent-select">
       <option class="rent-option" value="price">Price</option>
       <option class="rent-option" value="startDate">Start Date</option>
@@ -25,12 +25,12 @@
     <div class="error-state">
       {{ error }}
       @if (user?.role === 'host') {
-        <button class="retry-btn" (click)="loadCompanyRents()">
+        <button class="retry-btn" (click)="loadRents()">
           <i class="fas fa-redo"></i>
           Retry
         </button>
       } @else {
-        <button class="retry-btn" (click)="loadAllRents()">
+        <button class="retry-btn" (click)="loadRents()">
           <i class="fas fa-redo"></i>
           Retry
         </button>

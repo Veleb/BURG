@@ -1,38 +1,39 @@
 import { NextFunction, Request, Response, Router } from "express";
 import TransactionService from "../services/transactionService";
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
+import slugToIdMiddleware from "../middlewares/slugToIdMiddleware";
+import CompanyModel from "../models/company";
+import { HasSlug } from "../types/documentSlug";
 
 const TransactionController = Router();
 
-TransactionController.get('/', async (req: Request, res: Response, next: NextFunction) => {
+TransactionController.get('/', async (req, res, next) => {
   try {
-   
-    const transactions = await TransactionService.getAllTransactions();
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
 
-    if (!transactions || transactions.length === 0) {
-      res.status(404).json({ message: "No transactions found." });
-      return;
-    }
-
-    res.status(200).json(transactions);
+    const { transactions, totalCount } = await TransactionService.getAllTransactionsPaginated(limit, offset);
+    
+    res.status(200).json({ transactions, totalCount });
   } catch (err) {
     next(err);
   }
-})
+});
 
-TransactionController.get('/company/:companyId', async (req: Request, res: Response, next: NextFunction) => {
-
-  const companyId = new Types.ObjectId(req.params.companyId);
-
+TransactionController.get('/company/:companySlug', slugToIdMiddleware({ model: CompanyModel as unknown as Model<HasSlug> }) ,async (req, res, next) => {
   try {
-   
-    const transactions = await TransactionService.getCompanyTransactions(companyId);
+    const companyId = new Types.ObjectId(req.params.companyId);
 
-    res.status(200).json(transactions);
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    const { transactions, totalCount } = await TransactionService.getCompanyTransactionsPaginated(companyId, limit, offset);
+    
+    res.status(200).json({ transactions, totalCount });
   } catch (err) {
     next(err);
   }
-})
+});
 
 TransactionController.get('/:transactionId', async (req: Request, res: Response, next: NextFunction) => {
 

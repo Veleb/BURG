@@ -1,3 +1,7 @@
+.header {
+  margin-bottom: 10px;
+}
+
 .rents-section {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -15,6 +19,13 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.rent-list {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .no-rents {

@@ -1,40 +1,43 @@
 import { Request, Response, NextFunction } from 'express';
-import tokenUtils from '../utils/tokenUtil';
+import csrf from 'csurf';
+
+const excludedRoutes = ['/login', '/register', '/google-auth', '/csrf-token'];
+
+  const isProd = process.env.PROD === 'true';
+  
+  const sameSite = isProd ? 'none' : 'lax';
+  const secure = isProd; 
+
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    sameSite,
+    secure,
+  },
+});
 
 const csrfMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-
-  const authRoutes = ['/login', '/register', '/google-auth'];
-  
-  if (authRoutes.some(route => req.path.includes(route))) {
+  if (
+    !['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) ||
+    excludedRoutes.some(route => req.path.includes(route))
+  ) {
     return next();
   }
 
-  const methodsRequiringCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'];
+  csrfProtection(req, res, (err) => {
+    if (err) {
+      if (err.code === 'EBADCSRFTOKEN') {
+        return res.status(403).json({
+          code: 'CSRF_INVALID',
+          message: 'Invalid or missing CSRF token.'
+        });
+      }
 
-  if (!methodsRequiringCsrf.includes(req.method)) {
+      return next(err);
+    }
+
     next();
-    return;
-  }
-
-  const csrfHeaderToken = req.headers['x-csrf-token'];
-
-  if (!csrfHeaderToken || typeof csrfHeaderToken !== 'string') {
-    res.status(403).json({
-      code: 'CSRF_MISSING',
-      message: 'CSRF token is missing from headers.'
-    });
-    return;
-  } 
-
-  if (!tokenUtils.verifyCsrfToken(csrfHeaderToken, req)) {
-    res.status(403).json({
-      code: 'CSRF_INVALID',
-      message: 'Invalid CSRF token.'
-    });
-    return;
-  }
-
-  next();
+  });
 };
 
 export default csrfMiddleware;

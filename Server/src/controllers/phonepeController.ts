@@ -1,17 +1,15 @@
 import { Router, Request, Response } from 'express';
-import { Env, MetaInfo, StandardCheckoutClient, StandardCheckoutPayRequest } from 'pg-sdk-node';
+import { Env, RefundRequest, StandardCheckoutClient, StandardCheckoutPayRequest } from 'pg-sdk-node';
 import UserService from '../services/userService';
 import vehicleService from '../services/vehicleService';
 import rentService from '../services/rentService';
-import crypto from 'crypto';
 import { randomUUID } from 'crypto';
-import express from 'express';
+import TransactionService from '../services/transactionService';
 
 const clientId = process.env.PHONEPE_CLIENT_ID!;
 const clientSecret = process.env.PHONEPE_CLIENT_SECRET!;
 const clientVersion = Number(process.env.PHONEPE_CLIENT_VERSION!);
-// const env = process.env.PROD === 'true' ? Env.PRODUCTION : Env.SANDBOX;
-const env = Env.SANDBOX
+const env = process.env.PROD === 'true' ? Env.PRODUCTION : Env.SANDBOX;
 
 const FRONT_END_URL = process.env.PROD === 'true' ? process.env.FRONT_END_PROD! : process.env.FRONT_END_LOCAL!;
 
@@ -34,7 +32,6 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
       appliedDiscounts,
       pickupLocation,
       dropoffLocation,
-      selectedCurrency
     } = req.body;
 
     if (!vehicleId || !userId || !start || !end || !isPricePerDay || calculatedPrice === undefined) {
@@ -70,7 +67,10 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
       return; 
     }
 
-    const rent = await rentService.createRent({
+    const merchantOrderId = randomUUID();
+    const redirectUrl = `${FRONT_END_URL}/payments/pending?orderId=${merchantOrderId}`;
+
+    await rentService.createRent({
       vehicle: vehicleId,
       user: userId,
       start,
@@ -84,41 +84,29 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
       appliedDiscounts: {
         referral: referralDiscountSafe,
         creditsUsed
-      }
+      },
+      orderId: merchantOrderId
     });
 
-    const metaInfo = MetaInfo
-    .builder()
-    .udf1(rent.start.getDate().toString())
-    .udf2(rent.end.getDate().toString())
-    .udf3(rent.pickupLocation)
-    .udf4(rent.dropoffLocation)
-    .build()
-
-    const merchantOrderId = randomUUID();
-    const redirectUrl = `${FRONT_END_URL}/payments/success`;
+    // const metaInfo = MetaInfo
+    // .builder()
+    // .udf1(rent.start.getDate().toString())
+    // .udf2(rent.end.getDate().toString())
+    // .udf3(rent.pickupLocation)
+    // .udf4(rent.dropoffLocation)
+    // .build()
 
     const request = StandardCheckoutPayRequest
     .builder()
     .merchantOrderId(merchantOrderId)
     .amount(calculatedPrice * 100)
     .redirectUrl(redirectUrl)
-    .metaInfo(metaInfo)
+    // .metaInfo(metaInfo)
     .build();
 
-    await ensureValidToken(); // Ensure token is valid before making the request
+    await ensureValidToken();
 
     const response = await client.pay(request);
-
-    // if (response.state === 'COMPLETED' || response.state === 'INITIATED') {
-    //   res.status(200).json({ redirectUrl: response.redirectUrl });
-    // } else {
-    //   res.status(400).json({
-    //     message: 'Payment creation failed',
-    //     state: response.state,
-    //     redirectUrl: `${FRONT_END_URL}/payments/cancel`
-    //   });
-    // }
 
     res.status(200).json({ redirectUrl: response.redirectUrl });
 
@@ -129,106 +117,240 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
   }
 });
 
-phonepeController.use('/webhook', express.raw({ type: 'application/json' }));
+phonepeController.get('/check-status/:orderId', async (req: Request, res: Response) => {
+  const { orderId } = req.params;
 
-
-phonepeController.post('/webhook', async (req: Request, res: Response) => {
-    console.log('[Webhook] Received request');
   try {
-    const rawBody = (req as any).rawBody;
-    const receivedSignature = req.headers['authorization'];
+    await ensureValidToken(); // ensure access token is fresh
 
-    if (!receivedSignature || typeof receivedSignature !== 'string') {
-      console.warn('Webhook missing Authorization header');
-      res.status(401).json({ message: 'Unauthorized' });
-      return; 
-    }
+    const status = await client.getOrderStatus(orderId); 
 
-    const expectedSignature = crypto
-      .createHash('sha256')
-      .update(`${clientId}:${clientSecret}`)
-      .digest('hex');
+    // if (paymentState === 'COMPLETED') {
+    //   await rentService.handleSuccessfulPayment(orderId);
+    // } else if (paymentState === 'FAILED') {
+    //   await rentService.handleFailedPayment(orderId);
+    // }
 
-    if (receivedSignature !== expectedSignature) {
-      console.warn('Webhook signature mismatch. Possible fraudulent webhook.');
-      res.status(401).json({ message: 'Unauthorized' });
-      return; 
-    }
+    res.status(200).json({ status });
+  } catch (error) {
+    console.error(`[PhonePe] Error fetching status for ${orderId}:`, error);
+    res.status(500).json({ message: 'Failed to check payment status' });
+  }
+});
 
-    const event = req.body.event;
-    const payload = req.body.payload;
+phonepeController.get('/verify/:orderId', async (req: Request, res: Response) => {
+  const { orderId } = req.params;
 
-    if (!payload || !payload.state) {
-      console.warn('Invalid webhook payload structure');
-      res.status(400).json({ message: 'Bad Request' });
-      return; 
-    }
+  try {
+    await ensureValidToken();
+    const statusResponse = await client.getOrderStatus(orderId);
 
-    const paymentState = payload.state;
-    const merchantOrderId = payload.merchantOrderId || payload.merchantOrderID || payload.orderId; // adjust if naming differs
+    const paymentState = statusResponse?.state;
 
-    if (!merchantOrderId) {
-      console.warn('Webhook payload missing merchantOrderId');
-      res.status(400).json({ message: 'Bad Request' });
-      return; 
-    }
-
-    switch(paymentState) {
+    switch (paymentState) {
       case 'COMPLETED':
-        // await rentService.markAsPaid(merchantOrderId);
-        console.log(`Payment COMPLETED for order: ${merchantOrderId}`);
+        await rentService.handleSuccessfulPayment(orderId);
         break;
 
       case 'FAILED':
-        // await rentService.markAsFailed(merchantOrderId);
-        console.log(`Payment FAILED for order: ${merchantOrderId}`);
+        await rentService.handleFailedPayment(orderId);
         break;
 
       case 'PENDING':
-        // await rentService.markAsPending(merchantOrderId);
-        console.log(`Payment PENDING for order: ${merchantOrderId}`);
-        // Optionally trigger your reconciliation polling logic here or in a background job
+        await rentService.handlePendingPayment(orderId);
         break;
 
       default:
-        console.log(`Unhandled payment state received: ${paymentState} for order ${merchantOrderId}`);
+        console.warn(`[PhonePe] Unrecognized payment state for ${orderId}: ${paymentState}`);
     }
 
-    
-    switch(event) {
-  case 'checkout.order.completed':
-    console.log(`Order COMPLETED: ${payload.merchantOrderId}`);
-    // await rentService.markAsPaid(payload.merchantOrderId);
-    break;
-
-  case 'checkout.order.failed':
-    console.log(`Order FAILED: ${payload.merchantOrderId}`);
-    // await rentService.markAsFailed(payload.merchantOrderId);
-    break;
-
-  case 'pg.refund.completed':
-    console.log(`Refund COMPLETED for order: ${payload.originalTransactionId}`);
-    // You can update your rent record or notify the user
-    break;
-
-  case 'pg.refund.failed':
-    console.log(`Refund FAILED for order: ${payload.originalTransactionId}`);
-    // Optional: log or alert
-    break;
-
-  default:
-    console.log(`Unhandled event type: ${event}`);
-}
-
-    res.status(200).json({ message: 'Webhook processed' });
-    return; 
-
+    res.status(200).json({ status: paymentState });
   } catch (error) {
-    console.error('Error processing PhonePe webhook:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-    return; 
+    console.error(`[PhonePe] Error verifying payment for ${orderId}:`, error);
+    res.status(500).json({ message: 'Payment verification failed' });
   }
 });
+
+phonepeController.post('/refund', async (req: Request, res: Response) => {
+  const { orderId, amount } = req.body;
+
+  if (!orderId || !amount) {
+    res.status(400).json({ message: 'Missing orderId or amount' });
+    return; 
+  }
+
+  try {
+    await ensureValidToken();
+
+    const refundId = randomUUID(); 
+
+    const refundRequest = RefundRequest.builder()
+      .amount(amount * 100) 
+      .merchantRefundId(refundId)
+      .originalMerchantOrderId(orderId)
+      .build();
+
+    const response = await client.refund(refundRequest);
+
+    await TransactionService.addRefundIdToTransaction(orderId, refundId);
+
+    res.status(200).json({
+      message: 'Refund initiated',
+      response
+    });
+
+    return;
+
+  } catch (error) {
+    console.error('[PhonePe] Refund error:', error);
+    res.status(500).json({ message: 'Failed to process refund', error });
+  }
+});
+
+phonepeController.post('/verify/refund', async (req: Request, res: Response) => {
+  const { orderId } = req.body;
+
+  if (!orderId) {
+    res.status(400).json({ message: 'Missing orderId' });
+    return;
+  }
+
+  try {
+    const refundId = await TransactionService.getRefundIdByOrderId(orderId);
+
+    if (!refundId) {
+      res.status(404).json({ message: 'Refund ID not found for this orderId' });
+      return;
+    }
+
+    await ensureValidToken();
+
+    const response = await client.getRefundStatus(refundId);
+    console.log('[PhonePe] Full RefundStatusResponse:', response);
+
+    const refundStatus = response.state;
+
+    switch (refundStatus) {
+      case 'COMPLETED':
+        await TransactionService.markAsRefunded(orderId);
+        break;
+      case 'FAILED':
+        // handle failure if needed
+        break;
+      case 'PENDING':
+        // handle pending if needed
+        break;
+      default:
+        console.warn(`[PhonePe] Unrecognized refund state for ${orderId}: ${refundStatus}`);
+    }
+
+    res.status(200).json({ status: refundStatus });
+  } catch (error) {
+    console.error('[PhonePe] Refund verification error:', error);
+    res.status(500).json({ message: 'Failed to verify refund status', error });
+  }
+});
+
+
+// phonepeController.use('/webhook', express.raw({ type: 'application/json' }));
+
+// phonepeController.post('/webhook', async (req: Request, res: Response) => {
+//     console.log('[Webhook] Received request');
+//   try {
+//     const rawBody = (req as any).rawBody;
+//     const receivedSignature = req.headers['authorization'];
+
+//     if (!receivedSignature || typeof receivedSignature !== 'string') {
+//       console.warn('Webhook missing Authorization header');
+//       res.status(401).json({ message: 'Unauthorized' });
+//       return; 
+//     }
+
+//     const expectedSignature = crypto
+//       .createHash('sha256')
+//       .update(`${clientId}:${clientSecret}`)
+//       .digest('hex');
+
+//     if (receivedSignature !== expectedSignature) {
+//       console.warn('Webhook signature mismatch. Possible fraudulent webhook.');
+//       res.status(401).json({ message: 'Unauthorized' });
+//       return; 
+//     }
+
+//     const event = req.body.event;
+//     const payload = req.body.payload;
+
+//     if (!payload || !payload.state) {
+//       console.warn('Invalid webhook payload structure');
+//       res.status(400).json({ message: 'Bad Request' });
+//       return; 
+//     }
+
+//     const paymentState = payload.state;
+//     const merchantOrderId = payload.merchantOrderId || payload.merchantOrderID || payload.orderId; // adjust if naming differs
+
+//     if (!merchantOrderId) {
+//       console.warn('Webhook payload missing merchantOrderId');
+//       res.status(400).json({ message: 'Bad Request' });
+//       return; 
+//     }
+
+//     switch(paymentState) {
+//       case 'COMPLETED':
+//         // await rentService.markAsPaid(merchantOrderId);
+//         console.log(`Payment COMPLETED for order: ${merchantOrderId}`);
+//         break;
+
+//       case 'FAILED':
+//         // await rentService.markAsFailed(merchantOrderId);
+//         console.log(`Payment FAILED for order: ${merchantOrderId}`);
+//         break;
+
+//       case 'PENDING':
+//         // await rentService.markAsPending(merchantOrderId);
+//         console.log(`Payment PENDING for order: ${merchantOrderId}`);
+//         // Optionally trigger your reconciliation polling logic here or in a background job
+//         break;
+
+//       default:
+//         console.log(`Unhandled payment state received: ${paymentState} for order ${merchantOrderId}`);
+//     }
+
+    
+//     switch(event) {
+//   case 'checkout.order.completed':
+//     console.log(`Order COMPLETED: ${payload.merchantOrderId}`);
+//     // await rentService.markAsPaid(payload.merchantOrderId);
+//     break;
+
+//   case 'checkout.order.failed':
+//     console.log(`Order FAILED: ${payload.merchantOrderId}`);
+//     // await rentService.markAsFailed(payload.merchantOrderId);
+//     break;
+
+//   case 'pg.refund.completed':
+//     console.log(`Refund COMPLETED for order: ${payload.originalTransactionId}`);
+//     // You can update your rent record or notify the user
+//     break;
+
+//   case 'pg.refund.failed':
+//     console.log(`Refund FAILED for order: ${payload.originalTransactionId}`);
+//     // Optional: log or alert
+//     break;
+
+//   default:
+//     console.log(`Unhandled event type: ${event}`);
+// }
+
+//     res.status(200).json({ message: 'Webhook processed' });
+//     return; 
+
+//   } catch (error) {
+//     console.error('Error processing PhonePe webhook:', error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//     return; 
+//   }
+// });
 
 let currentToken: string | null = null;
 let tokenExpiresAt: number | null = null;

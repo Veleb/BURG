@@ -1,3 +1,88 @@
-<div class="company-page-wrapper">
-  <app-company-card [company]="company"/>
+<div class="company-showcase">
+  <div class="company-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1>{{company?.name}}</h1>
+        <div class="status-badges">
+          <span class="badge {{company?.status}}">
+            {{company?.status}}
+          </span>
+          @if (company?.isPromoted) {
+            <span class="badge promoted">
+              PROMOTED
+            </span>
+          }
+          
+        </div>
+      </div>
+      
+      <div class="contact-info">
+        <div class="contact-item">
+          <span class="icon">📧</span>
+          <span>{{company?.email}}</span>
+        </div>
+        <div class="contact-item">
+          <span class="icon">📱</span>
+          <span>{{company?.phoneNumber}}</span>
+        </div>
+        <div class="contact-item">
+          <span class="icon">📍</span>
+          <span>{{company?.location}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <h3>{{company?.slug}}</h3>
+      <p>Company Shorthand</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{company?.carsAvailable?.length}}</h3>
+      <p>Available Now</p>
+    </div>
+    <div class="stat-card highlight">
+      <h3>${{ (company?.totalEarnings ?? 0 )| currencyConverter }}</h3>
+      <p>Total Earnings</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Available Vehicles</h2>
+
+    @if ((company?.carsAvailable?.length ?? 0) > 0) {
+      <div class="vehicles-grid">
+
+        @for (vehicle of (company?.carsAvailable ?? []).slice(0, 6); track $index) {
+          <div class="vehicle-card">
+            <app-product-card [vehicle]="vehicle" />
+          </div>
+        }
+
+    </div>
+
+    } @else {
+      <div class="empty-state">
+        <p>No vehicles currently available!</p>
+      </div>
+    }
+    
+    
+  </div>
+
+  <div class="details-grid">
+    <div class="detail-item">
+      <h4>Company Type</h4>
+      <p>{{company?.companyType}}</p>
+    </div>
+    <div class="detail-item">
+      <h4>Owner</h4>
+      <p>{{ company?.owner?.fullName }}</p>
+    </div>
+    <div class="detail-item">
+      <h4>Member Since</h4>
+      <p>{{company?.createdAt | date }}</p>
+    </div>
+  </div>
 </div>

@@ -14,8 +14,8 @@
   padding: 8px;
   text-indent: 25px;
   position: relative;
-  border-left: 2px solid #1e1e1e;
-  border-right: 2px solid #1e1e1e;
+  border-left: 0px solid #1e1e1e;
+  border-right: 0px solid #1e1e1e;
   border-bottom: 2px dashed #110808;
   border-top: none;
   box-sizing: border-box;
@@ -159,6 +159,10 @@
 .suggestion-item:active {
   background-color: #E4B15A;
   color: white;
+}
+
+@media (max-width: 1200px) {
+  
 }
 
 @media (max-width: 768px) {

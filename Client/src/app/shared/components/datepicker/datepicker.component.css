@@ -15,25 +15,32 @@
 }
 
 .date-input {
-  border: 2px solid #1E1E1E;
+  border-left: 0px solid #1E1E1E;
+  border-top: 2px solid #1E1E1E;
+  border-bottom: 2px solid #1E1E1E;
+  border-right: 0px solid #1E1E1E;
   min-width: 200px;
   height: 40px;
   padding: 8px;
   padding-top: 12px;
   font-size: 15px;
   font-weight: 300;
+  max-width: 300px;
 }
 
 .date-input:focus {
   outline: none;
 }
 
-#startDate {
+.startDate {
+  border-right: 2px solid black;
+  border-left: 2px solid black;
   border-radius: 6px 0 0 0;
 }
 
-#endDate {
+.endDate {
   border-radius: 0 6px 0 0;
+  border-right: 2px solid black;
 }
 
 .date-label {
@@ -117,14 +124,6 @@
   outline: none;
 }
 
-#startDate {
-  border-radius: 6px 0 0 0;
-}
-
-#endDate {
-  border-radius: 0 6px 0 0;
-}
-
 .date-label-column {
   text-transform: uppercase;
   font-size: 12px;
@@ -170,6 +169,27 @@
   .date-input {
     width: 40vw;
   }
+  
+  .startDate {
+    border-right: 2px solid black;
+    border-left: 0px solid black;
+    border-radius: 6px 0 0 0;
+  }
+
+  .endDate {
+    border-radius: 0 6px 0 0;
+    border-right: 0px solid black;
+  }
+
+  .datepicker-wrapper-wrap {
+    display: flex;
+    flex-wrap: wrap;   
+    gap: 10px;         
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
 }
 
 @media (max-width: 768px) {
@@ -224,5 +244,16 @@
   .calendar-icon-right-column {
     right: 15px;
     top: 50%;
+  }
+
+  .startDate {
+    border-right: 2px solid black;
+    border-left: 2px solid black;
+    border-radius: 6px 0 0 0;
+  }
+
+  .endDate {
+    border-radius: 0 6px 0 0;
+    border-right: 2px solid black;
   }
 }

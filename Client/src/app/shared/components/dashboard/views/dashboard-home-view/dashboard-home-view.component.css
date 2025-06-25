@@ -18,7 +18,12 @@ rents-view .filters {
   margin-top: 2rem;
 }
 
-/* Home View */
+.rents-grid {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

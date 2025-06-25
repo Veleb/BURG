@@ -1,22 +1,26 @@
 <article class="product-card-wrapper">
   <div class="image-wrapper">
     <div class="icons-wrapper">
-      @if (vehicle?.available) {
-        <i class="fa-solid fa-circle-check available-icon-check"></i>
-      } @else {
-        <i class="fa-solid fa-circle-xmark available-icon-x"></i>
-      }
-      
-      @if (hasLiked) {
-        <i (click)="onHeartIconClick()" class="fa-solid fa-heart heart-icon liked"></i>
-      } @else {
-        <i (click)="onHeartIconClick()" class="fa-solid fa-heart heart-icon unliked"></i>
-      }
 
+      <div class="circle-badge left">
+        @if (vehicle?.available) {
+          <i class="fa-solid fa-circle-check available-icon-check"></i>
+        } @else {
+          <i class="fa-solid fa-circle-xmark available-icon-x"></i>
+        }
+      </div>
+      
+      <div class="circle-badge right" (click)="onHeartIconClick()">
+        @if (hasLiked) {
+          <i class="fa-solid fa-heart heart-icon liked"></i>
+        } @else {
+          <i class="fa-solid fa-heart heart-icon unliked"></i>
+        }
+      </div>
     </div>
 
     <img
-      [routerLink]="['/catalog/', vehicle?._id]"
+      [routerLink]="['/catalog/', vehicle?.details?.slug]"
       [src]="vehicle?.details?.images?.[currentIndex]"
       class="vehicle-image"
       alt="{{ vehicle?.details?.name }}"

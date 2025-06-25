@@ -11,13 +11,14 @@ export interface RentInterface {
   dropoffLocation: string;
   referralCode: string | null;
   useCredits: boolean;
-  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;
   calculatedPrice: number; 
   appliedDiscounts: { 
     referral: number;
     creditsUsed: number;
   };
+  orderId: string;
 }
 
 export interface RentForCreate {
@@ -29,13 +30,14 @@ export interface RentForCreate {
   user: string | null;
   referralCode: string | null;
   useCredits: boolean;
-  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed';
+  status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;
   calculatedPrice: number; 
   appliedDiscounts: { 
     referral: number;
     creditsUsed: number;
   };
+  orderId: string;
 }
 
 export interface FilterState {

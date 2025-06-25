@@ -50,7 +50,7 @@ export class AddVehicleComponent implements OnInit {
   @ViewChild('form') form!: NgForm;
   formSubmitted = false;
   
-  companyId: string | null = null;
+  companySlug: string | null = null;
   isSubmitting = false;
 
   sizes = Object.values(Size);
@@ -65,9 +65,9 @@ export class AddVehicleComponent implements OnInit {
   ngOnInit(): void {
     
     this.route.queryParamMap.subscribe(params => {
-      this.companyId = params.get("companyId");
-      if (this.companyId) {
-        this.vehicleData.vehicleCompany = this.companyId;
+      this.companySlug = params.get("companySlug");
+      if (this.companySlug) {
+        this.vehicleData.vehicleCompany = this.companySlug;
       }
     });
     
@@ -159,7 +159,6 @@ export class AddVehicleComponent implements OnInit {
           this.toastr.success('Vehicle created successfully!');
           this.isSubmitting = false;
           this.submittedVehicle = vehicle;
-          console.log(this.submittedVehicle);
           
           this.showSummaryModal = true;
           this.resetForm();

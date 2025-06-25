@@ -123,11 +123,24 @@ export class RentService {
     )
   }
 
-  getRentsByCompany(companyId: string): Observable<RentInterface[]> {
-    return this.http.get<RentInterface[]>(`/api/rents/company/${companyId}`).pipe(
-      tap(rents => this.rents$$.next(rents))
+  getCompanyRentsCount(slug: string) {
+    return this.http.get<number>(`/api/rents/company/${slug}/count`)
+    .pipe(
+      tap({
+        next: (count) => {
+          this.totalRentsCount$$.next(count);
+        }
+      })
     );
   }
+
+  getRentsByCompany(slug: string, limit: number, offset: number): Observable<RentInterface[]> {
+  return this.http.get<RentInterface[]>(`/api/rents/company/${slug}`, {
+    params: { limit, offset }
+  }).pipe(
+    tap(rents => this.rents$$.next(rents))
+  );
+}
 
   getRentById(rentId: string): Observable<RentInterface> {
     return this.http.get<RentInterface>(`/api/rents/${rentId}`);

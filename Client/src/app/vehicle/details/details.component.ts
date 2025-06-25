@@ -48,7 +48,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  vehicleId: string | null = null;
+  vehicleSlug: string | null = null;
   vehicle: VehicleInterface | null | undefined = undefined;
 
   isPricePerDay: boolean = true;
@@ -62,7 +62,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   totalDiscountDisplay: number | undefined = undefined;
   basePrice: number | undefined = undefined;
 
-  selectedCurrency: string = "USD";
+  selectedCurrency: string = "INR";
 
   currentImage: string | undefined;
   galleryOpen: boolean = false;
@@ -90,9 +90,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.route.paramMap.pipe(
       takeUntil(this.destroy$),
       switchMap(params => {
-        this.vehicleId = params.get('id');
-        return this.vehicleId ? 
-          this.vehicleService.getVehicleById(this.vehicleId).pipe(
+        this.vehicleSlug = params.get('slug');
+        return this.vehicleSlug ? 
+          this.vehicleService.getVehicleBySlug(this.vehicleSlug).pipe(
             catchError((error) => {
               if (error.status === 400 || error.status === 404) {
                 this.router.navigate(['/404']);
@@ -239,7 +239,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.toastr.warning('Please select a location.', "Warning");
       return;
     }
-    if (!this.vehicleId) {
+    if (!this.vehicleSlug) {
       this.toastr.error('Vehicle not found.', "Error Occurred");
       return;
     }
@@ -249,7 +249,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     }
 
     const rentalData = {
-      vehicleId: this.vehicleId,
+      vehicleId: this.vehicle?._id,
       start: this.startDate,
       end: this.endDate,
       pickupLocation: this.pickupLocation,
@@ -288,13 +288,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   rentVehicleViaPhonePe(): void {
-    if (!this.startDate || !this.endDate || !this.vehicleId || !this.user) {
+    if (!this.startDate || !this.endDate || !this.vehicleSlug || !this.user) {
       this.toastr.error("Missing rental details", "Error");
       return;
     }
 
     const rentalData = {
-      vehicleId: this.vehicleId,
+      vehicleId: this.vehicle?._id,
       start: this.startDate,
       end: this.endDate,
       pickupLocation: this.pickupLocation,
@@ -333,7 +333,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.toastr.warning('Please select a location.', "Warning");
       return;
     }
-    if (!this.vehicleId) {
+    if (!this.vehicleSlug) {
       this.toastr.error('Vehicle not found.', "Error Occurred");
       return;
     }
@@ -345,7 +345,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     const rentData: RentForCreate = {
       start: this.startDate,
       end: this.endDate,
-      vehicle: this.vehicleId,
+      vehicle: this.vehicleSlug,
       pickupLocation: this.pickupLocation,
       dropoffLocation: this.dropoffLocation,
       user: null,
@@ -357,7 +357,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
       appliedDiscounts: {
         referral: 0,
         creditsUsed: 0
-      }
+      },
+      orderId: "",
     };
 
     this.rentService.rentVehicleWithoutPaying(rentData).subscribe({

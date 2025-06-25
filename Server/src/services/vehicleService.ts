@@ -35,7 +35,20 @@ async function getVehicles(
   return { vehicles };
 }
 
-async function getCount() {
+async function getVehicleBySlug(slug: string): Promise<VehicleInterface> {
+  const vehicle = await VehicleModel.findOne({ "details.slug": slug })
+  .populate("company")
+    .populate("likes")
+    .lean();
+
+  if (!vehicle) {
+    throw new Error("Vehicle not found");
+  }
+  
+  return vehicle
+};
+
+async function getCount(): Promise<number> {
   const totalCount = await VehicleModel.countDocuments();
 
   if (!totalCount) {
@@ -313,6 +326,7 @@ const vehicleService = {
   getVehicles,
   getCompanyVehicles,
   getVehicleById,
+  getVehicleBySlug,
   checkAvailability,
   likeVehicle,
   removeLikeVehicle,

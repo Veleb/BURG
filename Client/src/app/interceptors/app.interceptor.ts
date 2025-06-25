@@ -7,6 +7,12 @@ import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../user/user.service'
 
 const API = '/api';
+// const CSRF_EXEMPT_PATHS = ['/login', '/register', '/google-auth', '/csrf-token'];
+
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
 
 export const appInterceptor: HttpInterceptorFn = (req, next) => {
   const toastr = inject(ToastrService);
@@ -23,18 +29,15 @@ export const appInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(modifiedReq.method)) {
+  // const isStateChanging = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(modifiedReq.method);
+  // const isExemptPath = CSRF_EXEMPT_PATHS.some(path => modifiedReq.url.includes(path));
 
-  //   if (req.url.includes('/login') || req.url.includes('/register')) {
-  //     return next(req);
-  //   }
-  
-  //   const csrfToken = userService.getCsrfToken();
+  // if (isStateChanging && !isExemptPath) {
+  //   const csrfToken = userService.getCsrfToken(); // assumes it reads from memory/localStorage
   //   if (csrfToken) {
   //     modifiedReq = modifiedReq.clone({
   //       headers: modifiedReq.headers.set('X-CSRF-Token', csrfToken)
   //     });
-      
   //   }
   // }
 

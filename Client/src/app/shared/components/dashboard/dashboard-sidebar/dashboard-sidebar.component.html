@@ -1,29 +1,29 @@
 <div class="dashboard-nav-wrapper">
   
   @if (!isProfileSection) {
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/home`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/home`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
       <i class="fas fa-home nav-icon"></i>
       <span class="nav-text">Home</span>
     </div>
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/vehicles`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/vehicles`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
       <i class="fas fa-car nav-icon"></i>
       <span class="nav-text">Vehicles</span>
     </div>
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/rents`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/rents`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
       <i class="fa-solid fa-calendar-days"></i>
       <span class="nav-text">Rents</span>
     </div>
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/transactions`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/transactions`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
       <i class="fa-solid fa-dollar-sign"></i>
       <span class="nav-text">Transactions</span>
     </div>
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/users`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/users`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
       <i class="fas fa-user nav-icon"></i>
       <span class="nav-text">Users</span>
     </div>
     
     @if (user?.role === 'admin') {
-      <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/companies`]" [queryParams]="{ companyId: selectedCompany }" routerLinkActive="active">
+      <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/companies`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
         <i class="fa-solid fa-building"></i>
         <span class="nav-text">Companies</span>
       </div>

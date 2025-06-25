@@ -18,24 +18,37 @@ export class UserService {
 
   private profileRequest$: Observable<UserFromDB | null> | null = null;
 
-  // private csrfToken$$ = new BehaviorSubject<string | null>(null);
+  private csrfToken$$ = new BehaviorSubject<string | null>(null);
 
   private isAuthenticating = false;
   platformId = inject(PLATFORM_ID);
 
   // CSRF token functions
 
-  // private storeCsrfToken(token: string): void {
-  //   this.csrfToken$$.next(token);
-  // }
+  private storeCsrfToken(token: string): void {
+    this.csrfToken$$.next(token);
+  }
 
-  // getCsrfToken(): string | null {
-  //   return this.csrfToken$$.value;
-  // }
-  
-  // private clearCsrfToken(): void {
-  //   this.csrfToken$$.next(null);
-  // }
+  getCsrfToken(): string | null {
+    return this.csrfToken$$.value;
+  }
+
+  private clearCsrfToken(): void {
+    this.csrfToken$$.next(null);
+  }
+
+  fetchCsrfToken(): Observable<string> {
+    return this.http.get<{ csrfToken: string }>('/api/users/csrf-token').pipe(
+      tap(response => {
+        this.csrfToken$$.next(response.csrfToken);
+      }),
+      map(response => response.csrfToken),
+      catchError(err => {
+        this.csrfToken$$.next(null);
+        return throwError(() => err);
+      })
+    );
+  }
 
   // Main functions
 
@@ -211,15 +224,15 @@ export class UserService {
     );
   }
 
-  fetchCsrfToken(): Observable<string> {
-    return this.http.get<{ csrfToken: string }>('/api/users/csrf-token').pipe(
-      // tap(res => this.storeCsrfToken(res.csrfToken)),
-      map(res => res.csrfToken),
-      catchError(err => {
-        return throwError(() => err);
-      })
-    );
-  }
+  // fetchCsrfToken(): Observable<string> {
+  //   return this.http.get<{ csrfToken: string }>('/api/users/csrf-token').pipe(
+  //     // tap(res => this.storeCsrfToken(res.csrfToken)),
+  //     map(res => res.csrfToken),
+  //     catchError(err => {
+  //       return throwError(() => err);
+  //     })
+  //   );
+  // }
 
   updateProfile(updatedData: FormData): Observable<{ message: string, user: UserFromDB}> {
     return this.http.put<{ message: string, user: UserFromDB}>('/api/users/update', updatedData).pipe(

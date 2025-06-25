@@ -8,6 +8,7 @@ export interface CompanyInterface {
   updatedAt: Date;
 
   name: string;
+  slug: string;
   email: string;
   phoneNumber: string;
   location: string;

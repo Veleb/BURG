@@ -33,7 +33,7 @@ export class DashboardVehiclesViewComponent {
 
   loading = true;
   error: string | null = null;
-  currentCompanyId?: string;
+  currentCompanySlug?: string;
   user: UserFromDB | null = null; 
 
   ngOnInit(): void {
@@ -44,7 +44,7 @@ export class DashboardVehiclesViewComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe(([user, params]) => {
         this.user = user;
-        this.currentCompanyId = params.get('companyId') || undefined;
+        this.currentCompanySlug = params.get('companySlug') || undefined;
 
         if (user) {
           user.role === 'host' ? this.loadCompanyVehicles() : this.loadAllVehicles();
@@ -56,7 +56,7 @@ export class DashboardVehiclesViewComponent {
   }
 
   loadCompanyVehicles(): void {
-    if (!this.currentCompanyId) {
+    if (!this.currentCompanySlug) {
       this.error = 'No company selected';
       this.loading = false;
       return;
@@ -65,7 +65,7 @@ export class DashboardVehiclesViewComponent {
     this.loading = true;
     this.error = null;
 
-    this.vehicleService.getCompanyVehicles(this.currentCompanyId).subscribe({
+    this.vehicleService.getCompanyVehicles(this.currentCompanySlug).subscribe({
       next: (vehicles) => {
         this.vehicles = vehicles;
         this.loading = false;

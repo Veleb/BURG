@@ -1,9 +1,11 @@
 import { Schema, Types, model } from "mongoose";
 import { CompanyInterface } from "../types/model-types/company-types";
+import slugify from "slugify";
 
 const CompanySchema = new Schema<CompanyInterface>({
 
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
+  slug: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true, match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
   phoneNumber: { type: String, required: true },
   location: { type: String },
@@ -24,6 +26,27 @@ const CompanySchema = new Schema<CompanyInterface>({
   
   
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
+
+CompanySchema.index({ owner: 1 });
+CompanySchema.index({ isPromoted: 1 });
+CompanySchema.index({ status: 1 });
+
+CompanySchema.pre('save', async function (next) {
+  const company = this;
+
+  if (!company.isModified('name')) return next();
+
+  const baseSlug = slugify(company.name, { lower: true, strict: true });
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (await CompanyModel.exists({ slug })) {
+    slug = `${baseSlug}-${counter++}`;
+  }
+
+  company.slug = slug;
+  next();
+});
 
 const CompanyModel = model('Company', CompanySchema);
 

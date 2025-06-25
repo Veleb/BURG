@@ -25,6 +25,14 @@ const TransactionSchema = new Schema<TransactionInterface>({
     type: String,
     required: true,
   },
+  merchantOrderId: {
+    type: String,
+    required: true,
+  },
+  refundId: {
+    type: String,
+    required: false,
+  }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 const TransactionModel = model('Transaction', TransactionSchema, 'transactions');

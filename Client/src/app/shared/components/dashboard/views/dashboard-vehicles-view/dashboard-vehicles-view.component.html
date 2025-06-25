@@ -5,7 +5,7 @@
     <div class="button-wrapper">
       <button 
       [routerLink]="[user?.role === 'host' ? '/dashboard/host/add-vehicle' : '/dashboard/admin/add-vehicle']" 
-      [queryParams]="{ companyId: currentCompanyId }"
+      [queryParams]="{ companySlug: currentCompanySlug }"
       class="add-btn"
       >
       

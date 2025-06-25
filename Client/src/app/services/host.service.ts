@@ -18,8 +18,4 @@ export class HostService {
     return this.http.get<CompanyInterface[]>(`/api/companies`);
   }
 
-  getCompanyById(companyId: string): Observable<CompanyInterface> {
-    return this.http.get<CompanyInterface>(`/api/companies/${companyId}`);
-  }
-
 }

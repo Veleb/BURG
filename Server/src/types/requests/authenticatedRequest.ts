@@ -1,8 +1,7 @@
 import { Request } from 'express';
 import { Types } from 'mongoose';
 
-export interface authenticatedRequest extends Request {
-  req: { _id: string; role: string; tokenVersion: number; isGoogleUser: boolean; };
+export interface AuthenticatedRequest extends Request {
   isAuthenticated?: boolean;
   user?: {
     _id: Types.ObjectId;

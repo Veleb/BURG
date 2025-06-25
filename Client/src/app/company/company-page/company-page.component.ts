@@ -3,11 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { CompanyService } from '../company.service';
 import { Subject, takeUntil } from 'rxjs';
 import { CompanyInterface } from '../../../types/company-types';
-import { CompanyCardComponent } from "../company-card/company-card.component";
+import { CurrencyConverterPipe } from '../../shared/pipes/currency.pipe';
+import { ProductCardComponent } from '../../vehicle/product-card/product-card.component';
+import { DatePipe } from '../../shared/pipes/date.pipe';
 
 @Component({
   selector: 'app-company-page',
-  imports: [CompanyCardComponent],
+  imports: [CurrencyConverterPipe, ProductCardComponent, DatePipe],
   templateUrl: './company-page.component.html',
   styleUrl: './company-page.component.css'
 })
@@ -18,12 +20,14 @@ export class CompanyPageComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  company: CompanyInterface | undefined = undefined;
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const companyId = params.get('id');
+      const slug = params.get('companySlug');
       
-      if (companyId) {
-        this.companyService.getCompanyById(companyId)
+      if (slug) {
+        this.companyService.getCompanyBySlug(slug)
           .pipe(takeUntil(this.destroy$))
           .subscribe(company => {
             this.company = company;
@@ -38,5 +42,5 @@ export class CompanyPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  company: CompanyInterface | null = null;
+  
 }

@@ -4,40 +4,41 @@ import UserModel from "../models/user";
 import { TransactionInterface } from "../types/model-types/transaction-types";
 import rentService from "./rentService";
 import CompanyModel from "../models/company";
+import RentModel from "../models/rent";
+import { CompanyInterface } from "../types/model-types/company-types";
+import { VehicleInterface } from "../types/model-types/vehicle-types";
 
-const getAllTransactions = async () => {
-  const transactions = await TransactionModel.find()
-    .populate({
-      path: 'user',
-      select: '-password',
-    })
-    .populate("rent")
-    .populate("company")
-    .lean();
+const adminCompanyId = new Types.ObjectId(process.env.ADMIN_COMPANY_ID);
 
-  if (!transactions || transactions.length === 0) {
-    throw new Error("No transactions found.");
-  }
+const getCompanyTransactionsPaginated = async (companyId: Types.ObjectId, limit: number, offset: number) => {
+  const [transactions, totalCount] = await Promise.all([
+    TransactionModel.find({ company: companyId })
+      .populate('user', '-password')
+      .populate('rent')
+      .populate('company')
+      .skip(offset)
+      .limit(limit)
+      .lean(),
+    TransactionModel.countDocuments({ company: companyId }),
+  ]);
 
-  return transactions;
-}
+  return { transactions, totalCount };
+};
 
-const getCompanyTransactions = async (companyId: Types.ObjectId) => {
-  const companyTransactions = await TransactionModel.find({ company: companyId })
-    .populate({
-      path: 'user',
-      select: '-password',
-    })
-    .populate("rent")
-    .populate("company")
-    .lean();
-  
-  if (!companyTransactions || companyTransactions.length === 0) {
-    throw new Error("No transactions found for this company.");
-  }
+const getAllTransactionsPaginated = async (limit: number, offset: number) => {
+  const [transactions, totalCount] = await Promise.all([
+    TransactionModel.find()
+      .populate('user', '-password')
+      .populate('rent')
+      .populate('company')
+      .skip(offset)
+      .limit(limit)
+      .lean(),
+    TransactionModel.countDocuments(),
+  ]);
 
-  return companyTransactions;
-}
+  return { transactions, totalCount };
+};
 
 const getTransactionById = async (transactionId: Types.ObjectId) => {
   const transaction = await TransactionModel.findById(transactionId)  
@@ -104,11 +105,68 @@ const createTransaction = async (
   return transaction;
 };
 
+const markAsRefunded = async (orderId: string): Promise<void> => {
+
+  const rent = await RentModel.findOneAndUpdate(
+    { orderId },
+    { $set: { status: 'refunded' } },
+    { new: true }
+  )
+  .populate("vehicle")
+  .populate("user")
+  .populate({
+    path: 'vehicle',
+    populate: { path: 'company' }
+  });
+
+  if (!rent) throw new Error("Rent not found");
+
+  const vehicle: VehicleInterface = rent.vehicle;
+  const company: CompanyInterface = vehicle.company as CompanyInterface
+
+  await TransactionModel.findOneAndUpdate(
+    { merchantOrderId: rent.orderId },
+    { $set: { status: 'refunded' } }
+  );
+
+  await CompanyModel.findByIdAndUpdate(
+    (company as CompanyInterface)._id,
+    { $inc: { totalEarnings: -(rent?.total ?? 0) * 0.90 } },
+    { new: true }
+  )
+
+  await CompanyModel.findByIdAndUpdate(
+    adminCompanyId,
+    { $inc: { totalEarnings: -(rent?.total ?? 0) * 0.10 } },
+    { new: true }
+  )
+
+}
+
+const addRefundIdToTransaction = async (orderId: string, refundId: string): Promise<TransactionInterface> => {
+  const updatedTransaction = await TransactionModel.findOneAndUpdate(
+    { merchantOrderId: orderId },
+    { $set: { refundId: refundId } },
+    { new: true }
+  ).lean();
+
+  return updatedTransaction as TransactionInterface;
+}
+
+const getRefundIdByOrderId = async (orderId: string): Promise<string | null> => {
+  const transaction = await TransactionModel.findOne({ merchantOrderId: orderId }).lean();
+  return transaction?.refundId || null;
+}
+
+
 const TransactionService = {
-  getAllTransactions,
+  getAllTransactionsPaginated,
   createTransaction,
-  getCompanyTransactions,
-  getTransactionById
+  getCompanyTransactionsPaginated,
+  getTransactionById,
+  markAsRefunded,
+  addRefundIdToTransaction,
+  getRefundIdByOrderId
 }
 
 export default TransactionService;

@@ -30,32 +30,32 @@
 }
 
 .available-icon-check {
-  position: relative;
-  left: 12px;
+  /* position: relative;
+  left: 12px; */
   color: #169340;
   border: none;
-  font-size: 18px; 
+  font-size: 19px;
 }
 
 .available-icon-x {
-  position: relative;
-  left: 12px;
+  /* position: relative; */
+  /* left: 12px; */
   color: #D31010;
   border: none;
-  font-size: 18px; 
+  font-size: 19px;
 }
 
 .heart-icon {
-  position: relative;
-  right: 12px;
-  font-size: 18px;
+  /* position: relative; */
+  /* right: 12px; */
+  font-size: 17.5px;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.heart-icon:hover {
+/* .heart-icon:hover {
   cursor: pointer;
-  transform: scale(1.2);
-}
+  transform: scale(1.2); 
+}*/
 
 .heart-icon.liked {
   animation: popLiked 0.3s ease;
@@ -311,4 +311,21 @@ button:hover {
   100% {
     transform: scale(1);
   }
+}
+
+.circle-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.circle-badge:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }

@@ -34,7 +34,7 @@ export class CompanyCardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  selectedCurrency: string = 'USD';
+  selectedCurrency: string = 'INR';
 
   confirmCompany(companyId: string) {
     if (this.company) {

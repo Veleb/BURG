@@ -34,7 +34,7 @@ export const routes: Routes = [
   { path: "certificate", component: VerifyCertificateComponent },
   { path: "redeem-certificate", component: RedeemCertificateComponent, canActivate: [ authGuard ] },
   
-  { path: "company/:id", component: CompanyPageComponent },
+  { path: "company/:companySlug", component: CompanyPageComponent },
 
   { 
     path: "auth",

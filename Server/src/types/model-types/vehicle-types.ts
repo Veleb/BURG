@@ -16,6 +16,7 @@ export interface VehicleInterface {
 
 interface VehicleDetails {
   name: string;
+  slug?: string;
   model: string;
   year: number;
   size: Size;

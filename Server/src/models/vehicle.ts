@@ -1,6 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 import { Size, Category } from "../types/model-types/enums"; 
 import { VehicleInterface } from "../types/model-types/vehicle-types";
+import slugify from "slugify";
 
 const VehicleSchema = new Schema<VehicleInterface>({
   reserved: [{
@@ -16,6 +17,7 @@ const VehicleSchema = new Schema<VehicleInterface>({
 
   details: {
     name: { type: String, required: true },
+    slug: { type: String, unique: true },
     model: { type: String, required: true },
     size: { type: String, enum: Object.values(Size) },
     images: { type: [String], default: [] },
@@ -45,8 +47,29 @@ const VehicleSchema = new Schema<VehicleInterface>({
 
 VehicleSchema.index({ "details.category": 1 });
 VehicleSchema.index({ "details.pricePerDay": 1 });
+VehicleSchema.index({ "details.name": 1, "details.model": 1 });
 VehicleSchema.index({ likes: 1 });
 VehicleSchema.index({ available: 1 }); 
+VehicleSchema.index({ company: 1 });
+
+
+VehicleSchema.pre("save", async function (next) {
+  const vehicle = this;
+  if (!vehicle.isModified("details.name") && !vehicle.isModified("details.model")) return next();
+
+  const baseSlug = slugify(`${vehicle.details.name}-${vehicle.details.model}-${vehicle.details.year}`, {
+    lower: true, strict: true,
+  });
+
+  let slug = baseSlug;
+  let counter = 1;
+  while (await VehicleModel.exists({ "details.slug": slug })) {
+    slug = `${baseSlug}-${counter++}`;
+  }
+
+  vehicle.details.slug = slug;
+  next();
+});
 
 const VehicleModel = model('Vehicle', VehicleSchema);
 

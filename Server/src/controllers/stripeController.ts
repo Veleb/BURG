@@ -87,7 +87,8 @@ stripeController.post('/create-checkout-session', async (req: Request, res: Resp
       appliedDiscounts: {
         referral: referralDiscountSafe,
         creditsUsed: useCredits ? appliedDiscounts.creditsUsed : 0
-      }
+      },
+      orderId: new Types.ObjectId().toString() // generate a new order ID
     });
 
     // create checkout session and add metadata
@@ -242,8 +243,7 @@ export const postWebhook = async (req: Request, res: Response) => {
             creditsUsed: session.metadata ? Number(session.metadata.creditsUsed) || 0 : 0
           }
         } as RentInterface,
-        session.id,
-        session.metadata?.referralCode || ''
+        session.id
       );
 
       await TransactionService.createTransaction(
@@ -253,7 +253,7 @@ export const postWebhook = async (req: Request, res: Response) => {
         amountTotal / 100
       );
 
-      res.status(200).json({ received: true, rental: result.rental, user: result.user });
+      res.status(200).json({ received: true, rental: result.rental, user: result.updatedUser });
     } catch (error) {
       console.error("Error in checkout.session.completed handler:", error);
     

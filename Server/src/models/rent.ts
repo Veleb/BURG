@@ -56,11 +56,17 @@ const RentSchema = new Schema<RentInterface>({
     },
   },
 
-  paymentSessionId: {
-    type: String,
-    required: false,
-  },
+  // paymentSessionId: {
+  //   type: String,
+  //   required: false,
+  // },
 
+  orderId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  
   referralCode: {
     type: String,
     required: false,

@@ -7,7 +7,8 @@ import errorMiddleware from '../middlewares/errorMiddleware';
 import csrfMiddleware from '../middlewares/csrfMiddleware';
 import { postWebhook } from '../controllers/stripeController';
 import path from 'path';
-
+import helmet from 'helmet';
+import csurf from 'csurf';
 
 const FRONT_END = (process.env.PROD === 'true') ? process.env.FRONT_END_PROD : process.env.FRONT_END_LOCAL;
 
@@ -30,10 +31,15 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
+const csrfProtection = csurf({ cookie: true });
+
+
 export function expressConfig(app: Application): void {
 
   app.set('trust proxy', 1);
     
+  app.use(helmet());
+
   app.post(
     '/stripe/webhook',
     express.raw({ type: 'application/json' }),
@@ -51,6 +57,11 @@ export function expressConfig(app: Application): void {
 
   app.use(authMiddleware);
   // app.use(csrfMiddleware);
+  
+  // app.get('/csrf-token', csrfProtection, (req, res) => {
+  //   res.json({ csrfToken: req.csrfToken() });
+  // });
+  
   app.use(routes);
   app.use(errorMiddleware);
 }

@@ -91,6 +91,34 @@
   transform: translateY(-3px) scale(1.05);
 }
 
+@media (min-width: 1600px) {
+  .background-image {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 1600px) {
+  .background-image {
+    min-width: min-content;
+  }
+}
+
+@media (max-width: 1200px) {
+    
+  .datepicker-section {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  
+}
+
 @media (max-width: 768px) {
   .hero {
     height: 500px;

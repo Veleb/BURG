@@ -6,7 +6,7 @@
         <div class="input-label-wrapper">
            <label class="date-label" for="startDate">Pick Up</label>
            <div class="input-container">
-              <input id="startDate" type="text" class="date-input" placeholder="Start date" #startDate>
+              <input id="startDate" type="text" class="date-input startDate" placeholder="Start date" #startDate>
               <i class="fa-solid fa-calendar-days calendar-icon-left" (click)="openCalendar(startDate)"></i>
            </div>
         </div>
@@ -19,7 +19,7 @@
            
            <label class="date-label" for="endDate">Drop Off</label>
            <div class="input-container">
-              <input id="endDate" type="text" class="date-input" placeholder="End date" #endDate>
+              <input id="endDate" type="text" class="date-input endDate" placeholder="End date" #endDate>
               <i class="fa-solid fa-calendar-days calendar-icon-right" (click)="openCalendar(endDate)"></i>
            </div>
 
@@ -35,7 +35,7 @@
         
         <div class="input-label-wrapper-column">
            <label class="date-label-column" for="startDate">Pick Up</label>
-           <input id="startDate" type="text" class="date-input-column" placeholder="Start date"  #startDate>
+           <input id="startDate" type="text" class="date-input-column startDate" placeholder="Start date"  #startDate>
         </div>
       
            <i class="fa-solid fa-calendar-days calendar-icon-left-column" (click)="openCalendar(startDate)"></i>
@@ -47,7 +47,7 @@
           
         <div class="input-label-wrapper-column">
            <label class="date-label-column" for="endDate">Drop Off</label>
-           <input id="endDate" type="text" class="date-input-column" placeholder="End date"  #endDate>
+           <input id="endDate" type="text" class="date-input-column endDate" placeholder="End date"  #endDate>
         </div>
       
            <i class="fa-solid fa-calendar-days calendar-icon-right-column" (click)="openCalendar(endDate)"></i>

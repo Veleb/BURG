@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { StripeService } from '../../services/stripe.service';
+import { PhonepeService } from '../../services/phonepe.service';
 
 @Component({
     selector: 'app-payment-success',
@@ -10,16 +10,19 @@ import { StripeService } from '../../services/stripe.service';
 })
 export class PaymentSuccessComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private stripeService: StripeService) {}
+  private route = inject(ActivatedRoute)
+  private phonepeService = inject(PhonepeService)
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      const sessionId = params['session_id'];
+      const orderId = params['orderId'];
       
-      if (sessionId) {
-        this.stripeService.verifyPayment(sessionId).subscribe();
+      if (orderId) {
+        this.phonepeService.verifyPayment(orderId).subscribe();
       }
     });
   }
 
+  
+  
 }

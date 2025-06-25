@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { authenticatedRequest } from "../types/requests/authenticatedRequest";
+import { AuthenticatedRequest } from "../types/requests/authenticatedRequest";
 import { Types } from "mongoose";
 import certificateService from "../services/certificateService";
 import { generateCertificatePDF } from "../utils/certificateGenerator";
@@ -31,7 +31,7 @@ certificateController.get(
 certificateController.get(
   `/users`,
   async (req: Request, res: Response, next: NextFunction) => {
-    const modifiedReq = req as authenticatedRequest;
+    const modifiedReq = req as AuthenticatedRequest;
 
     try {
       const userId = new Types.ObjectId(modifiedReq.user?._id);
@@ -85,14 +85,12 @@ certificateController.post(
 
       if (isValid) {
         if (certificate !== true) {
-          res
-            .status(200)
-            .json({
-              message: "Certificate is valid.",
-              valid: true,
-              downloadLink: certificate.downloadLink,
-              code: certificate.code,
-            });
+          res.status(200).json({
+            message: "Certificate is valid.",
+            valid: true,
+            downloadLink: certificate.downloadLink,
+            code: certificate.code,
+          });
         } else {
           res
             .status(400)
@@ -100,14 +98,12 @@ certificateController.post(
         }
         return;
       } else {
-        res
-          .status(400)
-          .json({
-            message: "Certificate is invalid.",
-            valid: false,
-            downloadLink: undefined,
-            code: null,
-          });
+        res.status(400).json({
+          message: "Certificate is invalid.",
+          valid: false,
+          downloadLink: undefined,
+          code: null,
+        });
         return;
       }
     } catch (error) {
@@ -196,7 +192,7 @@ certificateController.post(
 certificateController.post(
   `/add-user`,
   async (req: Request, res: Response, next: NextFunction) => {
-    const modifiedReq = req as authenticatedRequest;
+    const modifiedReq = req as AuthenticatedRequest;
 
     try {
       let { certificateCode, userId } = req.body;
@@ -233,7 +229,7 @@ certificateController.post(
 certificateController.post(
   `/redeem`,
   async (req: Request, res: Response, next: NextFunction) => {
-    const modifiedReq = req as authenticatedRequest;
+    const modifiedReq = req as AuthenticatedRequest;
 
     try {
       const userId = new Types.ObjectId(modifiedReq.user?._id);

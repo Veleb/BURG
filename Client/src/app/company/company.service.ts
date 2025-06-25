@@ -18,6 +18,10 @@ export class CompanyService {
     return this.http.get<CompanyInterface>(`/api/companies/${companyId}`);
   }
 
+  getCompanyBySlug(slug: string): Observable<CompanyInterface> {
+    return this.http.get<CompanyInterface>(`/api/companies/${slug}`);
+  }
+
   getPendingCompanies(): Observable<CompanyInterface[]> {
     return this.http.get<CompanyInterface[]>(`/api/companies/pending`);
   }

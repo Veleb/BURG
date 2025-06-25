@@ -5,7 +5,6 @@ import { CompanyInterface } from '../../../../../types/company-types';
 import { FormsModule } from '@angular/forms';
 import { combineLatest, filter, Subject, takeUntil } from 'rxjs';
 import { UserFromDB } from '../../../../../types/user-types';
-import { log } from 'node:console';
 
 @Component({
   selector: 'app-dashboard-sidebar',
@@ -49,7 +48,7 @@ export class DashboardSidebarComponent implements OnInit, OnDestroy {
       this.companies = companies;
 
       if (!this.isProfileSection  && this.companies.length > 0) {
-        this.selectedCompany = this.selectedCompany || this.companies[0]._id;
+        this.selectedCompany = this.selectedCompany || this.companies[0].slug;
         this.onCompanyChange();
       }
     });
@@ -59,7 +58,7 @@ export class DashboardSidebarComponent implements OnInit, OnDestroy {
     if (this.selectedCompany && !this.isProfileSection) {
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { companyId: this.selectedCompany },
+        queryParams: { companySlug: this.selectedCompany },
         queryParamsHandling: 'merge'
       });
     }

@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response, Router } from "express";
 import userService from "../services/userService";
 import { UserForAuth } from "../types/model-types/user-types";
-import { authenticatedRequest } from "../types/requests/authenticatedRequest";
+import { AuthenticatedRequest } from "../types/requests/authenticatedRequest";
 import setAuthTokens from "../utils/setAuthTokens";
 import tokenUtil from "../utils/tokenUtil";
 import { Types } from "mongoose";
 import upload from "../middlewares/upload";
-import { uploadFilesToCloudinary, uploadSingleFileToCloudinary } from "../utils/uploadFilesToCloudinary";
+import {
+  uploadFilesToCloudinary,
+  uploadSingleFileToCloudinary,
+} from "../utils/uploadFilesToCloudinary";
 
 const userController = Router();
 
@@ -14,7 +17,7 @@ userController.get(
   "/profile",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: Types.ObjectId | undefined = (req as authenticatedRequest)
+      const userId: Types.ObjectId | undefined = (req as AuthenticatedRequest)
         .user?._id;
 
       if (!userId) {
@@ -40,7 +43,7 @@ userController.get(
 userController.get(
   "/likes",
   async (req: Request, res: Response, next: NextFunction) => {
-    const customReq = req as authenticatedRequest;
+    const customReq = req as AuthenticatedRequest;
     const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
@@ -59,10 +62,14 @@ userController.get(
   }
 );
 
+userController.get("/csrf-token", (req: Request, res: Response) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
 userController.get(
   "/companies",
   async (req: Request, res: Response, next: NextFunction) => {
-    const customReq = req as authenticatedRequest;
+    const customReq = req as AuthenticatedRequest;
     const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
@@ -84,7 +91,7 @@ userController.get(
 userController.get(
   "/rents",
   async (req: Request, res: Response, next: NextFunction) => {
-    const customReq = req as authenticatedRequest;
+    const customReq = req as AuthenticatedRequest;
     const userId: Types.ObjectId | undefined = customReq.user?._id;
 
     try {
@@ -145,7 +152,7 @@ userController.post(
   "/logout",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const customReq = req as authenticatedRequest;
+      const customReq = req as AuthenticatedRequest;
       const userId = customReq.user?._id;
 
       if (!userId) {
@@ -204,7 +211,7 @@ userController.put(
     { name: "bannerImage", maxCount: 1 },
   ]),
   async (req: Request, res: Response, next: NextFunction) => {
-    const customReq = req as authenticatedRequest;
+    const customReq = req as AuthenticatedRequest;
 
     try {
       const userId: Types.ObjectId | undefined = customReq.user?._id;
@@ -253,7 +260,7 @@ userController.put(
         email,
         phoneNumber,
         profilePicture: profilePictureUrl,
-        bannerImage: bannerImageUrl
+        bannerImage: bannerImageUrl,
       };
 
       const updatedUser: Partial<UserForAuth> = await userService.updateUser(
@@ -273,7 +280,7 @@ userController.put(
 userController.delete(
   "/delete",
   async (req: Request, res: Response, next: NextFunction) => {
-    const customReq = req as authenticatedRequest;
+    const customReq = req as AuthenticatedRequest;
 
     try {
       const userId: Types.ObjectId | undefined = customReq.user?._id;

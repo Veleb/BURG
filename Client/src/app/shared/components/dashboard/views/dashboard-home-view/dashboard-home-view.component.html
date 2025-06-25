@@ -1,6 +1,7 @@
 <div class="home-view">
-  <h2>{{ user?.role === 'admin' ? "Admin" : "Company" }} Dashboard</h2>
-  
+  <!-- <h2>{{ user?.role === 'admin' ? "Admin" : "Company" }} Dashboard</h2> -->
+  <h2>{{ company?.name }} Dashboard</h2>
+
   <div class="stats-grid">
     <div class="stat-card">
       <h3>Total Earnings</h3>
@@ -15,7 +16,8 @@
     
     <div class="stat-card">
       <h3>Active Rents</h3>
-      <p>{{ user?.role === 'admin' ? totalRents : activeRents.length || 0 }}</p>
+      <!-- <p>{{ user?.role === 'admin' ? totalRents : activeRents.length || 0 }}</p> -->
+      <p>{{ totalRents }}</p>
     </div>
   </div>
 

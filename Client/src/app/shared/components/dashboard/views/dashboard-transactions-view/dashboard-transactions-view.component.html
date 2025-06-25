@@ -1,19 +1,38 @@
-<div class="transactions-wrapper">
-  @if (transactions.length < 0) {
-    <p class="no-transactions">No transactions found!</p>
-  } @else {
-    @for (transaction of transactions; track $index) {
-      <div class="transaction-card">
-        <div class="transaction-card-header">
-          <h3>Company - {{ transaction.company.name }}</h3>
-          <h3>User - {{ transaction.user.fullName }}</h3>
-          <p>{{ transaction.created_at | date }}</p>
+<div class="transactions-view">
+  <div class="transactions-wrapper">
+    @if (transactions.length < 0) {
+      <p class="no-transactions">No transactions found!</p>
+    } @else {
+      @for (transaction of transactions; track $index) {
+        <div class="transaction-card">
+          <div class="transaction-card-header">
+            <h3>Company - {{ transaction.company.name }}</h3>
+            <h3>User - {{ transaction.user.fullName }}</h3>
+            <p>{{ transaction.created_at | date }}</p>
+          </div>
+
+          <div class='transaction-details-wrapper'>
+            <div class="transaction-card-body">
+              <p>Total: {{ transaction.total | currencyConverter }}</p>
+              <p [class]="'transaction-status ' + transaction.status">Status: {{ transaction.status }}</p>
+            </div>
+  
+            <div class="buttons-wrapper">
+              @if (transaction.status === 'success') {
+                <button class="refund-button" (click)="onRefund(transaction)">Refund Payment</button>
+              }
+            </div>
+          </div>
         </div>
-        <div class="transaction-card-body">
-          <p>Total: {{ transaction.total | currencyConverter }}</p>
-          <p>Status: {{ transaction.status }}</p>
-        </div>
-      </div>
+      }
     }
-  }
+  </div>
+  
+  <app-paginator
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalCount]="totalCount"
+      (pageChange)="onPageChange($event)"
+  ></app-paginator>
+  
 </div>

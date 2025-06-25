@@ -16,12 +16,12 @@
           @if (vm.user.role === 'host') {
             <i routerLink="/dashboard/user/profile" class="fa-solid fa-user desktop-user-icon"></i>
             <i [routerLink]="['/dashboard/host/home']" 
-               [queryParams]="{ companyId: vm.user.companies[0] }" 
+               [queryParams]="{ companySlug: vm.user.companies[0].slug}" 
                class="fa-solid fa-handshake"></i>
           } @else if (vm.user.role === 'admin') {
             <i routerLink="/dashboard/user/profile" class="fa-solid fa-user desktop-user-icon"></i>
             <i [routerLink]="['/dashboard/admin/home']" 
-               [queryParams]="{ companyId: vm.user.companies[0] }" 
+               [queryParams]="{ companySlug: vm.user.companies[0].slug }" 
                class="fa-solid fa-handshake"></i>
           } @else {
             <i routerLink="/dashboard/user/profile" class="fa-solid fa-user desktop-user-icon"></i>

@@ -65,7 +65,7 @@
 
       <div class="company-details-wrapper">
         <div class="company-basic-details">
-          <div class="company-details">
+          <div class="company-details" [routerLink]="['/company', vehicle?.company?.slug]">
             <div class="company-profile-picture">
               {{ vehicle?.company?.owner?.bannerImage }}
             </div>

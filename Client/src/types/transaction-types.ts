@@ -7,9 +7,10 @@ export interface TransactionInterface {
   total: number;
   rent: RentInterface;
   company: CompanyInterface;
-  status: 'success' | 'failed' | 'expired',
-  type: string; // withdrawal | payment
-
+  status: 'success' | 'failed' | 'expired' | 'refunded',
+  // type: string; // withdrawal | payment
+  merchantOrderId: string;
+  refundId?: string;
   created_at: Date;
   updated_at: Date;
   _id: string;
@@ -20,6 +21,8 @@ export interface TransactionCreateInterface {
   total: number;
   rent: string;
   company: CompanyInterface;
-  status: 'success' | 'failed' | 'expired',
-  type: string; // withdrawal | payment
+  status: 'success' | 'failed' | 'expired' | 'refunded',
+  // type: string; // withdrawal | payment
+  merchantOrderId: string;
+  refundId?: string;
 }
