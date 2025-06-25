@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HostService } from '../services/host.service';
 import { ToastrService } from 'ngx-toastr';
@@ -15,15 +15,13 @@ import { LocationPickerComponent } from '../shared/components/location-picker/lo
 })
 export class BecomeHostComponent implements AfterViewInit {
 
+  private hostService = inject(HostService);
+  private toastr = inject(ToastrService);
+  private platformId = inject(PLATFORM_ID);
+  
   iti: any;  
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef;
   location: string | undefined = undefined;
-
-  constructor(
-    private hostService: HostService,
-    private toastr: ToastrService,
-    @Inject(PLATFORM_ID) private platformId: object,
-  ) {}
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {

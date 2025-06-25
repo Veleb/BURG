@@ -22,8 +22,10 @@ const getCompanyBySlug = async (slug: string) => {
 
 const createCompany = async (data: CompanyForCreate) => {
   try {
-    const company = await CompanyModel.create(data);
-  
+    const company = new CompanyModel(data);
+    await company.save();                         
+
+    
     if (company) {
       await UserModel.findByIdAndUpdate(
         data.owner, 
@@ -36,6 +38,7 @@ const createCompany = async (data: CompanyForCreate) => {
   
     return company;
   } catch (err) {
+    console.error("Create company error:", err);
     throw new Error('Error creating company');
   }
 };

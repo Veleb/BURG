@@ -63,7 +63,6 @@ companyController.post(
 
       const companyData = {
         name: req.body.companyName,
-        slug: "",
         email: req.body.companyEmail,
         phoneNumber: req.body.companyPhone,
         location: req.body.companyLocation,

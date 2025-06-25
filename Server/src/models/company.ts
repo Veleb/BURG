@@ -5,7 +5,7 @@ import slugify from "slugify";
 const CompanySchema = new Schema<CompanyInterface>({
 
   name: { type: String, required: true, unique: true },
-  slug: { type: String, required: true, unique: true },
+  slug: { type: String, unique: true },
   email: { type: String, required: true, unique: true, match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
   phoneNumber: { type: String, required: true },
   location: { type: String },
@@ -32,7 +32,7 @@ CompanySchema.index({ isPromoted: 1 });
 CompanySchema.index({ status: 1 });
 
 CompanySchema.pre('save', async function (next) {
-  const company = this;
+  const company = this as any;
 
   if (!company.isModified('name')) return next();
 
@@ -40,13 +40,16 @@ CompanySchema.pre('save', async function (next) {
   let slug = baseSlug;
   let counter = 1;
 
-  while (await CompanyModel.exists({ slug })) {
+  const Company = company.constructor;
+
+  while (await Company.exists({ slug })) {
     slug = `${baseSlug}-${counter++}`;
   }
 
   company.slug = slug;
   next();
 });
+
 
 const CompanyModel = model('Company', CompanySchema);
 

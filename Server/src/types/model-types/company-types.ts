@@ -26,7 +26,6 @@ export interface CompanyInterface {
 
 export interface CompanyForCreate {
   name: string;
-  slug: string;
   email: string;
   phoneNumber: string;
   location: string;
