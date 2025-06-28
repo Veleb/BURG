@@ -10,8 +10,8 @@ const VehicleSchema = new Schema<VehicleInterface>({
   }],
 
   company: { 
-    ref: 'Company', 
     type: Types.ObjectId, 
+    ref: 'Company', 
     required: true,
   },
 

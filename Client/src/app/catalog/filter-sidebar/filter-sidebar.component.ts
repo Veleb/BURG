@@ -37,6 +37,8 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
   categories: Category[] = environment.categories;
   activeCategories: string[] = [];
 
+  showOnlyAvailable: boolean = true;
+
   priceFilterMode: 'manual' | 'slider' = 'slider';
 
   priceMin: number = 50;
@@ -212,4 +214,9 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
     return isPlatformBrowser(this.platformId);
   }
   
+  toggleShowOnlyAvailable() {
+    this.showOnlyAvailable = !this.showOnlyAvailable;
+    this.vehicleService.setShowOnlyAvailable(this.showOnlyAvailable);
+  }
+
 }

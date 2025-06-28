@@ -121,6 +121,72 @@ companyController.put(
 );
 
 companyController.put(
+  "/hold/:id",
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const companyId: string | undefined = req.params.id;
+
+      if (!companyId) {
+        res.status(400).json({ message: "Company ID must be provided!" });
+        return;
+      }
+
+      const updatedCompany: CompanyInterface | null =
+        await companyService.updateCompanyStatus(companyId, "hold");
+
+      if (!updatedCompany) {
+        res.status(404).json({ message: "Company not found!" });
+        return;
+      }
+
+      await UserService.promoteUserStatus(
+        (updatedCompany.owner as UserInterface)._id,
+        "user"
+      );
+
+      res.status(200).json(updatedCompany);
+      return;
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+companyController.put(
+  "/ban/:id",
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const companyId: string | undefined = req.params.id;
+
+      if (!companyId) {
+        res.status(400).json({ message: "Company ID must be provided!" });
+        return;
+      }
+
+      const updatedCompany: CompanyInterface | null =
+      await companyService.updateCompanyStatus(companyId, "banned");
+
+      if (!updatedCompany) {
+        res.status(404).json({ message: "Company not found!" });
+        return;
+      }
+
+      await UserService.promoteUserStatus(
+        (updatedCompany.owner as UserInterface)._id,
+        "user"
+      );
+
+      res.status(200).json(updatedCompany);
+      return;
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+companyController.put(
   "/cancel/:id",
   adminMiddleware,
   async (req: Request, res: Response, next: NextFunction) => {

@@ -78,7 +78,22 @@
        }
       </div>
     <!-- } -->
-
     
     </div>
 
+    <hr class="section-break bigger-margin">
+
+    <div class="availability-filter-wrapper">
+      <label>
+        <input
+          type="checkbox"
+          [checked]="showOnlyAvailable"
+          (change)="toggleShowOnlyAvailable()"
+        />
+        Show only available vehicles
+      </label>
+    </div>
+    
+    <hr class="section-break">
+
+</div>

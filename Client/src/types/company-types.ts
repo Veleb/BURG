@@ -14,7 +14,7 @@ export interface CompanyInterface {
   location: string;
   vehicles: number;
   owner: UserFromDB;
-  status: 'pending' | 'confirmed' | 'canceled';
+  status: 'pending' | 'confirmed' | 'canceled' | "hold" | "banned";
   carsAvailable: VehicleInterface[],
   totalEarnings: number,
   transactions: TransactionInterface[],

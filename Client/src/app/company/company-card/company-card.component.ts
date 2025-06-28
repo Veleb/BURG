@@ -56,4 +56,23 @@ export class CompanyCardComponent implements OnInit, OnDestroy {
     }
   }
 
+  holdCompany(companyId: string) {
+    if (this.company) {
+      this.companyService.holdCompany(companyId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((company: CompanyInterface) => {
+        this.company = company;
+      });
+    }
+  }
+  
+  banCompany(companyId: string) {
+    if (this.company) {
+      this.companyService.banCompany(companyId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((company: CompanyInterface) => {
+        this.company = company;
+      });
+    }
+  }
 }

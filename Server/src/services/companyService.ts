@@ -43,7 +43,7 @@ const createCompany = async (data: CompanyForCreate) => {
   }
 };
 
-const updateCompanyStatus = async (id: string, status: 'pending' | 'confirmed' | 'canceled') => {
+const updateCompanyStatus = async (id: string, status: 'pending' | 'confirmed' | 'canceled' | "hold" | "banned") => {
   try {
     const updatedCompany = await CompanyModel.findByIdAndUpdate(
       id,

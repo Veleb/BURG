@@ -10,11 +10,31 @@
   <p><strong>Company ID:</strong> {{ (company?._id ?? '') }}</p>
 
   @if (company?.status === 'pending') {
+    <div class="action-buttons" >
+      <button class="confirm-button" (click)="confirmCompany((company?._id ?? ''))">Confirm</button>
+      <button class="reject-button" (click)="rejectCompany((company?._id ?? ''))">Reject</button>
+    </div>
+  } @else if (company?.status === 'canceled') {
+    <div class="action-buttons" >
+      <button class="confirm-button" (click)="confirmCompany((company?._id ?? ''))">Confirm</button>
+    </div>
+  } @else if (company?.status === 'confirmed') {
     <div class="action-buttons">
-      <button (click)="confirmCompany((company?._id ?? ''))">Confirm</button>
-      <button (click)="rejectCompany((company?._id ?? ''))">Reject</button>
+      <button class="hold-button" (click)="holdCompany((company?._id ?? ''))">Hold</button>
+      <button class="ban-button" (click)="banCompany((company?._id ?? ''))">Ban</button>
+    </div>
+  } @else if (company?.status === 'hold') {
+    <div class="action-buttons">
+      <button class="ban-button" (click)="banCompany((company?._id ?? ''))">Ban</button>
+      <button class="confirm-button" (click)="confirmCompany((company?._id ?? ''))">Unhold</button>
+    </div>
+  } @else if (company?.status === 'banned') {
+    <div class="action-buttons">
+      <button class="hold-button" (click)="holdCompany((company?._id ?? ''))">Hold</button>
+      <button class="confirm-button" (click)="confirmCompany((company?._id ?? ''))">Unban</button>
     </div>
   }
+
 
   <a class="details-link" [routerLink]="['/company', (company?.slug ?? '')]">View Details</a>
 </div> 

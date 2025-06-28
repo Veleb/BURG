@@ -78,22 +78,31 @@
   transition: all 0.2s ease;
 }
 
-.action-buttons button:first-child {
+.action-buttons .confirm-button {
   background: #48bb78;
   color: white;
 }
 
-.action-buttons button:first-child:hover {
+.action-buttons .confirm-button:hover {
   background: #38a169;
 }
 
-.action-buttons button:last-child {
+.action-buttons .reject-button, .ban-button {
   background: #f56565;
   color: white;
 }
 
-.action-buttons button:last-child:hover {
+.action-buttons .reject-button, .ban-button {
   background: #e53e3e;
+}
+
+.action-buttons .hold-button {
+  background: #E4B15A;
+  color: white;
+}
+
+.action-buttons .hold-button:hover {
+  background: #ed8936;
 }
 
 .details-link {

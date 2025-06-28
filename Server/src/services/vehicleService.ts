@@ -7,7 +7,7 @@ import type {
   VehicleForCreate,
   VehicleInterface,
 } from "../types/model-types/vehicle-types";
-import { uploadFilesToCloudinary, uploadSingleFileToCloudinary, uploadSummaryPdf } from "../utils/uploadFilesToCloudinary";
+import { uploadFilesToCloudinary, uploadSummaryPdf } from "../utils/uploadFilesToCloudinary";
 
 async function getVehicles(
   options: {
@@ -17,23 +17,27 @@ async function getVehicles(
 ): Promise<{ vehicles: VehicleInterface[] }> {
   const { limit = 20, offset = 0 } = options;
 
-  let query = VehicleModel.find().skip(offset).limit(limit).lean();
+  let vehicles = await VehicleModel.find().skip(offset).limit(limit).lean();
 
-  const vehicles = await query;
-
-  await Promise.all(
+  const updates = await Promise.all(
     vehicles.map(async (vehicle) => {
-      vehicle.available = await checkAvailabilityToday(vehicle._id.toString());
-      await VehicleModel.findByIdAndUpdate(
-        vehicle._id,
-        { available: vehicle.available },
-        { new: true }
-      );
+      const available = await checkAvailabilityToday(vehicle._id);
+      vehicle.available = available;
+
+      return {
+        updateOne: {
+          filter: { _id: vehicle._id },
+          update: { $set: { available } },
+        },
+      };
     })
   );
 
+  await VehicleModel.bulkWrite(updates);
+
   return { vehicles };
 }
+
 
 async function getVehicleBySlug(slug: string): Promise<VehicleInterface> {
   const vehicle = await VehicleModel.findOne({ "details.slug": slug })
@@ -211,7 +215,7 @@ async function checkAvailability(
   return !conflict;
 }
 
-async function checkAvailabilityToday(vehicleId: string): Promise<boolean> {
+async function checkAvailabilityToday(vehicleId: Types.ObjectId): Promise<boolean> {
   const now = new Date();
 
   const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));

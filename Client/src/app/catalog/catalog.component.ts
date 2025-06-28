@@ -121,10 +121,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
       case 'Most popular':
         this.vehicleService.setSort('likes', 'desc');
         break;
-      case 'Most expensive':
+      case 'Price high':
         this.vehicleService.setSort('price', 'desc');
         break;
-      case 'Least expensive':
+      case 'Price low':
         this.vehicleService.setSort('price', 'asc');
         break;
       case 'Year new-old':

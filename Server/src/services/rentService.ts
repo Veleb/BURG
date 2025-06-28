@@ -285,14 +285,17 @@ async function rentWithoutPaying(rentData: RentForCreate): Promise<RentInterface
 export async function handleSuccessfulPayment(orderId: string): Promise<{ success: boolean; transactionId: Types.ObjectId; rent: RentInterface }> {
   try {
     const rent = await RentModel.findOne({ orderId })
-    .populate("vehicle")
-    .populate("user")
-    .populate({
-      path: 'vehicle',
-      populate: { path: 'company' }
-    });
+      .populate('user')
+      .populate({
+        path: 'vehicle',
+        populate: { path: 'company', model: 'Company' }
+      });
 
     if (!rent) throw new Error("Rent not found");
+    if (!rent.vehicle) throw new Error("Vehicle not populated");
+    if (!rent.user) throw new Error("User not populated");
+    if (!rent.vehicle.company) throw new Error("Company not populated on vehicle");
+
 
     const vehicle: VehicleInterface = rent.vehicle;
     const user: UserFromDB = rent.user;

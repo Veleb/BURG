@@ -25,6 +25,7 @@ export class VehicleService {
     sort: { key: 'none', direction: 'asc' },
     priceMin: undefined,
     priceMax: undefined,
+    showOnlyAvailable: true,
   });
 
 
@@ -49,9 +50,10 @@ export class VehicleService {
         const matchesMaxPrice = filters.priceMax === undefined || 
         vehicle.details.pricePerDay <= filters.priceMax;
 
-
-        return matchesCategory && matchesYear && matchesMinPrice && matchesMaxPrice;
-
+        const matchesAvailable = !filters.showOnlyAvailable || vehicle.available;
+        
+        return matchesCategory && matchesYear && matchesMinPrice && matchesMaxPrice && matchesAvailable; 
+        
       })
 
       return this.sortVehicles(filtered, filters.sort);
@@ -115,6 +117,10 @@ export class VehicleService {
 
   setPriceRange(min: number, max: number): void {
     this.updateFilters({ priceMin: min, priceMax: max });
+  }
+
+  setShowOnlyAvailable(show: boolean): void {
+    this.updateFilters({ showOnlyAvailable: show });
   }
 
   priceData$: Observable<{ min: number; max: number; mid: number }> = this.availableVehicles$$

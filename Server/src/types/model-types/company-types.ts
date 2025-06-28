@@ -16,7 +16,7 @@ export interface CompanyInterface {
   carsAvailable?: VehicleInterface[];
   transactions: Types.ObjectId[]; 
   owner: Types.ObjectId | UserInterface;
-  status: 'pending' | 'confirmed' | 'canceled';
+  status: 'pending' | 'confirmed' | 'canceled' | "hold" | "banned";
   totalEarnings: number;
   companyType: string;
   stateRegistration: string;

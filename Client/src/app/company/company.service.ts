@@ -34,4 +34,12 @@ export class CompanyService {
     return this.http.put<CompanyInterface>(`/api/companies/cancel/${companyId}`, {});
   }
 
+  holdCompany(companyId: string): Observable<CompanyInterface> {
+    return this.http.put<CompanyInterface>(`/api/companies/hold/${companyId}`, {});
+  }
+
+  banCompany(companyId: string): Observable<CompanyInterface> {
+    return this.http.put<CompanyInterface>(`/api/companies/ban/${companyId}`, {});
+  }
+
 }
