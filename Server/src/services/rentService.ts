@@ -327,6 +327,18 @@ export async function handleSuccessfulPayment(orderId: string): Promise<{ succes
       transactions: transaction._id,
     });
 
+    const populatedRent = await RentModel.findById(updatedRent._id)
+      .populate('user')
+      .populate({
+        path: 'vehicle',
+        populate: { path: 'company', model: 'Company' }
+      });
+
+    if (!populatedRent) throw new Error("Updated rent not found after update");
+    if (!populatedRent.vehicle) throw new Error("Vehicle not populated");
+    if (!populatedRent.user) throw new Error("User not populated");
+    if (!populatedRent.vehicle.company) throw new Error("Company not populated on vehicle");
+
     const pdfBuffer = await generateReceiptPDF(updatedRent, updatedUser, transaction);
 
     await sendReceiptEmail(updatedUser.email, pdfBuffer);
