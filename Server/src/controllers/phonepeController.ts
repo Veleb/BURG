@@ -9,7 +9,8 @@ import TransactionService from '../services/transactionService';
 const clientId = process.env.PHONEPE_CLIENT_ID!;
 const clientSecret = process.env.PHONEPE_CLIENT_SECRET!;
 const clientVersion = Number(process.env.PHONEPE_CLIENT_VERSION!);
-const env = process.env.PROD === 'true' ? Env.PRODUCTION : Env.SANDBOX;
+// const env = process.env.PROD === 'true' ? Env.PRODUCTION : Env.SANDBOX;
+const env = Env.SANDBOX;
 
 const FRONT_END_URL = process.env.PROD === 'true' ? process.env.FRONT_END_PROD! : process.env.FRONT_END_LOCAL!;
 
