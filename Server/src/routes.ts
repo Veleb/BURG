@@ -22,5 +22,4 @@ routes.use('/transactions', TransactionController);
 routes.use('/certificates', certificateController);
 routes.use('/phonepe', rateLimiterMiddleware, phonepeController);
 
-
 export default routes;
