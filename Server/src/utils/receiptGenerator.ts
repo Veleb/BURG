@@ -7,23 +7,40 @@ import { TransactionInterface } from '../types/model-types/transaction-types';
 import fontkit from '@pdf-lib/fontkit';
 import { VehicleInterface } from '../types/model-types/vehicle-types';
 import { CompanyInterface } from '../types/model-types/company-types';
+import RentModel from '../models/rent';
 
 async function generateReceiptPDF(
   rent: RentInterface,
   user: UserFromDB,
   transaction: TransactionInterface
 ): Promise<Buffer> {
+
+  const populatedRent = await RentModel.findById(rent._id)
+    .populate('user')
+    .populate({
+      path: 'vehicle',
+      populate: { path: 'company', model: 'Company' }
+  });
+
+  if (!populatedRent) {
+    throw new Error("Rent couldn't be populated");
+  }
+
   const templatePath = path.join(__dirname, '../../public/templates/burg-receipt-template.pdf');
   const templateBytes = fs.readFileSync(templatePath);
 
-  const fontPath = path.join(__dirname, '../../public/fonts/Roboto-Regular.ttf'); // or NotoSans-Regular.ttf
+  const fontPath = path.join(__dirname, '../../public/fonts/Roboto-Regular.ttf');
   const fontBytes = fs.readFileSync(fontPath);
 
+  const checkmarkFontPath = path.join(__dirname, '../../public/fonts/DejaVuSans.ttf');
+  const checkmarkFontBytes = fs.readFileSync(checkmarkFontPath);
+  
   const pdfDoc = await PDFDocument.load(templateBytes);
-
+  
   pdfDoc.registerFontkit(fontkit);
-
+  
   const font = await pdfDoc.embedFont(fontBytes);
+  const checkmarkFont = await pdfDoc.embedFont(checkmarkFontBytes);
 
   const pages = pdfDoc.getPages();
 
@@ -45,10 +62,10 @@ async function generateReceiptPDF(
       return { x, y };
   }
 
-  const vehicle = rent.vehicle as VehicleInterface;
+  const vehicle = populatedRent.vehicle as VehicleInterface;
 
-  const { x: transactionX, y: transactionY } = cmToPdfPointPage1(1.42, 12.80);
-  const { x: dateX, y: dateY } = cmToPdfPointPage1(12, 12.80);
+  const { x: transactionX, y: transactionY } = cmToPdfPointPage1(2.80, 11.30);
+  const { x: dateX, y: dateY } = cmToPdfPointPage1(10, 12.80);  
   
   const { x: fullNameX, y: fullNameY } = cmToPdfPointPage1(1.42, 13.84);
   const { x: userIdX, y: userIdY } = cmToPdfPointPage1(12, 13.84);
@@ -72,44 +89,43 @@ async function generateReceiptPDF(
   const { x: paymentCheckmarkX, y: paymentCheckmarkY } = cmToPdfPointPage2(1.55, 3.63);
   const { x: transactionCheckmarkX, y: transactionCheckmarkY } = cmToPdfPointPage2(1.55, 5.67);
 
-  page1.drawText(transaction._id.toString(), { x: transactionX, y: transactionY, size: 12, font });
-  page1.drawText(new Date().toDateString(), { x: dateX, y: dateY, size: 12, font });
+  page1.drawText(transaction._id.toString() , { x: transactionX, y: transactionY, size: 12, font });
+  page1.drawText(new Date().toDateString() , { x: dateX, y: dateY, size: 12, font });
 
-  page1.drawText(user.fullName, { x: fullNameX, y: fullNameY, size: 12, font });
-  page1.drawText(user._id.toString(), { x: userIdX, y: userIdY, size: 12, font });
+  page1.drawText(user.fullName , { x: fullNameX, y: fullNameY, size: 12, font });
+  page1.drawText(user._id.toString() , { x: userIdX, y: userIdY, size: 12, font });
   page1.drawText(user.phoneNumber || 'N/A', { x: phoneNumberX, y: phoneNumberY, size: 12, font });
 
   const company = vehicle.company as CompanyInterface;
 
   if (company) {
-    page1.drawText(company.name, { x: agencyFullNameX, y: agencyFullNameY, size: 12, font });
-    page1.drawText(company._id.toString(), { x: agencyIdX, y: agencyIdY, size: 12, font });
-    page1.drawText(company.phoneNumber, { x: agencyPhoneNumberX, y: agencyPhoneNumberY, size: 12, font });
+    page1.drawText(company.name , { x: agencyFullNameX, y: agencyFullNameY, size: 12, font });
+    page1.drawText(company._id.toString() , { x: agencyIdX, y: agencyIdY, size: 12, font });
+    page1.drawText(company.phoneNumber , { x: agencyPhoneNumberX, y: agencyPhoneNumberY, size: 12, font });
 
   }
 
-  const days = Math.ceil((new Date(rent.end).getTime() - new Date(rent.start).getTime()) / (1000 * 60 * 60 * 24));
+  const days = Math.ceil((new Date(populatedRent.end).getTime() - new Date(populatedRent.start).getTime()) / (1000 * 60 * 60 * 24));
 
   page1.drawText(vehicle.details?.model || 'N/A', { x: vehicleTypeX, y: vehicleTypeY, size: 12, font });
-  page1.drawText(days.toString(), { x: rentalDaysX, y: rentalDaysY, size: 12, font });
+  page1.drawText(days.toString() , { x: rentalDaysX, y: rentalDaysY, size: 12, font });
   page1.drawText(vehicle.details?.pricePerDay.toString() || '0', { x: ratePerDayX, y: ratePerDayY, size: 12, font });
 
   const subtotal = days * (vehicle.details?.pricePerDay || 0);
   const gst = subtotal * 0.18;
-  const total = rent.total;
+  const total = populatedRent.total;
 
   page1.drawText(`₹${subtotal.toFixed(2)}`, { x: subtotalX, y: subtotalY, size: 12, font });
   page1.drawText(`₹${gst.toFixed(2)}`, { x: gstX, y: gstY, size: 12, font });
   page1.drawText(`₹${total.toFixed(2)}`, { x: totalAmountX, y: totalAmountY, size: 12, font });
   page2.drawText(`${total.toFixed(2)}`, { x: grandTotalAmountX, y: grandTotalAmountY, size: 12, font });
 
-  page2.drawText(transaction._id.toString(), { x: transactionIdX, y: transactionIdY, size: 12, font });
-  page2.drawText('✓', { x: paymentCheckmarkX, y: paymentCheckmarkY, size: 12, font });
-  page2.drawText('✓', { x: transactionCheckmarkX, y: transactionCheckmarkY, size: 12, font });
+  page2.drawText(transaction._id.toString() , { x: transactionIdX, y: transactionIdY, size: 12, font });
+  page2.drawText('✓', { x: paymentCheckmarkX, y: paymentCheckmarkY, size: 12, font: checkmarkFont });
+  page2.drawText('✓', { x: transactionCheckmarkX, y: transactionCheckmarkY, size: 12, font: checkmarkFont });
   
   const pdfBytes = await pdfDoc.save();
   return Buffer.from(pdfBytes);
 }
-
 
 export default generateReceiptPDF;

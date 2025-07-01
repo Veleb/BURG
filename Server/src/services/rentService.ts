@@ -332,7 +332,7 @@ export async function handleSuccessfulPayment(orderId: string): Promise<{ succes
       .populate({
         path: 'vehicle',
         populate: { path: 'company', model: 'Company' }
-      });
+    });
 
     if (!populatedRent) throw new Error("Updated rent not found after update");
     if (!populatedRent.vehicle) throw new Error("Vehicle not populated");
