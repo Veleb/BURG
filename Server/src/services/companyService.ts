@@ -49,7 +49,8 @@ const updateCompanyStatus = async (id: string, status: 'pending' | 'confirmed' |
       id,
       { status },
       { new: true }
-    );
+    )
+    .populate('owner');
   
     return updatedCompany;
   } catch (err) {
@@ -61,6 +62,23 @@ const getPendingCompanies = async () => {
   return await CompanyModel.find({ status: 'pending' });
 };
 
+const promoteCompany = async (id: string) => {
+  return await CompanyModel.findByIdAndUpdate(
+    id, 
+    { isPromoted: true },
+    { new: true } 
+  )
+}
+
+const deomoteCompany = async (id: string) => {
+  return await CompanyModel.findByIdAndUpdate(
+    id, 
+    { isPromoted: false },
+    { new: true } 
+  )
+}
+
+
 const companyService = {
   getCompanyById,
   getCompanyBySlug,
@@ -68,6 +86,8 @@ const companyService = {
   getAllCompanies,
   updateCompanyStatus,
   getPendingCompanies,
+  deomoteCompany,
+  promoteCompany
 };
 
 export default companyService;

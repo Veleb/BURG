@@ -138,7 +138,12 @@ rentController.post(
         return;
       }
 
-      if (user.role !== "admin") {
+      if (
+        user.role !== "admin" ||
+        !user.companies ||
+        user.companies.length === 0 ||
+        user.companies[0]?.isPromoted === false
+      ) {
         res.status(403).json({ message: "Forbidden action" });
         return;
       }

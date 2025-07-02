@@ -210,7 +210,6 @@
 
       <button class="cta-button" (click)="rentVehicleViaPhonePe()">Rent Now</button>
 
-
       @if (user?.role === 'admin' || (user?.role === 'host' &&
       user?.companies?.[0]?.isPromoted)) {
       <button class="cta-button" (click)="rentVehicleWithoutPaying()">
@@ -258,58 +257,65 @@
   </div>
 </div>
 
-<div class="specs-wrapper">
-  <h3 class="specs-heading">
-    Key specifications of {{ vehicle?.details?.model }}:
-  </h3>
-
-  <div class="specs-grid">
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-car"></i></div>
-      <div class="spec-label">Engine:</div>
-      <div class="spec-value">{{ vehicle?.details?.engine }}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-person"></i></div>
-      <div class="spec-label">Capacity:</div>
-      <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-car-battery"></i></div>
-      <div class="spec-label">Power:</div>
-      <div class="spec-value">{{ vehicle?.details?.power }}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-truck"></i></div>
-      <div class="spec-label">GVW:</div>
-      <div class="spec-value">{{ vehicle?.details?.gvw }} kg</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
-      <div class="spec-label">Fuel Tank Capacity:</div>
-      <div class="spec-value">{{ vehicle?.details?.fuelTank }} liters</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-circle-dot"></i></div>
-      <div class="spec-label">Tyres:</div>
-      <div class="spec-value">{{ vehicle?.details?.tyres }}</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-road"></i></div>
-      <div class="spec-label">Mileage:</div>
-      <div class="spec-value">{{ vehicle?.details?.mileage }} KM/L</div>
-    </div>
-
-    <div class="spec-row">
-      <div class="icon-cell"><i class="fa-solid fa-car-side"></i></div>
-      <div class="spec-label">Chassis Type:</div>
-      <div class="spec-value">{{ vehicle?.details?.chassisType }}</div>
+<div class="ad-specs-wrapper">
+  
+  <div class="specs-wrapper">
+    <h3 class="specs-heading">
+      Key specifications of {{ vehicle?.details?.model }}:
+    </h3>
+  
+    <div class="specs-grid">
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-car"></i></div>
+        <div class="spec-label">Engine:</div>
+        <div class="spec-value">{{ vehicle?.details?.engine }}</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-person"></i></div>
+        <div class="spec-label">Capacity:</div>
+        <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-car-battery"></i></div>
+        <div class="spec-label">Power:</div>
+        <div class="spec-value">{{ vehicle?.details?.power }}</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-truck"></i></div>
+        <div class="spec-label">GVW:</div>
+        <div class="spec-value">{{ vehicle?.details?.gvw }} kg</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
+        <div class="spec-label">Fuel Tank Capacity:</div>
+        <div class="spec-value">{{ vehicle?.details?.fuelTank }} liters</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-circle-dot"></i></div>
+        <div class="spec-label">Tyres:</div>
+        <div class="spec-value">{{ vehicle?.details?.tyres }}</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-road"></i></div>
+        <div class="spec-label">Mileage:</div>
+        <div class="spec-value">{{ vehicle?.details?.mileage }} KM/L</div>
+      </div>
+  
+      <div class="spec-row">
+        <div class="icon-cell"><i class="fa-solid fa-car-side"></i></div>
+        <div class="spec-label">Chassis Type:</div>
+        <div class="spec-value">{{ vehicle?.details?.chassisType }}</div>
+      </div>
     </div>
   </div>
+
+  <a href="https://phon.pe/83xz7rk2"><img src="/images/phonepe_ad.avif" alt="Phone Pe Referral Image" class="ad-banner"></a>
+
+
 </div>

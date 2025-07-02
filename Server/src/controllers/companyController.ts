@@ -140,10 +140,12 @@ companyController.put(
         return;
       }
 
-      await UserService.promoteUserStatus(
-        (updatedCompany.owner as UserInterface)._id,
-        "user"
-      );
+      if (( updatedCompany.owner as UserInterface).role !== "admin" ) {
+        await UserService.promoteUserStatus(
+          (updatedCompany.owner as UserInterface)._id,
+          "user"
+        );
+      }
 
       res.status(200).json(updatedCompany);
       return;
@@ -165,18 +167,19 @@ companyController.put(
         return;
       }
 
-      const updatedCompany: CompanyInterface | null =
-      await companyService.updateCompanyStatus(companyId, "banned");
+      const updatedCompany: CompanyInterface | null = await companyService.updateCompanyStatus(companyId, "banned");
 
       if (!updatedCompany) {
         res.status(404).json({ message: "Company not found!" });
         return;
       }
-
-      await UserService.promoteUserStatus(
-        (updatedCompany.owner as UserInterface)._id,
-        "user"
-      );
+      
+      if (( updatedCompany.owner as UserInterface).role !== "admin" ) {
+        await UserService.promoteUserStatus(
+          (updatedCompany.owner as UserInterface)._id,
+          "user"
+        );
+      }
 
       res.status(200).json(updatedCompany);
       return;
@@ -202,10 +205,54 @@ companyController.put(
         return;
       }
 
-      await UserService.promoteUserStatus(
-        (updatedCompany.owner as UserInterface)._id,
-        "user"
-      );
+      if (( updatedCompany.owner as UserInterface).role !== "admin" ) {
+        await UserService.promoteUserStatus(
+          (updatedCompany.owner as UserInterface)._id,
+          "user"
+        );
+      }
+
+      res.status(200).json(updatedCompany);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+companyController.post(
+  "/promote/:id",
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const companyId = req.params.id;
+
+      const updatedCompany = await companyService.promoteCompany(companyId);
+
+      if (!updatedCompany) {
+        res.status(404).json({ message: "Company not found!" });
+        return;
+      }
+
+      res.status(200).json(updatedCompany);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+companyController.post(
+  "/demote/:id",
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const companyId = req.params.id;
+
+      const updatedCompany = await companyService.deomoteCompany(companyId);
+
+      if (!updatedCompany) {
+        res.status(404).json({ message: "Company not found!" });
+        return;
+      }
 
       res.status(200).json(updatedCompany);
     } catch (err) {

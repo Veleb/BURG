@@ -468,7 +468,8 @@
   padding: 15px;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  max-width: 64%;
+  min-width: 64%;
+  max-height: 200px;
 }
 
 .specs-heading {
@@ -693,4 +694,16 @@
   #dropoffLocation {
     border-right: 2px solid #1E1E1E;
   }
+}
+
+.ad-specs-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.ad-banner {
+  width: 500px;
+  height: 400px;
+  margin-bottom: 10px;
+  border-radius: 10px;
 }

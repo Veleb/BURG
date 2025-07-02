@@ -4,6 +4,7 @@
   <p><strong>Phone:</strong> {{ company?.phoneNumber }}</p>
   <p><strong>Location:</strong> {{ company?.location }}</p>
   <p><strong>Status:</strong> {{ company?.status }}</p>
+  <p><strong>Is Promoted:</strong> {{ company?.isPromoted }}</p>
   <p><strong>Total Earnings:</strong> {{ (company?.totalEarnings ?? 0) | currencyConverter }}</p>
   <p><strong>Company Type:</strong> {{ company?.companyType }}</p>
   <p><strong>State Registration:</strong> {{ company?.stateRegistration }}</p>
@@ -22,6 +23,13 @@
     <div class="action-buttons">
       <button class="hold-button" (click)="holdCompany((company?._id ?? ''))">Hold</button>
       <button class="ban-button" (click)="banCompany((company?._id ?? ''))">Ban</button>
+      
+      @if ( company?.isPromoted === true ) {
+        <button class="ban-button" (click)="demoteCompany((company?._id ?? ''))">Demote</button>
+      } @else {
+        <button class="promote-button" (click)="promoteCompany((company?._id ?? ''))">Promote</button>
+      }
+
     </div>
   } @else if (company?.status === 'hold') {
     <div class="action-buttons">

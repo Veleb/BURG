@@ -42,4 +42,12 @@ export class CompanyService {
     return this.http.put<CompanyInterface>(`/api/companies/ban/${companyId}`, {});
   }
 
+  promoteCompany(companyId: string): Observable<CompanyInterface> {
+    return this.http.post<CompanyInterface>(`/api/companies/promote/${companyId}`, {});
+  }
+
+  demoteCompany(companyId: string): Observable<CompanyInterface> {
+    return this.http.post<CompanyInterface>(`/api/companies/demote/${companyId}`, {});
+  }
+
 }

@@ -92,7 +92,7 @@
   color: white;
 }
 
-.action-buttons .reject-button, .ban-button {
+.action-buttons .reject-button:hover, .ban-button:hover {
   background: #e53e3e;
 }
 
@@ -103,6 +103,15 @@
 
 .action-buttons .hold-button:hover {
   background: #ed8936;
+}
+
+.action-buttons .promote-button {
+  background: #035496;
+  color: white;
+}
+
+.action-buttons .promote-button:hover {
+  background: #1385e3;
 }
 
 .details-link {

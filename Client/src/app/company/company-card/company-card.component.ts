@@ -75,4 +75,24 @@ export class CompanyCardComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  promoteCompany(companyId: string) {
+    if (this.company) {
+      this.companyService.promoteCompany(companyId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((company: CompanyInterface) => {
+        this.company = company;
+      });
+    }
+  }
+
+  demoteCompany(companyId: string) {
+    if (this.company) {
+      this.companyService.demoteCompany(companyId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((company: CompanyInterface) => {
+        this.company = company;
+      });
+    }
+  }
 }
