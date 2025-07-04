@@ -95,7 +95,7 @@
 
       </div>
 
-      @if (user?.role === 'host') {
+      @if (user?.role === 'host' || user?.role === 'admin') {
 
         <div class="form-group">
           <label for="bannerImage">Banner Image</label>

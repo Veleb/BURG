@@ -14,13 +14,15 @@ import { VerifyCertificateComponent } from './certificate/verify-certificate/ver
 import { RedeemCertificateComponent } from './certificate/redeem-certificate/redeem-certificate.component';
 import { authGuard } from './guards/auth.guard';
 import { RefundComponent } from './legal/refund/refund.component';
+import { TeamComponent } from './team/team.component';
 
 export const routes: Routes = [
   { path: "", component: HomeComponent, pathMatch: "full" },
   
   { path: "home", component: HomeComponent },
+  { path: "team", component: TeamComponent },
+
   { path: "contact", component: ContactComponent },
-  
   { path: "terms", component: TermsComponent },
   { path: "cookies-policy", component: CookiesPolicyComponent },
   { path: "eula", component: EulaComponent },

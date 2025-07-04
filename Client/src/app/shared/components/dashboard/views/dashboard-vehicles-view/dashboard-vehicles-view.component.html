@@ -76,6 +76,18 @@
             <div class="vehicle-card-wrapper">
               <app-product-card [vehicle]="vehicle" class="vehicle-card" />
           
+              @if ( user?.role === 'admin' && vehicle.details.vehicleRegistration ) {
+
+                <div class="registration-wrapper">
+                  
+                  @for (registration of vehicle.details.vehicleRegistration; track $index) {
+                    <a target="_blank" [href]="vehicle.details.vehicleRegistration">Vehicle Registration</a>
+                  }
+
+                </div>
+
+              }
+
               <div class="actions">
                 @if (user?.role === 'host') {
                   <button 

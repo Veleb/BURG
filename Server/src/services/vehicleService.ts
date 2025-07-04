@@ -41,9 +41,12 @@ async function getVehicles(
 
 async function getVehicleBySlug(slug: string): Promise<VehicleInterface> {
   const vehicle = await VehicleModel.findOne({ "details.slug": slug })
-  .populate("company")
-    .populate("likes")
-    .lean();
+  .populate({
+    path: "company",         
+    populate: { path: "owner" }
+  })
+  .populate("likes")
+  .lean();
 
   if (!vehicle) {
     throw new Error("Vehicle not found");

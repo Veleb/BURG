@@ -13,7 +13,7 @@ interface FAQ {
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.css',
 })
-export class FaqComponent implements OnInit {
+export class FaqComponent {
   generalQuestions: FAQ[] = [
     {
       number: 1,
@@ -194,7 +194,7 @@ export class FaqComponent implements OnInit {
     },
   ];
 
-  ngOnInit() {}
+  // ngOnInit() {}
 
   toggleFAQ(faq: FAQ) {
     faq.active = !faq.active;

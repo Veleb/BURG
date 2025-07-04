@@ -62,7 +62,6 @@
   text-decoration: underline;
 }
 
-/* Special styling for sections */
 .privacy-policy-container h2 + p {
   margin-bottom: 0.5rem;
   font-weight: 500;

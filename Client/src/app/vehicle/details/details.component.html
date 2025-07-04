@@ -54,8 +54,8 @@
         <div class="basic-details">
           <h2 class="vehicle-name">{{ vehicle?.details?.name }}</h2>
           <div class="vehicle-characteristics">
-            <h6 class="vehicle-characteristic">Manual</h6>
-            <h6 class="vehicle-characteristic">Petrol</h6>
+            <h6 class="vehicle-characteristic">{{ vehicle?.details?.category }}</h6>
+            <h6 class="vehicle-characteristic">{{ vehicle?.details?.year }}</h6>
             <h6 class="vehicle-characteristic">
               {{ vehicle?.details?.capacity }}
             </h6>
@@ -65,11 +65,16 @@
 
       <div class="company-details-wrapper">
         <div class="company-basic-details">
-          <div class="company-details" [routerLink]="['/company', vehicle?.company?.slug]">
-            <div class="company-profile-picture">
-              {{ vehicle?.company?.owner?.bannerImage }}
-            </div>
-            <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
+          <div
+            class="company-details"
+            [routerLink]="['/company', vehicle?.company?.slug]"
+          >
+
+          <!-- <img [src]="vehicle?.company?.owner?.bannerImage" class="company-profile-picture"> -->
+          <img [src]="vehicle?.company?.owner?.bannerImage" class="company-profile-picture">
+          <!-- <img src="https://res.cloudinary.com/dye8fvmhy/image/upload/v1751619780/users/bannerImages/tv4x32ojen04rl502zrw.png" class="company-profile-picture"> -->
+
+          <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
           </div>
 
           <div (click)="toggleContactDropdown()" class="contact-wrapper">
@@ -84,18 +89,22 @@
 
             @if (isContactDropdownOpen) {
             <div class="contact-dropdown-wrapper">
-              <a class="tel-link" href="tel:+971521985759">
+              <!-- <a class="tel-link" href="tel:+971521985759"> -->
                 <div class="contact-item">
-                  <h3>+91 877 857 9209 - Akash Rajaraman</h3>
+                  <h3>
+                    <a href="tel:+918778579209">+91 877 857 9209</a> - Akash Rajaraman
+                  </h3>
                   <i class="fa-solid fa-phone"></i>
                 </div>
-              </a>
-              <a class="tel-link" href="tel:+918099853142">
+              <!-- </a> -->
+              <!-- <a class="tel-link" href="tel:+918099853142"> -->
                 <div class="contact-item">
-                  <h3>+91 809 985 3142 - Alankar Bezbaruah</h3>
+                  <h3>
+                    <a href="tel:+918099853142">+91 809 985 3142</a> - Alankar Bezbaruah
+                  </h3>
                   <i class="fa-solid fa-phone"></i>
                 </div>
-              </a>
+              <!-- </a> -->
             </div>
             }
           </div>
@@ -205,10 +214,16 @@
         </label>
         }
       </div>
-      
-      <p class="consent-paragraph">By proceeding to checkout I agree with the <span class="link-span"  routerLink="/terms">Terms and Conditions</span> and <span class="link-span"  routerLink="/refund">Refund Policy</span></p>
 
-      <button class="cta-button" (click)="rentVehicleViaPhonePe()">Rent Now</button>
+      <p class="consent-paragraph">
+        By proceeding to checkout I agree with the
+        <span class="link-span" routerLink="/terms">Terms and Conditions</span>
+        and <span class="link-span" routerLink="/refund">Refund Policy</span>
+      </p>
+
+      <button class="cta-button" (click)="rentVehicleViaPhonePe()">
+        Rent Now
+      </button>
 
       @if (user?.role === 'admin' || (user?.role === 'host' &&
       user?.companies?.[0]?.isPromoted)) {
@@ -258,55 +273,54 @@
 </div>
 
 <div class="ad-specs-wrapper">
-  
   <div class="specs-wrapper">
     <h3 class="specs-heading">
       Key specifications of {{ vehicle?.details?.model }}:
     </h3>
-  
+
     <div class="specs-grid">
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-car"></i></div>
         <div class="spec-label">Engine:</div>
         <div class="spec-value">{{ vehicle?.details?.engine }}</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-person"></i></div>
         <div class="spec-label">Capacity:</div>
         <div class="spec-value">{{ vehicle?.details?.capacity }}</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-car-battery"></i></div>
         <div class="spec-label">Power:</div>
         <div class="spec-value">{{ vehicle?.details?.power }}</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-truck"></i></div>
         <div class="spec-label">GVW:</div>
         <div class="spec-value">{{ vehicle?.details?.gvw }} kg</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-gas-pump"></i></div>
         <div class="spec-label">Fuel Tank Capacity:</div>
         <div class="spec-value">{{ vehicle?.details?.fuelTank }} liters</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-circle-dot"></i></div>
         <div class="spec-label">Tyres:</div>
         <div class="spec-value">{{ vehicle?.details?.tyres }}</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-road"></i></div>
         <div class="spec-label">Mileage:</div>
         <div class="spec-value">{{ vehicle?.details?.mileage }} KM/L</div>
       </div>
-  
+
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-car-side"></i></div>
         <div class="spec-label">Chassis Type:</div>
@@ -315,7 +329,10 @@
     </div>
   </div>
 
-  <a href="https://phon.pe/83xz7rk2"><img src="/images/phonepe_ad.avif" alt="Phone Pe Referral Image" class="ad-banner"></a>
-
-
+  <a href="https://phon.pe/83xz7rk2"
+    ><img
+      src="/images/phonepe_ad.avif"
+      alt="Phone Pe Referral Image"
+      class="ad-banner"
+  /></a>
 </div>

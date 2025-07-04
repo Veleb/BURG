@@ -28,7 +28,7 @@ import { PhonepeService } from '../../services/phonepe.service';
     LocationPickerComponent,
     FormsModule,
     ImageCarouselComponent,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.css'
