@@ -114,7 +114,18 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
       this.currencyService.rate$,
     ])
     .pipe(takeUntil(this.destroy$))
-    .subscribe(([data, rate]) => {
+    .subscribe(([vehiclePriceData, rate]) => {
+
+      let data = { min: 0, mid: 0, max: 0 };
+
+      if (this.mainCategory === 'vehicles') {
+        data = vehiclePriceData;
+      } else if (this.mainCategory === 'equipment') {
+        // data = equipmentData;
+      } else if (this.mainCategory === 'services') {
+        // data = serviceData;
+      }
+
       this.latestExchangeRate = rate;
     
       const convertedMin = data.min * rate;
@@ -147,20 +158,6 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  onMinRangeChange() {
-    if (this.minPrice > this.maxPrice - 1) {
-      this.minPrice = this.maxPrice - 1;
-    }
-    // this.onPriceChange();
-}
-
-  onMaxRangeChange() {
-    if (this.maxPrice < this.minPrice + 1) {
-      this.maxPrice = this.minPrice + 1;
-    }
-    // this.onPriceChange();
-  }
-
   getRangeLeft(): number {
     return ((this.minPrice - this.priceMin) / (this.priceMax - this.priceMin)) * 100;
   }
@@ -178,8 +175,10 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
     const usdMin = Math.round(actualConvertedMin / rate);
     const usdMax = Math.round(actualConvertedMax / rate);
 
+    this.minPrice = actualConvertedMin;
+    this.maxPrice = actualConvertedMax;
+
     this.vehicleService.setPriceRange(usdMin, usdMax);
-    
   }
 
   private log10(value: number): number {
@@ -217,6 +216,29 @@ export class FilterSidebarComponent implements OnInit, OnDestroy, OnChanges {
   toggleShowOnlyAvailable() {
     this.showOnlyAvailable = !this.showOnlyAvailable;
     this.vehicleService.setShowOnlyAvailable(this.showOnlyAvailable);
+  }
+
+  // manual price filter methods
+
+  onMinRangeChange() {
+    if (this.minPrice > this.maxPrice - 1) {
+      this.minPrice = this.maxPrice - 1;
+    }
+    this.updateLogFromManual();
+    this.onPriceChange();
+  }
+
+  onMaxRangeChange() {
+    if (this.maxPrice < this.minPrice + 1) {
+      this.maxPrice = this.minPrice + 1;
+    }
+    this.updateLogFromManual(); 
+    this.onPriceChange();
+  }
+
+  private updateLogFromManual() {
+    this.logMinPrice = this.log10(this.minPrice);
+    this.logMaxPrice = this.log10(this.maxPrice);
   }
 
 }

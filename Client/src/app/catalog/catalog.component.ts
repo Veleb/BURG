@@ -10,6 +10,7 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 
 @Component({
     selector: 'app-catalog',
+    standalone: true,
     imports: [ProductCardComponent, FilterSidebarComponent, SortDropdownComponent, PaginatorComponent],
     templateUrl: './catalog.component.html',
     styleUrl: './catalog.component.css'
@@ -33,46 +34,25 @@ export class CatalogComponent implements OnInit, OnDestroy {
   pageSize: number = 20;
   totalCount: number = 0;
 
-  // currency: string = "INR";
-  // currencySymbol: string = "";
-
   ngOnInit(): void {
-
     this.route.queryParams
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(params => {
-      this.startDate = params['start'] ? new Date(params['start']) : null;
-      this.endDate = params['end'] ? new Date(params['end']) : null;
-      this.queryCategory = params['category'] || null;
-      
-      this.vehicleService.updateAvailableVehicles(this.startDate, this.endDate);
-      
-       this.currentPage = 1;
-       this.fetchVehicles();
-    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.startDate = params['start'] ? new Date(params['start']) : null;
+        this.endDate = params['end'] ? new Date(params['end']) : null;
+        this.queryCategory = params['category'] || null;
 
-    this.fetchVehicles();
-    
+        this.vehicleService.updateAvailableVehicles(this.startDate, this.endDate);
+        this.fetchVehicles();
+      });
+
     this.vehicleService.totalCount$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(count => {
-      this.totalCount = count;
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(count => this.totalCount = count);
 
     this.vehicleService.filteredVehicles$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(filtered => {
-      this.vehicles = filtered;
-    });
-
-    // this.currencyService.getCurrency()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe({
-    //     next: (currency: string) => {
-    //       this.currency = currency;
-    //       this.currencySymbol = this.currencyService.getCurrencySymbol(currency);
-    //     },
-    //   });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(filtered => this.vehicles = filtered);
   }
 
   ngOnDestroy(): void {
@@ -84,29 +64,23 @@ export class CatalogComponent implements OnInit, OnDestroy {
     const offset = (this.currentPage - 1) * this.pageSize;
 
     forkJoin([
-    this.vehicleService.getAll({ limit: this.pageSize, offset }),
-    this.vehicleService.getTotalCount()
-  ]).subscribe({
-    next: ([vehiclesResponse, totalCount]) => {
-      this.totalCount = totalCount;
-      
-    },
-    error: err => console.error('Fetch error', err)
-  });
+      this.vehicleService.getAll({ limit: this.pageSize, offset }),
+      this.vehicleService.getTotalCount()
+    ]).subscribe({
+      next: ([_, totalCount]) => this.totalCount = totalCount,
+      error: err => console.error('Fetch error', err)
+    });
   }
 
   onPageChange(newPage: number): void {
-
-    if (newPage < 1) {
-      newPage = 1;
-    } else if (newPage > this.totalPages) {
-      newPage = this.totalPages;
-    }
-
+    if (newPage < 1) newPage = 1;
+    if (newPage > this.totalPages) newPage = this.totalPages;
     if (newPage === this.currentPage) return;
 
     this.currentPage = newPage;
-    this.fetchVehicles();
+    if (this.mainCategory === 'vehicles') {
+      this.fetchVehicles();
+    }
   }
 
   get totalPages(): number {
@@ -115,7 +89,6 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   onSortChange(sort: string): void {
     this.sort = sort;
-    //  this.currentPage = 1;
 
     switch(sort) {
       case 'Most popular':
@@ -141,8 +114,20 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   onChangeMainCategory(mainCategory: string): void {
+    if (this.mainCategory === mainCategory) return;
+
     this.mainCategory = mainCategory;
+
     this.currentPage = 1;
-    this.fetchVehicles();
+    this.totalCount = 0;
+    this.vehicles = [];
+    this.sort = 'Most popular';
+
+    if (this.mainCategory === 'vehicles') {
+      this.vehicleService.updateAvailableVehicles(this.startDate, this.endDate);
+      this.fetchVehicles();
+    } else {
+      this.vehicleService.setPriceRange(0, 0);
+    }
   }
 }

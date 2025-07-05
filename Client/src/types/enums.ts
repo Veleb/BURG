@@ -5,8 +5,9 @@ export enum Size {
 }
 
 export enum CategoryEnum {
-  // Equipment = 'equipment',
   // Cars = 'cars',
+  Equipment = 'equipment',
+  Services = 'services',
   Trucks = 'trucks',
   LowDuty = 'low duty',
   HeavyDuty = 'heavy duty',

@@ -8,10 +8,7 @@ export const environment: Environment = {
     //   name: "cars",
     //   description: "General category for personal and passenger vehicles designed for everyday transportation.",
     // },
-    // {
-    //   name: "equipment",
-    //   description: "Vehicles and machinery designed for construction, agriculture, and industrial tasks.",
-    // },
+    
     {
       name: "trucks",
       description: "Larger vehicles built for carrying heavy loads, often used for transport and construction.",
@@ -27,6 +24,14 @@ export const environment: Environment = {
     {
       name: "travel",
       description: "Vehicles and accessories related to long-distance journeys, vacations, and road trips.",
+    },
+    {
+      name: "equipment",
+      description: "Vehicles and machinery designed for construction, agriculture, and industrial tasks.",
+    },
+    {
+      name: "services",
+      description: "Services related to vehicle maintenance, repair, and other automotive services.",
     },
     // {
     //   name: "busses",
