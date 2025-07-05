@@ -64,30 +64,30 @@ async function generateReceiptPDF(
 
   const vehicle = populatedRent.vehicle as VehicleInterface;
 
-  const { x: transactionX, y: transactionY } = cmToPdfPointPage1(2.80, 11.30);
-  const { x: dateX, y: dateY } = cmToPdfPointPage1(10, 12.80);  
+  const { x: transactionX, y: transactionY } = cmToPdfPointPage1(2.25, 11.20);
+  const { x: dateX, y: dateY } = cmToPdfPointPage1(10.75, 11.20);
   
-  const { x: fullNameX, y: fullNameY } = cmToPdfPointPage1(1.42, 13.84);
-  const { x: userIdX, y: userIdY } = cmToPdfPointPage1(12, 13.84);
-  const { x: phoneNumberX, y: phoneNumberY } = cmToPdfPointPage1(1.42, 15.82);
+  const { x: fullNameX, y: fullNameY } = cmToPdfPointPage1(2.25, 14.20);
+  const { x: userIdX, y: userIdY } = cmToPdfPointPage1(10.75, 14.20);
+  const { x: phoneNumberX, y: phoneNumberY } = cmToPdfPointPage1(2.25, 16.20);
   
-  const { x: agencyFullNameX, y: agencyFullNameY } = cmToPdfPointPage1(1.42, 18.89);
-  const { x: agencyIdX, y: agencyIdY } = cmToPdfPointPage1(12, 18.89);
-  const { x: agencyPhoneNumberX, y: agencyPhoneNumberY } = cmToPdfPointPage1(1.42, 20.88);  
+  const { x: agencyFullNameX, y: agencyFullNameY } = cmToPdfPointPage1(2.25, 19.30);
+  const { x: agencyIdX, y: agencyIdY } = cmToPdfPointPage1(10.75, 19.30);
+  const { x: agencyPhoneNumberX, y: agencyPhoneNumberY } = cmToPdfPointPage1(2.25, 21.30);  
   
-  const { x: vehicleTypeX, y: vehicleTypeY } = cmToPdfPointPage1(1.77, 24.37);
-  const { x: rentalDaysX, y: rentalDaysY } = cmToPdfPointPage1(7.43, 24.37);
-  const { x: ratePerDayX, y: ratePerDayY } = cmToPdfPointPage1(13.09, 24.37);
+  const { x: vehicleTypeX, y: vehicleTypeY } = cmToPdfPointPage1(2.55, 24.80);
+  const { x: rentalDaysX, y: rentalDaysY } = cmToPdfPointPage1(8.25, 24.80);
+  const { x: ratePerDayX, y: ratePerDayY } = cmToPdfPointPage1(13.85, 24.80);
 
-  const { x: subtotalX, y: subtotalY } = cmToPdfPointPage1(1.77, 26.91);
-  const { x: gstX, y: gstY } = cmToPdfPointPage1(7.43, 26.91);
-  const { x: totalAmountX, y: totalAmountY } = cmToPdfPointPage1(13.09, 26.91);
-  const { x: grandTotalAmountX, y: grandTotalAmountY } = cmToPdfPointPage2(13.75, 1.40);
+  const { x: subtotalX, y: subtotalY } = cmToPdfPointPage1(2.55, 27.30);
+  const { x: gstX, y: gstY } = cmToPdfPointPage1(8.25, 27.30);
+  const { x: totalAmountX, y: totalAmountY } = cmToPdfPointPage1(13.85, 27.30);
+  const { x: grandTotalAmountX, y: grandTotalAmountY } = cmToPdfPointPage2(14.70, 1.80);
 
-  const { x: transactionIdX, y: transactionIdY } = cmToPdfPointPage2(4.39, 5.08);
+  const { x: transactionIdX, y: transactionIdY } = cmToPdfPointPage2(5.25, 5.50);
   
-  const { x: paymentCheckmarkX, y: paymentCheckmarkY } = cmToPdfPointPage2(1.55, 3.63);
-  const { x: transactionCheckmarkX, y: transactionCheckmarkY } = cmToPdfPointPage2(1.55, 5.67);
+  const { x: paymentCheckmarkX, y: paymentCheckmarkY } = cmToPdfPointPage2(2.35, 4.50);
+  const { x: transactionCheckmarkX, y: transactionCheckmarkY } = cmToPdfPointPage2(2.35, 6.50);
 
   page1.drawText(transaction._id.toString() , { x: transactionX, y: transactionY, size: 12, font });
   page1.drawText(new Date().toDateString() , { x: dateX, y: dateY, size: 12, font });
@@ -102,7 +102,6 @@ async function generateReceiptPDF(
     page1.drawText(company.name , { x: agencyFullNameX, y: agencyFullNameY, size: 12, font });
     page1.drawText(company._id.toString() , { x: agencyIdX, y: agencyIdY, size: 12, font });
     page1.drawText(company.phoneNumber , { x: agencyPhoneNumberX, y: agencyPhoneNumberY, size: 12, font });
-
   }
 
   const days = Math.ceil((new Date(populatedRent.end).getTime() - new Date(populatedRent.start).getTime()) / (1000 * 60 * 60 * 24));

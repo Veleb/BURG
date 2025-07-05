@@ -2,7 +2,10 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { VehicleService } from '../vehicle.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Size, CategoryEnum } from '../../../types/enums';
-import { VehicleForCreate, VehicleInterface } from '../../../types/vehicle-types';
+import {
+  VehicleForCreate,
+  VehicleInterface,
+} from '../../../types/vehicle-types';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -14,9 +17,8 @@ import { EMPTY, Subject, switchMap, takeUntil } from 'rxjs';
   selector: 'app-add-vehicle',
   imports: [FormsModule],
   templateUrl: './add-vehicle.component.html',
-  styleUrl: './add-vehicle.component.css'
+  styleUrl: './add-vehicle.component.css',
 })
-
 export class AddVehicleComponent implements OnInit {
   private vehicleService = inject(VehicleService);
   private CompanyService = inject(CompanyService);
@@ -24,7 +26,7 @@ export class AddVehicleComponent implements OnInit {
   private toastr = inject(ToastrService);
 
   private destroy$ = new Subject<void>();
-  
+
   vehicleData: VehicleForCreate = {
     vehicleCompany: '',
     vehicleName: '',
@@ -38,7 +40,7 @@ export class AddVehicleComponent implements OnInit {
     vehiclePower: '',
     vehicleGvw: 0,
     vehicleFuelTank: 0,
-    vehicleTyres: 4,
+    vehicletires: 4,
     vehicleMileage: 0,
     vehicleChassisType: '',
     vehicleCapacity: 0,
@@ -46,7 +48,7 @@ export class AddVehicleComponent implements OnInit {
     isPromoted: false,
     vehicleImages: [],
     vehicleRegistration: [],
-    summaryPdf: ''
+    summaryPdf: '',
   };
 
   showSummaryModal = false;
@@ -54,7 +56,7 @@ export class AddVehicleComponent implements OnInit {
 
   @ViewChild('form') form!: NgForm;
   formSubmitted = false;
-  
+
   companySlug: string | null = null;
   isSubmitting = false;
 
@@ -93,32 +95,33 @@ export class AddVehicleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.pipe(
-      takeUntil(this.destroy$),
-      switchMap((params: ParamMap) => {
+    this.route.queryParamMap
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((params: ParamMap) => {
+          this.companySlug = params.get('companySlug');
 
-        this.companySlug = params.get('companySlug');
+          if (!this.companySlug) {
+            this.toastr.error('Company slug missing in query params');
+            return EMPTY;
+          }
 
-        if (!this.companySlug) {
-          this.toastr.error('Company slug missing in query params');
-          return EMPTY;
-        }
-
-        return this.CompanyService.getCompanyBySlug(this.companySlug);
-      })
-    ).subscribe({
-      next: (company) => {
-        if (company) {
-          this.vehicleData.vehicleCompany = company._id;
-        } else {
-          this.toastr.error('Company not found');
-        }
-      },
-      error: (err) => {
-        this.toastr.error('Error fetching company details');
-        console.error(err);
-      }
-    });
+          return this.CompanyService.getCompanyBySlug(this.companySlug);
+        })
+      )
+      .subscribe({
+        next: (company) => {
+          if (company) {
+            this.vehicleData.vehicleCompany = company._id;
+          } else {
+            this.toastr.error('Company not found');
+          }
+        },
+        error: (err) => {
+          this.toastr.error('Error fetching company details');
+          console.error(err);
+        },
+      });
 
     (pdfMake as any).default.vfs = pdfFonts.vfs;
   }
@@ -152,7 +155,7 @@ export class AddVehicleComponent implements OnInit {
         { text: `VIN: ${data.identificationNumber}` },
         { text: `GVW: ${data.vehicleGvw} kg` },
         { text: `Fuel Tank: ${data.vehicleFuelTank} L` },
-        { text: `Tyres: ${data.vehicleTyres}` },
+        { text: `tires: ${data.vehicletires}` },
         { text: `Mileage: ${data.vehicleMileage} km` },
         { text: `Chassis: ${data.vehicleChassisType}` },
         { text: `Capacity: ${data.vehicleCapacity} kg` },
@@ -161,41 +164,39 @@ export class AddVehicleComponent implements OnInit {
         { text: `Price/Day: $${data.vehiclePricePerDay}` },
         { text: `Price/KM: $${data.vehiclePricePerKm}` },
         { text: `Promoted: ${data.isPromoted ? 'Yes' : 'No'}` },
-        { text: `\nThank you for listing your vehicle with us!`, style: 'footer' }
+        {
+          text: `\nThank you for listing your vehicle with us!`,
+          style: 'footer',
+        },
       ],
       styles: {
         header: { fontSize: 18, bold: true, marginBottom: 10 },
-        footer: { marginTop: 20, italics: true }
-      }
+        footer: { marginTop: 20, italics: true },
+      },
     };
 
     return new Promise((resolve, reject) => {
       pdfMake.createPdf(docDefinition).getBlob((blob: Blob | null) => {
         if (blob) {
           resolve(blob);
-        }
-        else reject(new Error('PDF generation failed'));
+        } else reject(new Error('PDF generation failed'));
       });
     });
   }
 
-
-
   async onSubmit() {
-
     this.vehicleImagesError = this.selectedImages.length < 5;
     this.registrationImageError = !this.selectedRegistrations;
 
     if (this.vehicleImagesError || this.registrationImageError) {
-      return; 
-    }
-
-    
-    if (!this.vehicleData.vehicleCompany) {
-      this.toastr.error("Company ID missing in query params");
       return;
     }
-    
+
+    if (!this.vehicleData.vehicleCompany) {
+      this.toastr.error('Company ID missing in query params');
+      return;
+    }
+
     this.isSubmitting = true;
 
     this.formSubmitted = true;
@@ -205,24 +206,30 @@ export class AddVehicleComponent implements OnInit {
     const vehicleDataToSend = {
       ...this.vehicleData,
       vehicleSize: this.vehicleData.vehicleSize.toString(),
-      vehicleCategory: this.vehicleData.vehicleCategory.toString()
+      vehicleCategory: this.vehicleData.vehicleCategory.toString(),
     };
 
     formData.append('vehicleData', JSON.stringify(vehicleDataToSend));
 
-    this.selectedImages.forEach(file => formData.append('images', file));
-    this.selectedRegistrations.forEach(file => formData.append('registrations', file));
+    this.selectedImages.forEach((file) => formData.append('images', file));
+    this.selectedRegistrations.forEach((file) =>
+      formData.append('registrations', file)
+    );
 
     try {
       const pdfBlob = await this.generateVehiclePDF(vehicleDataToSend);
-      formData.append('summaryPdf', pdfBlob, `${vehicleDataToSend.vehicleName}_Summary.pdf`);
+      formData.append(
+        'summaryPdf',
+        pdfBlob,
+        `${vehicleDataToSend.vehicleName}_Summary.pdf`
+      );
 
       this.vehicleService.createVehicle(formData).subscribe({
         next: (vehicle) => {
           this.toastr.success('Vehicle created successfully!');
           this.isSubmitting = false;
           this.submittedVehicle = vehicle;
-          
+
           this.showSummaryModal = true;
           this.resetForm();
         },
@@ -230,7 +237,7 @@ export class AddVehicleComponent implements OnInit {
           this.toastr.error('Error creating vehicle. Please try again.');
           this.isSubmitting = false;
           console.error(err);
-        }
+        },
       });
     } catch (err) {
       this.toastr.error('Failed to generate summary PDF');
@@ -239,12 +246,10 @@ export class AddVehicleComponent implements OnInit {
     }
   }
 
-
-
   resetForm() {
     this.form.resetForm();
     this.formSubmitted = false;
-    
+
     this.vehicleData = {
       ...this.vehicleData,
       vehicleName: '',
@@ -253,7 +258,7 @@ export class AddVehicleComponent implements OnInit {
       vehiclePower: '',
       vehicleGvw: 0,
       vehicleFuelTank: 0,
-      vehicleTyres: 4,
+      vehicletires: 4,
       vehicleMileage: 0,
       vehicleChassisType: '',
       vehicleCapacity: 0,
@@ -262,14 +267,13 @@ export class AddVehicleComponent implements OnInit {
       vehicleRegistration: [],
       isPromoted: false,
       vehiclePricePerDay: 0,
-      vehiclePricePerKm: 0
+      vehiclePricePerKm: 0,
     };
     this.selectedImages = [];
     this.selectedRegistrations = [];
   }
-  
+
   closeModal() {
     this.showSummaryModal = false;
   }
 }
-

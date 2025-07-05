@@ -24,7 +24,7 @@ interface VehicleDetails {
   power: string;
   gvw: number;
   fuelTank: number;
-  tyres: number;
+  tires: number;
   mileage: number;
   chassisType: string;
   identificationNumber: string;
@@ -35,7 +35,7 @@ interface VehicleDetails {
   isPromoted: boolean;
   images: string[];
   vehicleRegistration: string[];
-  summaryPdf: string
+  summaryPdf: string;
 }
 
 export interface VehicleForCreate {
@@ -48,7 +48,7 @@ export interface VehicleForCreate {
     power: string;
     gvw: number;
     fuelTank: number;
-    tyres: number;
+    tires: number;
     mileage: number;
     chassisType: string;
     category: Category;
@@ -56,16 +56,16 @@ export interface VehicleForCreate {
     pricePerDay: number;
     pricePerKm: number;
     identificationNumber: string;
-    isPromoted: boolean,
+    isPromoted: boolean;
     images: (string | Express.Multer.File)[];
     vehicleRegistration: (string | Express.Multer.File)[];
-    summaryPdf: (string | Express.Multer.File);
-  },
-  company: Types.ObjectId,
-  reserved: Types.ObjectId[],
-  likes: Types.ObjectId[],
-  available: boolean
-};
+    summaryPdf: string | Express.Multer.File;
+  };
+  company: Types.ObjectId;
+  reserved: Types.ObjectId[];
+  likes: Types.ObjectId[];
+  available: boolean;
+}
 
 export interface VehicleFilters {
   isPromoted: boolean;

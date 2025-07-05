@@ -1,13 +1,13 @@
-import { CompanyInterface } from "./company-types";
-import { CategoryEnum, Size } from "./enums";
-import { RentInterface } from "./rent-types";
+import { CompanyInterface } from './company-types';
+import { CategoryEnum, Size } from './enums';
+import { RentInterface } from './rent-types';
 
 export interface VehicleInterface {
   _id: string;
   company: CompanyInterface;
   reserved: string[] | RentInterface[];
   available: boolean;
-  details: VehicleDetails
+  details: VehicleDetails;
   likes: string[];
 
   created_at: Date;
@@ -24,18 +24,18 @@ interface VehicleDetails {
   power: string;
   gvw: number;
   fuelTank: number;
-  tyres: number;
+  tires: number;
   mileage: number;
   chassisType: string;
   category: CategoryEnum;
   capacity: number;
   pricePerDay: number;
-  identificationNumber: string
+  identificationNumber: string;
   pricePerKm: number;
   images: string[];
   vehicleRegistration: string[];
-  isPromoted: boolean,
-  summaryPdf: string
+  isPromoted: boolean;
+  summaryPdf: string;
 }
 
 export interface VehicleForCreate {
@@ -47,7 +47,7 @@ export interface VehicleForCreate {
   vehiclePower: string;
   vehicleGvw: number;
   vehicleFuelTank: number;
-  vehicleTyres: number;
+  vehicletires: number;
   vehicleMileage: number;
   vehicleChassisType: string;
   vehicleCategory: CategoryEnum | string;
@@ -56,20 +56,20 @@ export interface VehicleForCreate {
   vehiclePricePerDay: number;
   vehiclePricePerKm: number;
   vehicleImages: (string | File)[];
-  vehicleRegistration: (string  | File)[];
-  summaryPdf: (string  | File);
-  vehicleCompany: string,
+  vehicleRegistration: (string | File)[];
+  summaryPdf: string | File;
+  vehicleCompany: string;
   isPromoted: boolean;
-};
+}
 
 export interface FilterState {
   categories: string[];
   year?: number;
   sort: {
-    key: 'price' | 'year' | "likes" | 'none';
+    key: 'price' | 'year' | 'likes' | 'none';
     direction: 'asc' | 'desc';
   };
   priceMin?: number;
   priceMax?: number;
-  showOnlyAvailable: boolean,
+  showOnlyAvailable: boolean;
 }

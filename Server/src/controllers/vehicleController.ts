@@ -152,11 +152,11 @@ vehicleController.get(
     try {
       const vehicle = await vehicleService.getVehicleBySlug(vehicleSlug);
       res.status(200).json(vehicle);
-      return; 
+      return;
     } catch (err) {
       res.status(404).json({ message: "Vehicle not found" });
       next(err);
-      return; 
+      return;
     }
   }
 );
@@ -351,7 +351,7 @@ vehicleController.post(
           power: vehicleData.vehiclePower,
           gvw: Number(vehicleData.vehicleGvw),
           fuelTank: Number(vehicleData.vehicleFuelTank),
-          tyres: Number(vehicleData.vehicleTyres),
+          tires: Number(vehicleData.vehicletires),
           mileage: Number(vehicleData.vehicleMileage),
           chassisType: vehicleData.vehicleChassisType,
           capacity: Number(vehicleData.vehicleCapacity),
@@ -418,7 +418,7 @@ vehicleController.post(
             power: vehicleData.details.power,
             gvw: vehicleData.details.gvw,
             fuelTank: vehicleData.details.fuelTank,
-            tyres: vehicleData.details.tyres,
+            tires: vehicleData.details.tires,
             mileage: vehicleData.details.mileage,
             chassisType: vehicleData.details.chassisType,
             capacity: vehicleData.details.capacity,
@@ -490,7 +490,7 @@ vehicleController.put(
           power: vehicleData.vehiclePower,
           gvw: vehicleData.vehicleGvw,
           fuelTank: vehicleData.vehicleFuelTank,
-          tyres: vehicleData.vehicleTyres,
+          tires: vehicleData.vehicletires,
           mileage: vehicleData.vehicleMileage,
           chassisType: vehicleData.vehicleChassisType,
           capacity: vehicleData.vehicleCapacity,
@@ -556,7 +556,11 @@ vehicleController.delete(
 
 vehicleController.delete(
   "/slug/:vehicleSlug",
-  slugToIdMiddleware({ model: VehicleModel as unknown as Model<HasSlug>, slugParam: 'vehicleSlug', idParam: 'vehicleId'}),
+  slugToIdMiddleware({
+    model: VehicleModel as unknown as Model<HasSlug>,
+    slugParam: "vehicleSlug",
+    idParam: "vehicleId",
+  }),
   async (req: Request, res: Response, next: NextFunction) => {
     const vehicleId: string = req.params.vehicleId;
 
@@ -586,7 +590,5 @@ vehicleController.delete(
     }
   }
 );
-
-
 
 export default vehicleController;

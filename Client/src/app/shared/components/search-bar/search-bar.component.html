@@ -13,7 +13,14 @@
       placeholder="Search vehicles..."
       class="search-input"
       >
-      <i class="fa-solid fa-xmark clear-icon" (click)="clearSearch()"></i>
+      
+    @if (searchTerm) {
+      <i 
+        class="fa-solid fa-xmark clear-icon"
+        (click)="clearSearch()"
+      ></i>
+    }
+    
   </div>
 
   

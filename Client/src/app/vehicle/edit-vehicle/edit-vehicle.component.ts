@@ -2,25 +2,35 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Size, CategoryEnum } from '../../../types/enums';
-import { VehicleForCreate, VehicleInterface } from '../../../types/vehicle-types';
+import {
+  VehicleForCreate,
+  VehicleInterface,
+} from '../../../types/vehicle-types';
 import { VehicleService } from '../vehicle.service';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, distinctUntilChanged, EMPTY, Observable, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  catchError,
+  distinctUntilChanged,
+  EMPTY,
+  Observable,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 
 @Component({
   selector: 'app-edit-vehicle',
   imports: [FormsModule],
   templateUrl: './edit-vehicle.component.html',
-  styleUrl: './edit-vehicle.component.css'
+  styleUrl: './edit-vehicle.component.css',
 })
-export class EditVehicleComponent implements OnInit, OnDestroy  {
-
-  
+export class EditVehicleComponent implements OnInit, OnDestroy {
   private vehicleService = inject(VehicleService);
   private route = inject(ActivatedRoute);
   private toastr = inject(ToastrService);
 
-  private destroy$ = new Subject<void>;
+  private destroy$ = new Subject<void>();
   private vehicleCache = new Map<string, Observable<VehicleInterface>>();
 
   isSubmitting: boolean = false;
@@ -30,7 +40,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
 
   selectedImages: File[] = [];
   selectedRegistrations: File[] = [];
-  
+
   private initializeFormData(vehicle: VehicleInterface) {
     this.vehicleData = {
       vehicleCompany: vehicle?.company._id || '',
@@ -45,7 +55,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
       vehiclePower: vehicle?.details.power || '',
       vehicleGvw: vehicle?.details.gvw || 0,
       vehicleFuelTank: vehicle?.details.fuelTank || 0,
-      vehicleTyres: vehicle?.details.tyres || 4,
+      vehicletires: vehicle?.details.tires || 4,
       vehicleMileage: vehicle?.details.mileage || 0,
       vehicleChassisType: vehicle?.details.chassisType || '',
       vehicleCapacity: vehicle?.details.capacity || 0,
@@ -53,7 +63,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
       isPromoted: false,
       vehicleImages: [...vehicle.details.images],
       vehicleRegistration: [...vehicle.details.vehicleRegistration],
-      summaryPdf: vehicle?.details.summaryPdf || ''
+      summaryPdf: vehicle?.details.summaryPdf || '',
     };
   }
 
@@ -70,7 +80,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     vehiclePower: '',
     vehicleGvw: 0,
     vehicleFuelTank: 0,
-    vehicleTyres: 4,
+    vehicletires: 4,
     vehicleMileage: 0,
     vehicleChassisType: '',
     vehicleCapacity: 0,
@@ -78,38 +88,44 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     isPromoted: false,
     vehicleImages: [''],
     vehicleRegistration: [''],
-    summaryPdf: ''
+    summaryPdf: '',
   };
 
   ngOnInit(): void {
-    this.route.queryParamMap.pipe(
-      distinctUntilChanged((a, b) => a.get('vehicleId') === b.get('vehicleId')),
-      switchMap(params => {
-        const vehicleId = params.get('vehicleId');
-        
-        if (!vehicleId) {
-          this.vehicle = undefined;
+    this.route.queryParamMap
+      .pipe(
+        distinctUntilChanged(
+          (a, b) => a.get('vehicleId') === b.get('vehicleId')
+        ),
+        switchMap((params) => {
+          const vehicleId = params.get('vehicleId');
+
+          if (!vehicleId) {
+            this.vehicle = undefined;
+            return EMPTY;
+          }
+
+          if (!this.vehicleCache.has(vehicleId)) {
+            this.vehicleCache.set(
+              vehicleId,
+              this.vehicleService
+                .getVehicleById(vehicleId)
+                .pipe(shareReplay(1), takeUntil(this.destroy$))
+            );
+          }
+
+          return this.vehicleCache.get(vehicleId)!;
+        }),
+        catchError((error) => {
+          this.toastr.error('Error loading vehicle', `Error Occurred`);
           return EMPTY;
-        }
-  
-        if (!this.vehicleCache.has(vehicleId)) {
-          this.vehicleCache.set(vehicleId, this.vehicleService.getVehicleById(vehicleId).pipe(
-            shareReplay(1),
-            takeUntil(this.destroy$)
-          ))
-        }
-  
-        return this.vehicleCache.get(vehicleId)!;
-      }),
-      catchError(error => {
-        this.toastr.error('Error loading vehicle', `Error Occurred`);
-        return EMPTY;
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe(vehicle => {
-      this.vehicle = vehicle;
-      this.initializeFormData(vehicle);
-    });
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((vehicle) => {
+        this.vehicle = vehicle;
+        this.initializeFormData(vehicle);
+      });
   }
 
   ngOnDestroy(): void {
@@ -151,36 +167,37 @@ export class EditVehicleComponent implements OnInit, OnDestroy  {
     }
   }
 
-  onSubmit(form: NgForm) { 
+  onSubmit(form: NgForm) {
     if (form.invalid || this.isSubmitting || !this.vehicle?._id) return;
 
     this.isSubmitting = true;
 
     const formData = new FormData();
-    
+
     formData.append('vehicleData', JSON.stringify(this.vehicleData));
 
-    this.selectedImages.forEach(file => {
+    this.selectedImages.forEach((file) => {
       formData.append('vehicleImages', file);
     });
 
-    this.selectedRegistrations.forEach(file => {
+    this.selectedRegistrations.forEach((file) => {
       formData.append('vehicleRegistration', file);
     });
 
-    this.vehicleService.updateVehicle(this.vehicle?._id, this.vehicleData).subscribe({
-      next: (res) => {
-        this.isSubmitting = false;
-        this.toastr.success('Vehicle updated successfully!', "Success");
-        form.resetForm();
-        this.vehicleData.vehicleImages = [''];
-        this.vehicleData.vehicleRegistration = [''];
-      },
-      error: (err) => {
-        this.toastr.error('Error while updating vehicle!', "Error Occurred");
-        this.isSubmitting = false;
-      }
-    });
+    this.vehicleService
+      .updateVehicle(this.vehicle?._id, this.vehicleData)
+      .subscribe({
+        next: (res) => {
+          this.isSubmitting = false;
+          this.toastr.success('Vehicle updated successfully!', 'Success');
+          form.resetForm();
+          this.vehicleData.vehicleImages = [''];
+          this.vehicleData.vehicleRegistration = [''];
+        },
+        error: (err) => {
+          this.toastr.error('Error while updating vehicle!', 'Error Occurred');
+          this.isSubmitting = false;
+        },
+      });
   }
-
 }

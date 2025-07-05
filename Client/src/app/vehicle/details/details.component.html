@@ -54,7 +54,9 @@
         <div class="basic-details">
           <h2 class="vehicle-name">{{ vehicle?.details?.name }}</h2>
           <div class="vehicle-characteristics">
-            <h6 class="vehicle-characteristic">{{ vehicle?.details?.category }}</h6>
+            <h6 class="vehicle-characteristic">
+              {{ vehicle?.details?.category }}
+            </h6>
             <h6 class="vehicle-characteristic">{{ vehicle?.details?.year }}</h6>
             <h6 class="vehicle-characteristic">
               {{ vehicle?.details?.capacity }}
@@ -69,12 +71,14 @@
             class="company-details"
             [routerLink]="['/company', vehicle?.company?.slug]"
           >
+            <!-- <img [src]="vehicle?.company?.owner?.bannerImage" class="company-profile-picture"> -->
+            <img
+              [src]="vehicle?.company?.owner?.bannerImage"
+              class="company-profile-picture"
+            />
+            <!-- <img src="https://res.cloudinary.com/dye8fvmhy/image/upload/v1751619780/users/bannerImages/tv4x32ojen04rl502zrw.png" class="company-profile-picture"> -->
 
-          <!-- <img [src]="vehicle?.company?.owner?.bannerImage" class="company-profile-picture"> -->
-          <img [src]="vehicle?.company?.owner?.bannerImage" class="company-profile-picture">
-          <!-- <img src="https://res.cloudinary.com/dye8fvmhy/image/upload/v1751619780/users/bannerImages/tv4x32ojen04rl502zrw.png" class="company-profile-picture"> -->
-
-          <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
+            <h4 class="company-name">{{ vehicle?.company?.name }}</h4>
           </div>
 
           <div (click)="toggleContactDropdown()" class="contact-wrapper">
@@ -90,20 +94,22 @@
             @if (isContactDropdownOpen) {
             <div class="contact-dropdown-wrapper">
               <!-- <a class="tel-link" href="tel:+971521985759"> -->
-                <div class="contact-item">
-                  <h3>
-                    <a href="tel:+918778579209">+91 877 857 9209</a> - Akash Rajaraman
-                  </h3>
-                  <i class="fa-solid fa-phone"></i>
-                </div>
+              <div class="contact-item">
+                <h3>
+                  <a href="tel:+918778579209">+91 877 857 9209</a> - Akash
+                  Rajaraman
+                </h3>
+                <i class="fa-solid fa-phone"></i>
+              </div>
               <!-- </a> -->
               <!-- <a class="tel-link" href="tel:+918099853142"> -->
-                <div class="contact-item">
-                  <h3>
-                    <a href="tel:+918099853142">+91 809 985 3142</a> - Alankar Bezbaruah
-                  </h3>
-                  <i class="fa-solid fa-phone"></i>
-                </div>
+              <div class="contact-item">
+                <h3>
+                  <a href="tel:+918099853142">+91 809 985 3142</a> - Alankar
+                  Bezbaruah
+                </h3>
+                <i class="fa-solid fa-phone"></i>
+              </div>
               <!-- </a> -->
             </div>
             }
@@ -311,8 +317,8 @@
 
       <div class="spec-row">
         <div class="icon-cell"><i class="fa-solid fa-circle-dot"></i></div>
-        <div class="spec-label">Tyres:</div>
-        <div class="spec-value">{{ vehicle?.details?.tyres }}</div>
+        <div class="spec-label">tires:</div>
+        <div class="spec-value">{{ vehicle?.details?.tires }}</div>
       </div>
 
       <div class="spec-row">
@@ -329,7 +335,7 @@
     </div>
   </div>
 
-  <a href="https://phon.pe/83xz7rk2"
+  <a href="https://phon.pe/83xz7rk2" target="_blank"
     ><img
       src="/images/phonepe_ad.avif"
       alt="Phone Pe Referral Image"
