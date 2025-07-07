@@ -127,3 +127,9 @@
   color: #3182ce;
   text-decoration: underline;
 }
+
+.registration-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

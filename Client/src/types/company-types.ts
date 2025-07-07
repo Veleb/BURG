@@ -21,6 +21,7 @@ export interface CompanyInterface {
 
   companyType: string;
   stateRegistration: string;
+  registrationImages: string[];
   isPromoted: boolean;
 
 }

@@ -20,6 +20,7 @@ export interface CompanyInterface {
   totalEarnings: number;
   companyType: string;
   stateRegistration: string;
+  registrationImages: string[];
 
   isPromoted: boolean;
 }
@@ -35,4 +36,5 @@ export interface CompanyForCreate {
   totalEarnings: number;
   companyType: string;
   stateRegistration: string;
+  registrationImages: (string | Express.Multer.File)[];
 }

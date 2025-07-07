@@ -13,6 +13,7 @@ import slugToIdMiddleware from "../middlewares/slugToIdMiddleware";
 import CompanyModel from "../models/company";
 import { HasSlug } from "../types/documentSlug";
 import VehicleModel from "../models/vehicle";
+import generateVehicleSummaryPDF from "../utils/vehicleSummaryGenerator";
 
 const vehicleController = Router();
 
@@ -76,6 +77,29 @@ vehicleController.get(
     }
   }
 );
+
+vehicleController.get('/:vehicleId/summary-pdf', async (req, res) => {
+  try {
+    const vehicle = await vehicleService.getVehicleById(req.params.vehicleId);
+
+    if (!vehicle) {
+      res.status(404).send('Vehicle not found');
+      return; 
+    }
+
+    const pdfBuffer = await generateVehicleSummaryPDF(vehicle);
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=${vehicle.details?.name}_summary.pdf`,
+    });
+
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to generate PDF');
+  }
+});
 
 vehicleController.get(
   "/:vehicleId",

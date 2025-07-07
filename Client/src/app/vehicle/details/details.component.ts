@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { catchError, forkJoin, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { VehicleService } from '../../vehicle/vehicle.service';
 import { VehicleInterface } from '../../../types/vehicle-types';
 import { DatepickerComponent } from "../../shared/components/datepicker/datepicker.component";
@@ -18,6 +18,7 @@ import { ImageCarouselComponent } from '../../shared/components/image-carousel/i
 import { RentService } from '../../rents/rent.service';
 import { UserFromDB } from '../../../types/user-types';
 import { PhonepeService } from '../../services/phonepe.service';
+import { LocationService } from '../../services/location.service';
 
 @Component({
   selector: 'app-details',
@@ -44,6 +45,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   private stripeService = inject(StripeService);
   private phonepeService = inject(PhonepeService);
   private router = inject(Router);
+  private locationService = inject(LocationService);
   private breakpointObserver = inject(BreakpointObserver);
 
   private destroy$ = new Subject<void>();
@@ -75,7 +77,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
   dropoffLocation: string = '';
   startDate: Date | null = null;
   endDate: Date | null = null;
-
+  distanceToPickupKm: number | null = null;
+  distanceToDropoffKm: number | null = null;
+  // distanceFromPickupToDropoffKm: number | null = null;
+  
   referralCode: string = '';
   referralDiscount: number = 0;
   useCredits: boolean = false;
@@ -196,6 +201,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.dropoffLocation = location;
 
     }
+
+    this.calculateDistance();
   }
 
   calculatePrice(): void {
@@ -226,8 +233,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.gstAmount = Math.round(gstAmount); 
     this.totalPrice = Math.round(priceAfterDiscounts * 1.18); 
   }
-  
-  
   
   rentVehicle(): void {
 
@@ -363,8 +368,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
     this.rentService.rentVehicleWithoutPaying(rentData).subscribe({
       next: () => {
-        this.router.navigate((['catalog']))
         this.toastr.success(`Successfully created rent without paying!`, `Success`)
+        this.router.navigate((['catalog']))
       },
       error: () => this.toastr.error('Error creating rent', "Error Occurred"),
     });
@@ -416,6 +421,55 @@ export class DetailsComponent implements OnInit, OnDestroy {
     );
   }
 
+  calculateDistance() {
+
+    forkJoin([
+      this.locationService.geocodeLocation(this.pickupLocation),
+      this.locationService.geocodeLocation(this.dropoffLocation),
+      this.locationService.geocodeLocation(this.vehicle?.company.location || ''),
+    ]).subscribe(([pickupCoords, dropoffCoords, companyCoords]) => {
+      if (pickupCoords && dropoffCoords && companyCoords) {
+
+        const pickup = {
+          latitude: pickupCoords.lat,
+          longitude: pickupCoords.lon
+        };
+
+        const dropoff = {
+          latitude: dropoffCoords.lat,
+          longitude: dropoffCoords.lon
+        };
+
+        const company = {
+          latitude: companyCoords.lat,
+          longitude: companyCoords.lon
+        };
+
+        forkJoin([
+          this.locationService.getDrivingDistance([company, pickup]),
+          this.locationService.getDrivingDistance([company, dropoff])
+        ]).subscribe({
+          next: ([companyToPickup, companyToDropoff]) => {
+            this.distanceToPickupKm = companyToPickup.distanceKm;
+            this.distanceToDropoffKm = companyToDropoff.distanceKm;
+
+            console.log(`Agency to Pickup: ${this.distanceToPickupKm.toFixed(2)} km`);
+            console.log(`Agency to Dropoff: ${this.distanceToDropoffKm.toFixed(2)} km`);
+          },
+          error: (err) => {
+            console.error('Failed to fetch one or both distances:', err);
+            this.distanceToPickupKm = null;
+            this.distanceToDropoffKm = null;
+          }
+        });
+      } else {
+        this.distanceToPickupKm = null;
+        this.distanceToDropoffKm = null;
+        console.warn('Could not geocode one or more locations');
+      }
+    });
+  }
+  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

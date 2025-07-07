@@ -10,8 +10,8 @@ export class HostService {
 
   private http = inject(HttpClient)
 
-  createCompany(companyData: CompanyInterface): Observable<CompanyInterface> {
-    return this.http.post<CompanyInterface>(`/api/companies`, companyData);
+  createCompany(formData: FormData): Observable<CompanyInterface> {
+    return this.http.post<CompanyInterface>(`/api/companies`, formData);
   }
 
   getCompanies(): Observable<CompanyInterface[]> {

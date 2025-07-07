@@ -9,6 +9,7 @@ import { UserInterface } from "../types/model-types/user-types";
 import UserService from "../services/userService";
 import { Types } from "mongoose";
 import adminMiddleware from "../middlewares/adminMiddleware";
+import upload from "../middlewares/upload";
 
 const companyController = Router();
 
@@ -50,6 +51,7 @@ companyController.get(
 
 companyController.post(
   "/",
+  upload.fields([{ name: "registrationImages", maxCount: 5 }]),
   async (req: Request, res: Response, next: NextFunction) => {
     const customReq = req as AuthenticatedRequest;
 
@@ -61,6 +63,12 @@ companyController.post(
         return;
       }
 
+      let registrationImages: Express.Multer.File[] = [];
+
+      if (req.files && !Array.isArray(req.files) && typeof req.files === "object") {
+        registrationImages = (req.files["registrationImages"] as Express.Multer.File[]) || [];
+      }
+
       const companyData = {
         name: req.body.companyName,
         email: req.body.companyEmail,
@@ -68,6 +76,7 @@ companyController.post(
         location: req.body.companyLocation,
         companyType: req.body.companyType,
         stateRegistration: req.body.stateRegistration,
+        registrationImages
       };
 
       const dataWithOwner: CompanyForCreate = {

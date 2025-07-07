@@ -26,6 +26,10 @@ export class BecomeHostComponent implements AfterViewInit {
 
   location: string | undefined = undefined;
 
+  selectedRegistrations: File[] = [];
+  registrationImageError = false;
+  registrationModel: FileList | null = null;
+
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.iti = intlTelInput(this.phoneInput.nativeElement, {
@@ -43,6 +47,13 @@ export class BecomeHostComponent implements AfterViewInit {
     this.location = location;
   }
 
+  onRegistrationImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.registrationModel = input.files;
+    this.selectedRegistrations = input.files ? Array.from(input.files) : [];
+    this.registrationImageError = this.selectedRegistrations.length < 1;
+  }
+
   onSubmitCompany(companyForm: NgForm): void {
     if (companyForm.valid) {
 
@@ -57,9 +68,20 @@ export class BecomeHostComponent implements AfterViewInit {
 
       const formattedPhoneNumber = this.iti.getNumber(intlTelInputUtils.numberFormat.E164);
       
-      const newCompanyData = { ...companyForm.value, companyLocation: this.location, phoneNumber: formattedPhoneNumber, };
+      const formData = new FormData();
+      
+      formData.append('companyName', companyForm.value.companyName);
+      formData.append('companyEmail', companyForm.value.companyEmail);
+      formData.append('companyPhone', formattedPhoneNumber);
+      formData.append('companyLocation', companyForm.value.companyLocation);
+      formData.append('companyType', companyForm.value.companyType);
+      formData.append('stateRegistration', companyForm.value.stateRegistration);
 
-      this.hostService.createCompany(newCompanyData).subscribe({
+      for (const file of this.selectedRegistrations) {
+        formData.append('registrationImages', file);
+      }
+
+      this.hostService.createCompany(formData).subscribe({
         next: () => {
           this.toastr.success(`Sent host application`, `Success`);
           companyForm.reset();

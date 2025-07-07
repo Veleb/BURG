@@ -24,7 +24,8 @@ const CompanySchema = new Schema<CompanyInterface>({
   
   isPromoted: { type: Boolean, required: false, default: false },
   
-  
+  registrationImages: [{ type: String }]
+
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 CompanySchema.index({ owner: 1 });

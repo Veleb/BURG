@@ -69,29 +69,24 @@ export class AddVehicleComponent implements OnInit {
   vehicleImagesError = false;
   registrationImageError = false;
 
+  registrationModel: FileList | null = null;
+  vehicleImageModel: FileList | null = null;
+
   currentYear = new Date().getFullYear();
   maxYear = this.currentYear + 1;
 
   onVehicleImagesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.selectedImages = Array.from(input.files);
-      this.vehicleImagesError = this.selectedImages.length < 5;
-    } else {
-      this.selectedImages = [];
-      this.vehicleImagesError = true;
-    }
+    this.vehicleImageModel = input.files;
+    this.selectedImages = input.files ? Array.from(input.files) : [];
+    this.vehicleImagesError = this.selectedImages.length < 1;
   }
 
   onRegistrationImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.selectedRegistrations = Array.from(input.files);
-      this.vehicleImagesError = this.selectedRegistrations.length < 5;
-    } else {
-      this.selectedRegistrations = [];
-      this.registrationImageError = true;
-    }
+    this.registrationModel = input.files;
+    this.selectedRegistrations = input.files ? Array.from(input.files) : [];
+    this.registrationImageError = this.selectedRegistrations.length < 1;
   }
 
   ngOnInit(): void {
@@ -142,48 +137,6 @@ export class AddVehicleComponent implements OnInit {
     }
   }
 
-  generateVehiclePDF(data: VehicleForCreate): Promise<Blob> {
-    const docDefinition = {
-      content: [
-        { text: 'Vehicle Listing Confirmation', style: 'header' },
-        { text: `\nCompany: ${data.vehicleCompany ?? ''}` },
-        { text: `Name: ${data.vehicleName}` },
-        { text: `Model: ${data.vehicleModel}` },
-        { text: `Year: ${data.vehicleYear}` },
-        { text: `Engine: ${data.vehicleEngine}` },
-        { text: `Power: ${data.vehiclePower}` },
-        { text: `VIN: ${data.identificationNumber}` },
-        { text: `GVW: ${data.vehicleGvw} kg` },
-        { text: `Fuel Tank: ${data.vehicleFuelTank} L` },
-        { text: `tires: ${data.vehicletires}` },
-        { text: `Mileage: ${data.vehicleMileage} km` },
-        { text: `Chassis: ${data.vehicleChassisType}` },
-        { text: `Capacity: ${data.vehicleCapacity} kg` },
-        { text: `Size: ${data.vehicleSize}` },
-        { text: `Category: ${data.vehicleCategory}` },
-        { text: `Price/Day: $${data.vehiclePricePerDay}` },
-        { text: `Price/KM: $${data.vehiclePricePerKm}` },
-        { text: `Promoted: ${data.isPromoted ? 'Yes' : 'No'}` },
-        {
-          text: `\nThank you for listing your vehicle with us!`,
-          style: 'footer',
-        },
-      ],
-      styles: {
-        header: { fontSize: 18, bold: true, marginBottom: 10 },
-        footer: { marginTop: 20, italics: true },
-      },
-    };
-
-    return new Promise((resolve, reject) => {
-      pdfMake.createPdf(docDefinition).getBlob((blob: Blob | null) => {
-        if (blob) {
-          resolve(blob);
-        } else reject(new Error('PDF generation failed'));
-      });
-    });
-  }
-
   async onSubmit() {
     this.vehicleImagesError = this.selectedImages.length < 5;
     this.registrationImageError = !this.selectedRegistrations;
@@ -198,7 +151,6 @@ export class AddVehicleComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-
     this.formSubmitted = true;
 
     const formData = new FormData();
@@ -217,20 +169,29 @@ export class AddVehicleComponent implements OnInit {
     );
 
     try {
-      const pdfBlob = await this.generateVehiclePDF(vehicleDataToSend);
-      formData.append(
-        'summaryPdf',
-        pdfBlob,
-        `${vehicleDataToSend.vehicleName}_Summary.pdf`
-      );
-
       this.vehicleService.createVehicle(formData).subscribe({
-        next: (vehicle) => {
+        next: (vehicle: VehicleInterface) => {
           this.toastr.success('Vehicle created successfully!');
           this.isSubmitting = false;
           this.submittedVehicle = vehicle;
-
           this.showSummaryModal = true;
+
+          // 🔽 Trigger download of the generated PDF
+          this.vehicleService.generateSummaryPDF(vehicle).subscribe({
+            next: (pdfBlob) => {
+              const url = window.URL.createObjectURL(pdfBlob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${vehicle.details?.name}_summary.pdf`;
+              a.click();
+              URL.revokeObjectURL(url);
+            },
+            error: (err) => {
+              this.toastr.error('Failed to download summary PDF');
+              console.error(err);
+            },
+          });
+
           this.resetForm();
         },
         error: (err) => {
@@ -240,11 +201,12 @@ export class AddVehicleComponent implements OnInit {
         },
       });
     } catch (err) {
-      this.toastr.error('Failed to generate summary PDF');
+      this.toastr.error('Failed to create vehicle');
       this.isSubmitting = false;
       console.error(err);
     }
   }
+
 
   resetForm() {
     this.form.resetForm();

@@ -144,31 +144,34 @@
       class="form-input"
       [(ngModel)]="vehicleData.identificationNumber"
       required
-      minlength="10"
-      maxlength="10"
       #idn="ngModel"
-      pattern="^[A-Z0-9]{10}$"
+      
       (input)="
         vehicleData.identificationNumber =
-          vehicleData.identificationNumber.toUpperCase()
-      "
+        vehicleData.identificationNumber.toUpperCase()
+        "
       [class]="{
         error: idn.invalid && (idn.dirty || idn.touched),
         success: idn.valid && (idn.dirty || idn.touched)
       }"
     />
+    <!-- pattern="^[A-Z0-9]{10}$" -->
+    <!-- minlength="10" -->
+    <!-- maxlength="10" -->
 
     @if (idn.invalid && (idn.dirty || idn.touched)) {
     <ul class="errors">
       @if (idn.errors?.['required']) {
       <li class="error-msg">VIN is required</li>
-      } @if (idn.errors?.['minlength'] || idn.errors?.['maxlength']) {
-      <li class="error-msg">Must be exactly 10 characters</li>
-      } @if (idn.errors?.['pattern']) {
+      }
+      @if (idn.errors?.['pattern']) {
       <li class="error-msg">
         Invalid VIN format (alphanumeric - 10 symbol sequence)
       </li>
       }
+      <!-- @if (idn.errors?.['minlength'] || idn.errors?.['maxlength']) {
+        <li class="error-msg">Must be exactly 10 characters</li>
+      } -->
     </ul>
     }
   </div>
@@ -465,6 +468,7 @@
       (change)="onVehicleImagesSelected($event)"
       #vehicleImages
       required
+      ngModel="vehicleImageModel"
       [class.error]="vehicleImagesError"
     />
 
@@ -481,10 +485,12 @@
       type="file"
       id="registrationImage"
       name="registrationImage"
+      multiple
       accept="image/*"
       (change)="onRegistrationImageSelected($event)"
       #registrationImage
       required
+      ngModel="registrationModel"
       [class.error]="registrationImageError"
     />
     @if (registrationImageError) {
@@ -504,14 +510,14 @@
           submittedVehicle?.details?.pricePerDay
         }}
       </p>
-
+<!-- 
       <a
         [href]="submittedVehicle?.details?.summaryPdf"
         target="_blank"
         download
       >
         <button>Download Summary PDF</button>
-      </a>
+      </a> -->
 
       <button (click)="closeModal()">Close</button>
     </div>

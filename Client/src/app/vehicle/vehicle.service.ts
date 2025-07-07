@@ -280,10 +280,18 @@ export class VehicleService {
     return this.http.put<{ message: string, likes?: VehicleInterface['likes'] }>(`/api/vehicles/unlike/${vehicleId}`, {});
   }
 
-  
   isReferralValid(referralCode: string): Observable<{message: string, valid: boolean}> {
     return this.http.get<{message: string, valid: boolean}>(`/api/vehicles/referral-code/${referralCode}`).pipe(
       catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
+
+  generateSummaryPDF(vehicle: VehicleInterface): Observable<Blob> {
+    return this.http.get(`/api/vehicles/${vehicle._id}/summary-pdf`, { responseType: 'blob' }).pipe(
+      catchError(err => {
+        console.error('Error generating vehicle summary PDF', err);
         return throwError(() => err);
       })
     );

@@ -13,7 +13,7 @@
         <span class="btn-text">Add Vehicle</span>
       </button>
   
-      <button class="add-btn" (click)="fileInput.click()">
+      <!-- <button class="add-btn" (click)="fileInput.click()">
         <i class="fas fa-plus"></i>
         <span class="btn-text">Add Vehicles in bulk</span>
       </button>
@@ -33,7 +33,7 @@
     >
       <i class="fas fa-download"></i>
       <span>Download Template</span>
-    </a>
+    </a> -->
 
     </div>
 
@@ -81,7 +81,7 @@
                 <div class="registration-wrapper">
                   
                   @for (registration of vehicle.details.vehicleRegistration; track $index) {
-                    <a target="_blank" [href]="vehicle.details.vehicleRegistration">Vehicle Registration</a>
+                    <a target="_blank" [href]="registration">Vehicle Registration</a>
                   }
 
                 </div>

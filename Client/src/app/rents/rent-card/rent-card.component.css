@@ -1,49 +1,104 @@
 .rent-card-wrapper {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #fdfdfd;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   min-width: 475px;
   max-width: 475px;
+  transition: box-shadow 0.2s ease;
+}
+
+.rent-card-wrapper:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.rent-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dates,
+.locations {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
 }
 
 .status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   font-size: 0.875rem;
-  
-  &.active {
-    background: #e3f2fd;
-    color: #1976d2;
-  }
-  
-  &.completed {
-    background: #e8f5e9;
-    color: #2e7d32;
-  }
-  
-  &.cancelled {
-    background: #ffebee;
-    color: #c62828;
-  }
+  font-weight: 500;
+  background-color: #f5f5f5;
+}
+
+.status-badge .badge-title {
+  color: #999;
+}
+
+.status-badge .badge-value {
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.completed {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.cancelled {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.total {
+  background-color: #fff8e1;
+  color: #1976d2;
+}
+
+.vehicle-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 0.25rem;
+}
+
+.vehicle-name:hover {
+  color: #0077cc;
 }
 
 .cancel-btn {
-  background: #ff4444;
-  color: white;
+  align-self: flex-start;
+  background-color: #ff5252;
+  color: #fff;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   cursor: pointer;
-  margin-top: 1rem;
+  transition: background-color 0.2s ease;
 }
 
-.loading, .error {
-  padding: 1rem;
-  text-align: center;
+.cancel-btn:hover {
+  background-color: #e53935;
 }
 
 .error {
+  background-color: #ffebee;
   color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
 }

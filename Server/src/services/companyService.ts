@@ -1,6 +1,7 @@
 import CompanyModel from "../models/company";
 import UserModel from "../models/user";
 import { CompanyForCreate } from "../types/model-types/company-types";
+import { uploadFilesToCloudinary } from "../utils/uploadFilesToCloudinary";
 
 const getAllCompanies = async () => {
   return await CompanyModel.find().lean();
@@ -22,16 +23,31 @@ const getCompanyBySlug = async (slug: string) => {
 
 const createCompany = async (data: CompanyForCreate) => {
   try {
-    const company = new CompanyModel(data);
-    await company.save();                         
-
     
+    let registrationImageUrls: string[] = [];
+
+    if (data.registrationImages && data.registrationImages.length > 0) {
+      const uploadedDocs = await uploadFilesToCloudinary(
+        data.registrationImages as Express.Multer.File[],
+        "companies/registrations"
+      );
+      registrationImageUrls = uploadedDocs.map(doc => doc.secureUrl);
+    }
+
+    const companyData = {
+      ...data,
+      registrationImages: registrationImageUrls,
+    };                        
+
+    const company = new CompanyModel(companyData);
+    await company.save();
+
     if (company) {
       await UserModel.findByIdAndUpdate(
-        data.owner, 
+        data.owner,
         { $push: { companies: company._id } },
         { new: true }
-      );
+    );
     } else {
       throw new Error('Company not found');
     }

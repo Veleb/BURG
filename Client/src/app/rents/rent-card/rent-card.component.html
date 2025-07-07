@@ -11,26 +11,32 @@
         </p>
       }
 
+      @if (rent.pickupLocation && rent.dropoffLocation) {
+        <p class="locations">
+          {{ rent.pickupLocation }} → {{ rent.dropoffLocation }}
+        </p>
+      }
+
       @if (rent.status) {
-        <div class="status-badge" [class]="rent.status">
-          <h3>Rent status</h3>
-          <h4>{{ rent.status }}</h4>
+        <div class="status-badge" [class]="rent.status.toLowerCase()">
+          <span class="badge-title">Status</span>
+          <span class="badge-value">{{ rent.status }}</span>
         </div>
       }
 
       @if (rent.total) {
-        <div class="status-badge" [class]="rent.total">
-          <h3>Rent total</h3>
-          <h4>{{ rent.total | currencyConverter }}</h4>
+        <div class="status-badge total">
+          <span class="badge-title">Total</span>
+          <span class="badge-value">{{ rent.total | currencyConverter }}</span>
         </div>
       }
-      
+
       @if (vehicle) {
         <h3 class="vehicle-name" routerLink="/catalog/{{ vehicle._id }}">
           {{ vehicle.details.name }}
         </h3>
-      } 
-      
+      }
+
       @if (rent.status !== 'canceled' && rent.status !== 'failed') {
         <button class="cancel-btn" (click)="onCancel()">Cancel Rent</button>
       }

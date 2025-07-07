@@ -7,8 +7,12 @@
   <p><strong>Is Promoted:</strong> {{ company?.isPromoted }}</p>
   <p><strong>Total Earnings:</strong> {{ (company?.totalEarnings ?? 0) | currencyConverter }}</p>
   <p><strong>Company Type:</strong> {{ company?.companyType }}</p>
-  <p><strong>State Registration:</strong> {{ company?.stateRegistration }}</p>
-  <p><strong>Company ID:</strong> {{ (company?._id ?? '') }}</p>
+  
+  <div class="registration-wrapper">
+    @for (registrationImage of company?.registrationImages; track $index) {
+    <a target="_blank" [href]="registrationImage">Company Registration</a>
+  }
+  </div>
 
   @if (company?.status === 'pending') {
     <div class="action-buttons" >

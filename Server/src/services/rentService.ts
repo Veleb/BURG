@@ -332,7 +332,8 @@ export async function handleSuccessfulPayment(orderId: string): Promise<{ succes
       .populate({
         path: 'vehicle',
         populate: { path: 'company', model: 'Company' }
-    });
+      })
+      .lean();
 
     if (!populatedRent) throw new Error("Updated rent not found after update");
     if (!populatedRent.vehicle) throw new Error("Vehicle not populated");
@@ -341,7 +342,7 @@ export async function handleSuccessfulPayment(orderId: string): Promise<{ succes
 
     const pdfBuffer = await generateReceiptPDF(updatedRent, updatedUser, transaction);
 
-    await sendReceiptEmail(updatedUser.email, pdfBuffer);
+    await sendReceiptEmail(updatedUser.email, company.email, pdfBuffer);
 
     return {
       success: true,
