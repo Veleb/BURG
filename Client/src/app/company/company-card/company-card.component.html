@@ -2,7 +2,7 @@
   <h3>{{ company?.name }}</h3>
   <p><strong>Email:</strong> {{ company?.email }}</p>
   <p><strong>Phone:</strong> {{ company?.phoneNumber }}</p>
-  <p><strong>Location:</strong> {{ company?.location }}</p>
+  <p><strong>Location:</strong> {{ company?.location?.text ? company?.location?.text : company?.location }}</p>
   <p><strong>Status:</strong> {{ company?.status }}</p>
   <p><strong>Is Promoted:</strong> {{ company?.isPromoted }}</p>
   <p><strong>Total Earnings:</strong> {{ (company?.totalEarnings ?? 0) | currencyConverter }}</p>

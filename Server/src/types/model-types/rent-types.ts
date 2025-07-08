@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { UserFromDB } from "./user-types";
 import { VehicleInterface } from "./vehicle-types";
+import { locationInterface } from "./interfaces";
 
 export interface RentInterface {
   _id: Types.ObjectId;
@@ -10,8 +11,8 @@ export interface RentInterface {
   start: Date;
   end: Date;
   vehicle: VehicleInterface;  
-  pickupLocation: string;
-  dropoffLocation: string;
+  pickupLocation: locationInterface;
+  dropoffLocation: locationInterface;
   user: UserFromDB;
   status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;
@@ -33,8 +34,8 @@ export interface RentForCreate {
   start: Date;
   end: Date;
   vehicle: VehicleInterface;  
-  pickupLocation: string;
-  dropoffLocation: string;
+  pickupLocation: locationInterface;
+  dropoffLocation: locationInterface;
   user: UserFromDB;
   status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;

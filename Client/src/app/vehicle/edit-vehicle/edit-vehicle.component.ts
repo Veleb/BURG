@@ -2,22 +2,10 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Size, CategoryEnum } from '../../../types/enums';
-import {
-  VehicleForCreate,
-  VehicleInterface,
-} from '../../../types/vehicle-types';
+import { VehicleForCreate, VehicleInterface, } from '../../../types/vehicle-types';
 import { VehicleService } from '../vehicle.service';
 import { ToastrService } from 'ngx-toastr';
-import {
-  catchError,
-  distinctUntilChanged,
-  EMPTY,
-  Observable,
-  shareReplay,
-  Subject,
-  switchMap,
-  takeUntil,
-} from 'rxjs';
+import { catchError, distinctUntilChanged, EMPTY, Observable, shareReplay, Subject, switchMap, takeUntil, } from 'rxjs';
 
 @Component({
   selector: 'app-edit-vehicle',
@@ -64,6 +52,7 @@ export class EditVehicleComponent implements OnInit, OnDestroy {
       vehicleImages: [...vehicle.details.images],
       vehicleRegistration: [...vehicle.details.vehicleRegistration],
       summaryPdf: vehicle?.details.summaryPdf || '',
+      slug: vehicle?.details.slug || '',
     };
   }
 

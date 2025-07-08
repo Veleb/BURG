@@ -1,68 +1,28 @@
-@if (layoutType === 'default') {
-  <div class="location-picker-wrapper">
+<div [class]="layoutType==='default'?'location-picker-wrapper':'simple-location-wrapper form-group'">
+  <div class="input-wrapper">
+    <input
+      #locationInput
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="onSearch(searchQuery)"
+      placeholder="Search for a location"
+      [class]="layoutType==='default'?'location-input':'simple-location-input'"
+    />
+    <i class="fa-solid fa-location-dot"
+       [class]="layoutType==='default'?'location-icon':'simple-location-icon'"></i>
 
-    <div class="input-wrapper">
-      <input
-        type="text"
-        [(ngModel)]="searchQuery"
-        (input)="onSearch(searchQuery)"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        placeholder="Search for a location"
-        class="location-input"
-        #locationInput
-      />
-  
-      <i class="fa-solid fa-location-dot location-icon"></i>
-  
-      @if (suggestions.length > 0) {
-        <ul class="suggestions-list">
-          @for (suggestion of suggestions; track $index) {
-            <li
-              (click)="selectSuggestion(suggestion)"
-              class="suggestion-item"
-            >
-              {{ suggestion.display_name }}
-            </li>
-          }
-        </ul>
+    @if (suggestions.length) {
+
+    }
+
+    <ul [class]="layoutType==='default'?'suggestions-list':'simple-suggestions-list'">
+      @for (suggestion of suggestions; track $index) {
+        <li
+          (click)="selectSuggestion(suggestion)"
+          class="suggestion-item">
+          {{ suggestion.description }}
+        </li>
       }
-    </div>
-      
+    </ul>
   </div>
-  
-}
-
-@else if (layoutType === 'simple') {
-  <div class="simple-location-wrapper form-group">
-    <div class="input-wrapper">
-      <input
-        class="simple-location-input"
-        type="text"
-        [(ngModel)]="searchQuery"
-        (input)="onSearch(searchQuery)"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        placeholder="Search for a location"
-        #locationInput
-      />
-      <i class="fa-solid fa-location-dot simple-location-icon"></i>
-      <ul class="simple-suggestions-list">
-        @if (suggestions.length > 0) {
-          <ul class="suggestions-list">
-            @for (suggestion of suggestions; track $index) {
-              <li
-                class="suggestion-item"
-                (click)="selectSuggestion(suggestion)"
-              >
-                {{ suggestion.display_name }}
-              </li>
-            }
-          </ul>
-        }
-      </ul>
-    </div>
-  </div>
-  
-  
-}
+</div>

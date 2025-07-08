@@ -73,7 +73,7 @@ companyController.post(
         name: req.body.companyName,
         email: req.body.companyEmail,
         phoneNumber: req.body.companyPhone,
-        location: req.body.companyLocation,
+        location: JSON.parse(req.body.companyLocation),
         companyType: req.body.companyType,
         stateRegistration: req.body.stateRegistration,
         registrationImages

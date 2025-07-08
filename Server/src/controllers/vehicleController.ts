@@ -523,6 +523,7 @@ vehicleController.put(
           images: vehicleData.vehicleImages,
           vehicleRegistration: vehicleData.vehicleRegistration,
           summaryPdf: vehicleData.summaryPdf,
+          slug: vehicleData.slug,
         },
         company: vehicleData.vehicleCompany,
         reserved: [],

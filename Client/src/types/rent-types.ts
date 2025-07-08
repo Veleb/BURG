@@ -1,3 +1,4 @@
+import { locationInterface } from "./interfaces";
 import { UserFromDB } from "./user-types";
 import { VehicleInterface } from "./vehicle-types";
 
@@ -7,8 +8,8 @@ export interface RentInterface {
   end: Date;
   vehicle: string | VehicleInterface;
   user: string | null;
-  pickupLocation: string;
-  dropoffLocation: string;
+  pickupLocation: locationInterface;
+  dropoffLocation: locationInterface;
   referralCode: string | null;
   useCredits: boolean;
   status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
@@ -25,8 +26,8 @@ export interface RentForCreate {
   start: Date;
   end: Date;
   vehicle: string;  
-  pickupLocation: string;
-  dropoffLocation: string;
+  pickupLocation: locationInterface;
+  dropoffLocation: locationInterface;
   user: string | null;
   referralCode: string | null;
   useCredits: boolean;

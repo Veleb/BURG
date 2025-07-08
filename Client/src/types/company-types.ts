@@ -1,3 +1,4 @@
+import { locationInterface } from "./interfaces";
 import { TransactionInterface } from "./transaction-types";
 import { UserFromDB } from "./user-types";
 import { VehicleInterface } from "./vehicle-types";
@@ -11,7 +12,7 @@ export interface CompanyInterface {
   slug: string;
   email: string;
   phoneNumber: string;
-  location: string;
+  location: locationInterface;
   vehicles: number;
   owner: UserFromDB;
   status: 'pending' | 'confirmed' | 'canceled' | "hold" | "banned";

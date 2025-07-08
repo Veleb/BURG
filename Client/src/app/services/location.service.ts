@@ -2,18 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
-interface NominatimResult {
-  lat: string;
-  lon: string;
-}
-
 interface Coordinates {
   latitude: number;
   longitude: number;
-}
-
-interface DistanceResponse {
-  distanceKm: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,21 +13,31 @@ export class LocationService {
   
   constructor(private http: HttpClient) {}
 
-  geocodeLocation(location: string): Observable<{ lat: number; lon: number } | null> {
+  autocompleteLocation(input: string): Observable<{ description: string; place_id: string }[]> {
+    if (input.length < 3) return new Observable(subscriber => subscriber.next([]));
 
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1`;
-    
-    return this.http.get<NominatimResult[]>(url).pipe(
-      map(results => {
-        if (results.length === 0) return null;
-        return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
-      })
+    const url = `/api/locations/autocomplete`;
+    return this.http.post<{ predictions: { description: string; place_id: string }[] }>(url, { input }).pipe(
+      map(response => response.predictions || [])
     );
-
   }
 
-  getDrivingDistance(coords: [Coordinates, Coordinates]): Observable<DistanceResponse> {
-    return this.http.post<DistanceResponse>('/api/ors/distance', { coordinates: coords });
+
+  getLocationDetails(placeId: string): Observable<{ lat: number; lon: number } | null> {
+    const url = `/api/locations/details`;
+    return this.http.post<{ result: { geometry: { location: { lat: number; lng: number } } } }>(url, { place_id: placeId }).pipe(
+      map(response => {
+        if (!response.result) return null;
+        const loc = response.result.geometry.location;
+        return { lat: loc.lat, lon: loc.lng };
+      })
+    );
+  }
+
+  getDistanceBetweenPoints(coords: [Coordinates, Coordinates]): Observable<number> {
+    return this.http.post<{ distanceKm: number }>('/api/locations/distance', { coordinates: coords }).pipe(
+      map(response => response.distanceKm)
+    );
   }
   
 }

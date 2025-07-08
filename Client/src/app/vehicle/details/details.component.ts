@@ -19,6 +19,7 @@ import { RentService } from '../../rents/rent.service';
 import { UserFromDB } from '../../../types/user-types';
 import { PhonepeService } from '../../services/phonepe.service';
 import { LocationService } from '../../services/location.service';
+import { locationInterface } from '../../../types/interfaces';
 
 @Component({
   selector: 'app-details',
@@ -30,6 +31,7 @@ import { LocationService } from '../../services/location.service';
     FormsModule,
     ImageCarouselComponent,
     RouterLink,
+    CurrencyConverterPipe
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.css'
@@ -73,8 +75,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   isTawkInitialized = false;
 
   isSameLocation: boolean = false;
-  pickupLocation: string = '';
-  dropoffLocation: string = '';
+  pickupLocation: locationInterface = { text: '', lat: 0, lng: 0 };
+  dropoffLocation: locationInterface = { text: '', lat: 0, lng: 0 };;
   startDate: Date | null = null;
   endDate: Date | null = null;
   distanceToPickupKm: number | null = null;
@@ -185,7 +187,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onLocationSelected(location: string, isCombined: boolean, type?: 'pickup' | 'dropoff'): void {
+  onLocationSelected(location: locationInterface, isCombined: boolean, type?: 'pickup' | 'dropoff'): void {
 
     if (isCombined || this.isSameLocation) {
 
@@ -422,54 +424,51 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   calculateDistance() {
+    if (
+      !this.pickupLocation?.lat || 
+      !this.dropoffLocation?.lat || 
+      !this.vehicle?.company?.location?.lat
+    ) {
+      console.warn('Missing coordinates for pickup, dropoff, or company location');
+      this.distanceToPickupKm = null;
+      this.distanceToDropoffKm = null;
+      return;
+    }
+
+    const pickup = {
+      latitude: this.pickupLocation.lat,
+      longitude: this.pickupLocation.lng
+    };
+
+    const dropoff = {
+      latitude: this.dropoffLocation.lat,
+      longitude: this.dropoffLocation.lng
+    };
+
+    const company = {
+      latitude: this.vehicle.company.location.lat,
+      longitude: this.vehicle.company.location.lng
+    };
 
     forkJoin([
-      this.locationService.geocodeLocation(this.pickupLocation),
-      this.locationService.geocodeLocation(this.dropoffLocation),
-      this.locationService.geocodeLocation(this.vehicle?.company.location || ''),
-    ]).subscribe(([pickupCoords, dropoffCoords, companyCoords]) => {
-      if (pickupCoords && dropoffCoords && companyCoords) {
+      this.locationService.getDistanceBetweenPoints([company, pickup]),
+      this.locationService.getDistanceBetweenPoints([company, dropoff])
+    ]).subscribe({
+      next: ([companyToPickupKM, companyToDropoffKM]) => {
+        this.distanceToPickupKm = companyToPickupKM
+        this.distanceToDropoffKm = companyToDropoffKM
 
-        const pickup = {
-          latitude: pickupCoords.lat,
-          longitude: pickupCoords.lon
-        };
-
-        const dropoff = {
-          latitude: dropoffCoords.lat,
-          longitude: dropoffCoords.lon
-        };
-
-        const company = {
-          latitude: companyCoords.lat,
-          longitude: companyCoords.lon
-        };
-
-        forkJoin([
-          this.locationService.getDrivingDistance([company, pickup]),
-          this.locationService.getDrivingDistance([company, dropoff])
-        ]).subscribe({
-          next: ([companyToPickup, companyToDropoff]) => {
-            this.distanceToPickupKm = companyToPickup.distanceKm;
-            this.distanceToDropoffKm = companyToDropoff.distanceKm;
-
-            console.log(`Agency to Pickup: ${this.distanceToPickupKm.toFixed(2)} km`);
-            console.log(`Agency to Dropoff: ${this.distanceToDropoffKm.toFixed(2)} km`);
-          },
-          error: (err) => {
-            console.error('Failed to fetch one or both distances:', err);
-            this.distanceToPickupKm = null;
-            this.distanceToDropoffKm = null;
-          }
-        });
-      } else {
+        console.log(`Agency to Pickup: ${this.distanceToPickupKm.toFixed(2)} km`);
+        console.log(`Agency to Dropoff: ${this.distanceToDropoffKm.toFixed(2)} km`);
+      },
+      error: (err) => {
+        console.error('Failed to fetch one or both distances:', err);
         this.distanceToPickupKm = null;
         this.distanceToDropoffKm = null;
-        console.warn('Could not geocode one or more locations');
       }
     });
-  }
-  
+  }  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

@@ -216,7 +216,7 @@
             [(ngModel)]="useCredits"
             (change)="calculatePrice()"
           />
-          Use my {{ user?.credits }} credits ($1 per credit)
+          Use my {{ user?.credits }} credits ( {{ 100 | currencyConverter }} per credit)
         </label>
         }
       </div>

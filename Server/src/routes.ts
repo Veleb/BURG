@@ -10,6 +10,7 @@ import certificateController from "./controllers/certificateController";
 import phonepeController from "./controllers/phonepeController";
 import { rateLimiterMiddleware } from "./middlewares/rateLimiterMiddleware";
 import openRouteServiceController from "./controllers/openRouteServiceController";
+import locationController from "./controllers/locationController";
 
 const routes = Router();
 
@@ -22,6 +23,7 @@ routes.use('/companies', companyController);
 routes.use('/transactions', TransactionController);
 routes.use('/certificates', certificateController);
 routes.use('/ors', openRouteServiceController);
+routes.use('/locations', locationController);
 routes.use('/phonepe', rateLimiterMiddleware, phonepeController);
 
 export default routes;

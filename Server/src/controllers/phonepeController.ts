@@ -60,7 +60,7 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
 
     const referralDiscountSafe = appliedDiscounts?.referral || 0;
     const creditsUsed = useCredits ? appliedDiscounts?.creditsUsed || 0 : 0;
-    const priceAfterDiscounts = Math.max(basePrice - (referralDiscountSafe + creditsUsed), 0);
+    const priceAfterDiscounts = Math.max(basePrice - (referralDiscountSafe + creditsUsed * 100), 0);
     const expectedTotal = Math.round(priceAfterDiscounts * 1.18);
 
     if (calculatedPrice !== expectedTotal) {

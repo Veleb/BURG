@@ -6,6 +6,7 @@ import { EmailDirective } from '../directives/email.directive';
 import { isPlatformBrowser } from '@angular/common';
 import intlTelInput from 'intl-tel-input';
 import { LocationPickerComponent } from '../shared/components/location-picker/location-picker.component';
+import { locationInterface } from '../../types/interfaces';
 
 @Component({
   selector: 'app-become-host',
@@ -24,7 +25,7 @@ export class BecomeHostComponent implements AfterViewInit {
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef;
   @ViewChild(LocationPickerComponent) locationPickerComponent!: LocationPickerComponent;
 
-  location: string | undefined = undefined;
+  location: locationInterface | undefined = undefined;
 
   selectedRegistrations: File[] = [];
   registrationImageError = false;
@@ -43,7 +44,7 @@ export class BecomeHostComponent implements AfterViewInit {
     }
   }
 
-  onLocationSelected(location: string) {
+  onLocationSelected(location: { text: string; lat: number; lng: number; }) {
     this.location = location;
   }
 
@@ -73,7 +74,7 @@ export class BecomeHostComponent implements AfterViewInit {
       formData.append('companyName', companyForm.value.companyName);
       formData.append('companyEmail', companyForm.value.companyEmail);
       formData.append('companyPhone', formattedPhoneNumber);
-      formData.append('companyLocation', companyForm.value.companyLocation);
+      formData.append('companyLocation', this.location ? JSON.stringify(this.location) : '');
       formData.append('companyType', companyForm.value.companyType);
       formData.append('stateRegistration', companyForm.value.stateRegistration);
 
@@ -85,7 +86,7 @@ export class BecomeHostComponent implements AfterViewInit {
         next: () => {
           this.toastr.success(`Sent host application`, `Success`);
           companyForm.reset();
-          this.locationPickerComponent.reset();        
+          // this.locationPickerComponent.reset();        
         },
         error: () => {
           this.toastr.error(`Error occurred while sending host application`, `Error Occurred`)

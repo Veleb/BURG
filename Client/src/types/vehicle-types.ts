@@ -60,6 +60,7 @@ export interface VehicleForCreate {
   summaryPdf: string | File;
   vehicleCompany: string;
   isPromoted: boolean;
+  slug?: string;
 }
 
 export interface FilterState {

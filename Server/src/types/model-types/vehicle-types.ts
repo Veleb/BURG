@@ -60,6 +60,7 @@ export interface VehicleForCreate {
     images: (string | Express.Multer.File)[];
     vehicleRegistration: (string | Express.Multer.File)[];
     summaryPdf: string | Express.Multer.File;
+    slug?: string;
   };
   company: Types.ObjectId;
   reserved: Types.ObjectId[];

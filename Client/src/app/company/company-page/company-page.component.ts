@@ -9,7 +9,7 @@ import { DatePipe } from '../../shared/pipes/date.pipe';
 
 @Component({
   selector: 'app-company-page',
-  imports: [CurrencyConverterPipe, ProductCardComponent, DatePipe],
+  imports: [ProductCardComponent, DatePipe],
   templateUrl: './company-page.component.html',
   styleUrl: './company-page.component.css'
 })

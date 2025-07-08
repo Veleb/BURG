@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { UserInterface } from "./user-types";
 import { VehicleInterface } from "./vehicle-types";
+import { locationInterface } from "./interfaces";
 
 export interface CompanyInterface {
   _id: Types.ObjectId;
@@ -11,7 +12,7 @@ export interface CompanyInterface {
   slug: string;
   email: string;
   phoneNumber: string;
-  location: string;
+  location: locationInterface;
 
   carsAvailable?: VehicleInterface[];
   transactions: Types.ObjectId[]; 
@@ -29,7 +30,7 @@ export interface CompanyForCreate {
   name: string;
   email: string;
   phoneNumber: string;
-  location: string;
+  location: locationInterface;
   owner: Types.ObjectId;
   transactions: string[]; 
   status: 'pending' | 'confirmed' | 'canceled';

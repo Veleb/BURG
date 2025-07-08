@@ -6,88 +6,77 @@ import {
   EventEmitter,
   Output,
   Input,
-  inject,
+  inject
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { NominatimResponse } from '../../../../types/api-responses';
-import { catchError, Subscription, of } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import {
+  Subject,
+  debounceTime,
+  switchMap,
+  takeUntil,
+  distinctUntilChanged
+} from 'rxjs';
+import { LocationService } from '../../../services/location.service';
 
 @Component({
   selector: 'app-location-picker',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './location-picker.component.html',
   styleUrl: './location-picker.component.css',
 })
 export class LocationPickerComponent implements OnDestroy {
-
-  private http = inject(HttpClient);
+  private locationService = inject(LocationService);
+  private destroy$ = new Subject<void>();
 
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
-  @Output() locationSelected = new EventEmitter<string>();
+  @Output() locationSelected = new EventEmitter<{ text: string; lat: number; lng: number }>();
+  @Input() layoutType = 'default';
 
-  @Input('layoutType') layoutType: string = 'default';
+  searchQuery = '';
+  suggestions: { description: string; place_id: string }[] = [];
 
-  selectedLocation: { lat: number; lng: number } | null = null;
-  searchQuery: string = '';
-  suggestions: NominatimResponse[] = [];
-  isInputFocused: boolean = false;
+  private searchQuery$ = new Subject<string>();
 
-  private blurTimeout: any;
-  private searchSub?: Subscription;
-  private reverseGeocodeSub?: Subscription;
-  
-  onBlur(): void {
-    this.blurTimeout = setTimeout(() => {
-      this.isInputFocused = false;
-      this.suggestions = [];
-    }, 4500);
+  constructor() {
+    this.searchQuery$
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(300),
+        distinctUntilChanged(), 
+        switchMap(query => {
+          if (query.length < 3) return []; 
+          return this.locationService.autocompleteLocation(query);
+        })
+      )
+      .subscribe({
+        next: predictions => this.suggestions = predictions,
+        error: () => this.suggestions = []
+      });
   }
 
-  onFocus(): void {
-    this.isInputFocused = true;
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  
-
-  cancelBlurTimeout(): void {
-    if (this.blurTimeout) {
-      clearTimeout(this.blurTimeout);
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.searchSub?.unsubscribe();
-    this.reverseGeocodeSub?.unsubscribe();
-  }
-
-  selectSuggestion(suggestion: NominatimResponse): void {
-    this.searchQuery = suggestion.display_name;
-    this.suggestions = [];
-    this.locationSelected.emit(suggestion.display_name);
-  }
-
-  onSearch(query: string): void {
-    this.searchQuery = query;
-    if (query.length > 2) {
-      this.searchSub = this.http
-        .get<NominatimResponse[]>(
-          `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`
-        )
-        .pipe(catchError(() => of([])))
-        .subscribe((data) => {
-          this.suggestions = data;
-        });
-    } else {
+  onSearch(query: string) {
+    this.searchQuery$.next(query);
+    if (query.length < 3) {
       this.suggestions = [];
     }
   }
 
-  reset(): void {
-    this.searchQuery = '';
-    this.suggestions = [];
-    this.selectedLocation = null;
+  selectSuggestion(s: { description: string; place_id: string }) {
+    this.locationService.getLocationDetails(s.place_id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        if (!result) return;
+        const { lat, lon } = result;
+        this.searchQuery = s.description;
+        this.suggestions = [];
+        this.locationSelected.emit({ text: s.description, lat, lng: lon });
+      });
   }
-
 }
