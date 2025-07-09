@@ -161,4 +161,13 @@ export class RentService {
   getUnavailableDates(vehicleId: string): Observable<RentInterface[]> {
     return this.http.get<RentInterface[]>(`/api/rents/${vehicleId}/unavailable-dates`);
   }
+
+  getUserReceipts(userId: string): Observable<{rents: RentInterface[], receipts: string[] }> {
+    return this.http.get<{rents: RentInterface[], receipts: string[] }>(`/api/rents/receipts/${userId}`)
+  }
+
+  getAllReceipts(): Observable<{rents: RentInterface[], receipts: string[] }> {
+    return this.http.get<{rents: RentInterface[], receipts: string[] }>(`/api/rents/receipts`)
+  }
+
 }

@@ -33,7 +33,6 @@ export const DASHBOARD_ROUTES: Routes = [
       { path: 'add-vehicle', component: AddVehicleComponent, resolve: { user: authUserResolver } },
       { path: 'edit-vehicle', component: EditVehicleComponent, resolve: { user: authUserResolver } },
       { path: 'rents', component: DashboardRentsViewComponent, resolve: { user: authUserResolver } },
-      { path: 'users', component: DashboardUsersViewComponent, resolve: { user: authUserResolver } },
       { path: 'transactions', component: DashboardTransactionsViewComponent, resolve: { user: authUserResolver } },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]

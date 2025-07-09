@@ -233,6 +233,44 @@ rentController.get(
   }
 );
 
+rentController.get("/receipts", async (req: Request, res: Response, next: NextFunction) => {
+
+  try {
+    const response = await rentService.getAllReceipts();
+
+    if (!response) {
+      res.status(404).json({ message: "No receipts found." });
+      return;
+    }
+
+    res.status(200).json({ receipts: response.receipts, rents: response.rents });
+  } catch (error) {
+    next(error);
+  }
+})
+
+rentController.get("/receipts/:userId", async (req: Request, res: Response, next: NextFunction) => {
+  const userId = new Types.ObjectId(req.params.userId);
+
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required" });
+    return;
+  }
+
+  try {
+    const response = await rentService.getAllUserReceipts(userId);
+
+    if (!response) {
+      res.status(404).json({ message: "No receipts found for this user." });
+      return;
+    }
+
+    res.status(200).json({ receipts: response.receipts, rents: response.rents });
+  } catch (error) {
+    next(error);
+  }
+})
+
 rentController.get(
   "/:rentId",
   async (req: Request, res: Response, next: NextFunction) => {

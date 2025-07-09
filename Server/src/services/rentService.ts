@@ -11,6 +11,7 @@ import { VehicleInterface } from "../types/model-types/vehicle-types";
 import { UserFromDB } from "../types/model-types/user-types";
 import generateReceiptPDF from "../utils/receiptGenerator";
 import sendReceiptEmail from "../utils/sendReceiptEmail";
+import { uploadReceiptPdf } from "../utils/uploadFilesToCloudinary";
 
 const adminCompanyId = new mongoose.Types.ObjectId(process.env.ADMIN_COMPANY_ID);
 
@@ -327,20 +328,30 @@ export async function handleSuccessfulPayment(orderId: string): Promise<{ succes
       transactions: transaction._id,
     });
 
-    const populatedRent = await RentModel.findById(updatedRent._id)
-      .populate('user')
-      .populate({
-        path: 'vehicle',
-        populate: { path: 'company', model: 'Company' }
-      })
-      .lean();
-
-    if (!populatedRent) throw new Error("Updated rent not found after update");
-    if (!populatedRent.vehicle) throw new Error("Vehicle not populated");
-    if (!populatedRent.user) throw new Error("User not populated");
-    if (!populatedRent.vehicle.company) throw new Error("Company not populated on vehicle");
-
     const pdfBuffer = await generateReceiptPDF(updatedRent, updatedUser, transaction);
+
+    const pdfFile: Express.Multer.File = {
+      buffer: pdfBuffer,
+      mimetype: 'application/pdf',
+      fieldname: 'receiptPdf',
+      originalname: 'receipt.pdf',
+      encoding: '7bit',
+      size: pdfBuffer.length,
+      destination: '',
+      filename: '',
+      path: '',
+      stream: null as any,
+    };
+
+    const uploadedResult = await uploadReceiptPdf(pdfFile, 'rents/receipts');
+
+    await RentModel.findByIdAndUpdate(
+      updatedRent._id,
+      {
+        receiptUrl: uploadedResult.secureUrl,
+      },
+      { new: true }
+    );
 
     await sendReceiptEmail(updatedUser.email, company.email, pdfBuffer);
 
@@ -386,9 +397,6 @@ export async function handleFailedPayment(orderId: string): Promise<{ success: b
       merchantOrderId: rent.orderId,
     });
 
-    // TODO: Generate receipt and store/send it
-    // e.g., await generateReceiptPDF(updatedRent, user, transaction);
-
     return {
       success: false,
       transactionId: transaction._id,
@@ -426,9 +434,6 @@ export async function handlePendingPayment(orderId: string): Promise<{ success: 
       merchantOrderId: rent.orderId,
     });
 
-    // TODO: Generate receipt and store/send it
-    // e.g., await generateReceiptPDF(rent, user, transaction);
-
     return {
       success: false,
       transactionId: transaction._id,
@@ -438,6 +443,33 @@ export async function handlePendingPayment(orderId: string): Promise<{ success: 
   } catch (error) {
     console.error("handleSuccessfulPayment error:", error);
     throw new Error("Failed to handle successful payment");
+  }
+}
+async function getAllReceipts() {
+  try {
+    const rents = await RentModel.find({ receiptUrl: { $exists: true, $ne: null } })
+      .populate("vehicle")
+      .lean();
+
+    const receipts = rents.map(rent => rent.receiptUrl);
+
+    return { receipts, rents };
+  } catch (err) {
+    throw new Error("Error fetching receipts");
+  }
+}
+
+async function getAllUserReceipts(userId: Types.ObjectId) {
+  try {
+    const rents = await RentModel.find({ user: userId, receiptUrl: { $exists: true, $ne: null } })
+      .populate("vehicle")
+      .lean();
+
+    const receipts = rents.map(rent => rent.receiptUrl);
+
+    return { receipts, rents };
+  } catch (err) {
+    throw new Error("Error fetching user receipts");
   }
 }
 
@@ -453,7 +485,9 @@ const rentService = {
   getTotalCompanyRentCount,
   handleSuccessfulPayment,
   handleFailedPayment,
-  handlePendingPayment
+  handlePendingPayment,
+  getAllUserReceipts,
+  getAllReceipts
 }
 
 export default rentService;

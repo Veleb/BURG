@@ -39,6 +39,7 @@ const VehicleSchema = new Schema<VehicleInterface>(
       capacity: { type: Number, min: 0 },
       identificationNumber: { type: String, required: true, unique: true },
       isPromoted: { type: Boolean, required: true },
+      isLeased: { type: Boolean, required: true, default: false },
       summaryPdf: { type: String, default: "" },
     },
 

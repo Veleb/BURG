@@ -64,6 +64,10 @@ const RentSchema = new Schema<RentInterface>({
     },
   },
 
+  receiptUrl: {
+    type: String,
+  },
+
   // paymentSessionId: {
   //   type: String,
   //   required: false,

@@ -33,6 +33,7 @@ interface VehicleDetails {
   pricePerDay: number;
   pricePerKm: number;
   isPromoted: boolean;
+  isLeased: boolean;
   images: string[];
   vehicleRegistration: string[];
   summaryPdf: string;
@@ -57,6 +58,7 @@ export interface VehicleForCreate {
     pricePerKm: number;
     identificationNumber: string;
     isPromoted: boolean;
+    isLeased: boolean;
     images: (string | Express.Multer.File)[];
     vehicleRegistration: (string | Express.Multer.File)[];
     summaryPdf: string | Express.Multer.File;

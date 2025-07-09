@@ -64,3 +64,28 @@ export const uploadSummaryPdf = async (file: Express.Multer.File, folder: string
     publicId: uploadResult.public_id,
   };
 };
+
+
+export const uploadReceiptPdf = async (file: Express.Multer.File, folder: string) => {
+  if (!file || !file.buffer || !file.mimetype) {
+    throw new Error("Invalid file");
+  }
+
+  if (file.mimetype !== 'application/pdf') {
+    throw new Error("Only PDF files allowed for receipt upload");
+  }
+
+  const base64DataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+
+  const uploadResult = await cloudinary.uploader.upload(base64DataUri, {
+    folder,
+    resource_type: 'raw',
+    format: 'pdf',
+    type: 'upload'
+  });
+
+  return {
+    secureUrl: uploadResult.secure_url,
+    publicId: uploadResult.public_id,
+  };
+}

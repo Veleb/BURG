@@ -6,6 +6,8 @@ import { CertificateCardComponent } from '../../../certificate/certificate-card/
 import { UserService } from '../../../user/user.service';
 import { UserFromDB } from '../../../../types/user-types';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RentService } from '../../../rents/rent.service';
+import { RentInterface } from '../../../../types/rent-types';
 
 @Component({
   selector: 'app-user-documents',
@@ -16,11 +18,18 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 export class UserDocumentsComponent implements OnInit, OnDestroy {
 
   private certificateService = inject(CertificateService);
+  private rentService = inject(RentService);
 
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.user?.role === 'admin' ? this.loadAdminData() : this.loadUserData();
+
+    if (this.user?.role === 'admin') {
+      this.loadAdminData();
+    } else {
+      this.loadUserData();
+    }
+
   }
 
   ngOnDestroy(): void {
@@ -29,6 +38,8 @@ export class UserDocumentsComponent implements OnInit, OnDestroy {
   }
 
   certificates: CertificateInterface[] = [];
+  receipts: string[] = [];
+  rents: RentInterface[] = [];
   user: UserFromDB | null = inject(ActivatedRoute).snapshot.data['user'];
 
   private loadUserData(): void {
@@ -41,6 +52,17 @@ export class UserDocumentsComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.rentService.getUserReceipts(this.user?._id || '').subscribe({
+      next: (res) => {
+        this.receipts = res.receipts;
+        this.rents = res.rents;
+
+      },
+      error: (err) => {
+        console.error('Error loading user receipts:', err);
+      }
+    })  
+
   }
 
   private loadAdminData(): void {
@@ -52,6 +74,16 @@ export class UserDocumentsComponent implements OnInit, OnDestroy {
         this.certificates = res.certificates;
       }
     });
+
+    this.rentService.getAllReceipts().subscribe({
+      next: (res) => {
+        this.receipts = res.receipts;
+        this.rents = res.rents;
+      },
+      error: (err) => {
+        console.error('Error loading receipts:', err);
+      }
+    })
 
   }
 

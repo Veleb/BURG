@@ -262,6 +262,30 @@
     }
   </div>
 
+  <div class="form-group isPromotedCheckbox">
+    <label for="isPromoted" class="promotedLabel">Is Promoted?</label>
+    <input
+      type="checkbox"
+      id="isPromoted"
+      name="isPromoted"
+      class="promotedCheckbox"
+      [(ngModel)]="vehicleData.isPromoted"
+      #isPromoted="ngModel"
+    />
+  </div>
+
+  <div class="form-group isLeasedCheckbox">
+    <label for="isLeased" class="leasedLabel">Is Leased?</label>
+    <input
+      type="checkbox"
+      id="isLeased"
+      name="isLeased"
+      class="leasedCheckbox"
+      [(ngModel)]="vehicleData.isLeased"
+      #isLeased="ngModel"
+    />
+  </div> 
+
   <div class="form-row">
     <div class="form-group">
       <label for="vehicleSize">Size</label>
@@ -337,6 +361,7 @@
         [value]="vehicle?.details?.pricePerKm"
       />
     </div>
+
   </div>
 
   <div class="form-group">

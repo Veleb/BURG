@@ -1,10 +1,18 @@
 <div class="user-documents-wrapper">
   
-  @if (certificates.length > 0) {
-  
     <!-- <div class="documents-wrapper"> -->
   
+      @if (certificates.length > 0) {
+  
+        <h2>Certificates</h2>
+  
+        <p>Here you can find all the certificates you have been awarded.</p>
 
+      } @else {
+  
+        <h2>No Certificates Awarded!</h2>
+  
+      }
   
       <div class="certificates-wrapper">
   
@@ -13,14 +21,26 @@
         }
   
       </div>
+
+      <div class="receipts-wrapper">
+        @if (receipts.length > 0) {
+          <h2>Receipts</h2>
+          <ul class="receipts-list">
+            @for (rent of rents; track $index) {
+              @for (receipt of receipts; track $index) {
+              <h4>{{ rent.vehicle.details.name }}</h4>
+              <li>
+                <a [href]="receipt" target="_blank">Receipt {{ $index + 1 }}</a>
+              </li>
+            }
+            }
+          </ul>
+        } @else {
+          <h2>No Receipts Available!</h2>
+        }
+      </div>
   
     <!-- </div> -->
-  
-  } @else {
-  
-    <h2>No Certificates Awarded!</h2>
-  
-  }
 
   @if (user?.role === 'admin') { 
         <button class="add-cert-button" routerLink="/dashboard/admin/add-certificate">Add Certificate</button>

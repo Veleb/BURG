@@ -6,7 +6,7 @@ export interface RentInterface {
   _id: string;
   start: Date;
   end: Date;
-  vehicle: string | VehicleInterface;
+  vehicle: VehicleInterface;
   user: string | null;
   pickupLocation: locationInterface;
   dropoffLocation: locationInterface;

@@ -46,6 +46,7 @@ export class AddVehicleComponent implements OnInit {
     vehicleCapacity: 0,
     identificationNumber: '',
     isPromoted: false,
+    isLeased: false,
     vehicleImages: [],
     vehicleRegistration: [],
     summaryPdf: '',
@@ -176,7 +177,6 @@ export class AddVehicleComponent implements OnInit {
           this.submittedVehicle = vehicle;
           this.showSummaryModal = true;
 
-          // 🔽 Trigger download of the generated PDF
           this.vehicleService.generateSummaryPDF(vehicle).subscribe({
             next: (pdfBlob) => {
               const url = window.URL.createObjectURL(pdfBlob);

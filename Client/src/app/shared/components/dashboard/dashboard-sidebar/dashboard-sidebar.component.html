@@ -17,10 +17,6 @@
       <i class="fa-solid fa-dollar-sign"></i>
       <span class="nav-text">Transactions</span>
     </div>
-    <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/users`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
-      <i class="fas fa-user nav-icon"></i>
-      <span class="nav-text">Users</span>
-    </div>
     
     @if (user?.role === 'admin') {
       <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/companies`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
@@ -30,6 +26,10 @@
       <div class="dashboard-nav-item" [routerLink]="[`/dashboard/admin/certificates`]" routerLinkActive="active">
         <i class="fa-solid fa-file nav-icon"></i>
         <span class="nav-text">Certificates</span>
+      </div>
+      <div class="dashboard-nav-item" [routerLink]="[`/dashboard/${user?.role === 'host' ? 'host' : 'admin'}/users`]" [queryParams]="{ companySlug: selectedCompany }" routerLinkActive="active">
+        <i class="fas fa-user nav-icon"></i>
+        <span class="nav-text">Users</span>
       </div>
     }
 

@@ -17,6 +17,7 @@ export interface RentInterface {
   status: 'pending' | 'confirmed' | 'canceled' | 'active' | 'completed' | 'refunded' | 'failed';
   total: number;
 
+  
   referralCode: string | null;
   useCredits: boolean;
 
@@ -24,8 +25,9 @@ export interface RentInterface {
     referral: number;
     creditsUsed: number;
   };
-
+  
   // paymentSessionId?: string;
+  receiptUrl?: string;
   orderId: string;
 }
 

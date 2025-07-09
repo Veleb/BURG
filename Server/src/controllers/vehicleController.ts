@@ -381,6 +381,7 @@ vehicleController.post(
           capacity: Number(vehicleData.vehicleCapacity),
           identificationNumber: vehicleData.identificationNumber,
           isPromoted: vehicleData.isPromoted,
+          isLeased: vehicleData.isLeased,
           images: files?.images ?? [],
           vehicleRegistration: files?.registrations ?? [],
           summaryPdf: files?.summaryPdf ? files.summaryPdf[0] : "",
@@ -399,7 +400,6 @@ vehicleController.post(
         return;
       }
 
-      // res.status(201).json({message: 'Vehicle created successfully!', vehicle});
       res.status(201).json(vehicle);
       return;
     } catch (err) {
@@ -493,8 +493,7 @@ vehicleController.put(
         return;
       }
 
-      const company: CompanyInterface | null =
-        await companyService.getCompanyById(vehicleData.vehicleCompany);
+      const company: CompanyInterface | null = await companyService.getCompanyById(vehicleData.vehicleCompany);
 
       if (company?.owner._id.toString() !== userId.toString()) {
         res.status(403).json({ message: "Unauthorized company access" });
@@ -519,6 +518,7 @@ vehicleController.put(
           chassisType: vehicleData.vehicleChassisType,
           capacity: vehicleData.vehicleCapacity,
           isPromoted: vehicleData.isPromoted,
+          isLeased: vehicleData.isLeased,
           identificationNumber: vehicleData.identificationNumber,
           images: vehicleData.vehicleImages,
           vehicleRegistration: vehicleData.vehicleRegistration,

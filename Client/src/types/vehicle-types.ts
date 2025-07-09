@@ -35,6 +35,7 @@ interface VehicleDetails {
   images: string[];
   vehicleRegistration: string[];
   isPromoted: boolean;
+  isLeased: boolean;
   summaryPdf: string;
 }
 
@@ -60,6 +61,7 @@ export interface VehicleForCreate {
   summaryPdf: string | File;
   vehicleCompany: string;
   isPromoted: boolean;
+  isLeased: boolean;
   slug?: string;
 }
 

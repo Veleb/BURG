@@ -136,20 +136,20 @@ select {
   background-size: 16px;
 }
 
-.promotedLabel {
+.promotedLabel, .leasedLabel {
   min-width: fit-content;
 }
 
-#isPromoted {
+#isPromoted, #isLeased {
   width: 5%;
   margin-bottom: 5px;
 }
 
-.isPromotedCheckbox {
+.isPromotedCheckbox, .isLeasedCheckbox {
   display: flex;
   align-items: center;
   gap: 10px;
-}
+} 
 
 .modal-backdrop {
   position: fixed;
