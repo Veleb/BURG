@@ -127,7 +127,6 @@ certificateController.post(
 
       if (
         !issuedTo ||
-        !downloadLink ||
         !position ||
         typeof isRedeemed !== "boolean" ||
         !userId
@@ -148,6 +147,7 @@ certificateController.post(
       );
 
       const customDate = new Date(certificate.created_at);
+      
       const dateString = `${customDate.getDate()}/${
         customDate.getMonth() + 1
       }/${customDate.getFullYear()}`;
@@ -159,12 +159,13 @@ certificateController.post(
         date: dateString,
       });
 
-      // Upload to Cloudinary
       const uploadResult: any = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
             resource_type: "raw",
-            public_id: `certificates/${certificate.code}`,
+            format: 'pdf',
+            type: 'upload',
+            // public_id: `certificates/${certificate.code}`,
           },
           (error, result) => {
             if (error) return reject(error);
@@ -174,7 +175,6 @@ certificateController.post(
         streamifier.createReadStream(pdfBuffer).pipe(uploadStream);
       });
 
-      // Optionally update the downloadLink
       certificate.downloadLink = uploadResult.secure_url;
       await certificate.save();
 

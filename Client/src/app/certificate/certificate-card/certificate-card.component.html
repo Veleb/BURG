@@ -39,6 +39,7 @@
   <div class="card-actions">
       <a 
         class="download-btn"
+        target="_blank"
         [href]="certificate?.downloadLink"
         [attr.download]="'Certificate-' + certificate?.code + '.pdf'"
         [class.disabled]="!certificate?.downloadLink"

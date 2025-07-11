@@ -81,7 +81,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
   endDate: Date | null = null;
   distanceToPickupKm: number | null = null;
   distanceToDropoffKm: number | null = null;
-  // distanceFromPickupToDropoffKm: number | null = null;
+  
+  pickupTotal: number | null = null;
+  dropoffTotal: number | null = null;
   
   referralCode: string = '';
   referralDiscount: number = 0;
@@ -230,10 +232,15 @@ export class DetailsComponent implements OnInit, OnDestroy {
     const totalDiscount = this.referralDiscount + this.actualCreditUsed;
     const priceAfterDiscounts = Math.max(this.basePrice - totalDiscount, 0);
   
-    const gstAmount = priceAfterDiscounts * 0.18;
-    this.totalPriceBeforeTax = priceAfterDiscounts;
-    this.gstAmount = Math.round(gstAmount); 
-    this.totalPrice = Math.round(priceAfterDiscounts * 1.18); 
+    const totalPickupDropoff = (this.pickupTotal || 0) + (this.dropoffTotal || 0);
+    this.totalPriceBeforeTax = priceAfterDiscounts + totalPickupDropoff;
+
+    const totalBeforeTax = priceAfterDiscounts + totalPickupDropoff;
+    this.totalPriceBeforeTax = totalBeforeTax;
+
+    const gstAmount = totalBeforeTax * 0.18;
+    this.gstAmount = Math.round(gstAmount);
+    this.totalPrice = Math.round(totalBeforeTax + gstAmount);
   }
   
   rentVehicle(): void {
@@ -315,13 +322,15 @@ export class DetailsComponent implements OnInit, OnDestroy {
       appliedDiscounts: {
         creditsUsed: this.actualCreditUsed,
         referral: this.referralDiscount || 0
-      }
+      },
+      pickupTotal: this.pickupTotal,
+      dropoffTotal: this.dropoffTotal
     };
 
     this.phonepeService.initiatePayment(rentalData).subscribe({
       next: (response) => {
         if (response.redirectUrl) {
-          window.location.href = response.redirectUrl;  // Redirect to PhonePe hosted page
+          window.location.href = response.redirectUrl;  
         } else {
           this.toastr.error("No redirect URL provided", "PhonePe Error");
         }
@@ -455,11 +464,23 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.locationService.getDistanceBetweenPoints([company, dropoff])
     ]).subscribe({
       next: ([companyToPickupKM, companyToDropoffKM]) => {
-        this.distanceToPickupKm = companyToPickupKM
-        this.distanceToDropoffKm = companyToDropoffKM
+        this.distanceToPickupKm = Math.round(companyToPickupKM)
+        this.distanceToDropoffKm = Math.round(companyToDropoffKM)
 
-        console.log(`Agency to Pickup: ${this.distanceToPickupKm.toFixed(2)} km`);
-        console.log(`Agency to Dropoff: ${this.distanceToDropoffKm.toFixed(2)} km`);
+        if (this.distanceToPickupKm > 5 && this.vehicle) {
+          this.pickupTotal = Math.round((this.distanceToPickupKm - 5) * this.vehicle.details.pricePerKm);
+        } else {
+          this.pickupTotal = 0;
+        }
+
+        if (this.distanceToDropoffKm > 5 && this.vehicle) {
+          this.dropoffTotal = Math.round((this.distanceToDropoffKm - 5) * this.vehicle.details.pricePerKm);
+        } else {
+          this.dropoffTotal = 0;
+        }
+
+        this.calculatePrice();
+
       },
       error: (err) => {
         console.error('Failed to fetch one or both distances:', err);

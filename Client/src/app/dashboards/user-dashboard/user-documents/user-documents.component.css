@@ -1,13 +1,74 @@
 .user-documents-wrapper {
   display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+}
+
+.section {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+  text-align: center;
+}
+
+.section-description {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .certificates-wrapper {
   display: flex;
-  align-items: center;
-  gap: 1rem;
   flex-wrap: wrap;
-  max-width: 85%;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.receipts-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.receipt-item {
+  padding: 1rem;
+  background: #f1f1f1;
+  border-radius: 6px;
+  max-width: 450px;
+  min-width: 450px;
+}
+
+.receipt-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.receipt-link {
+  text-decoration: none;
+  color: #1a73e8;
+  font-weight: 500;
+}
+
+.receipt-link:hover {
+  text-decoration: underline;
+}
+
+.empty-section {
+  text-align: center;
+  color: #888;
+  padding: 2rem 0;
 }
 
 .add-cert-button {
@@ -23,4 +84,22 @@
   justify-content: center;
   width: 200px;
   height: 40px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: background 0.3s ease;
+}
+
+.add-cert-button:hover {
+  background: #2a1b17;
+}
+
+.admin-controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.receipt-details {
+  display: flex;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
 }

@@ -57,6 +57,8 @@ export const uploadSummaryPdf = async (file: Express.Multer.File, folder: string
   const uploadResult = await cloudinary.uploader.upload(base64DataUri, {
     folder,
     resource_type: 'raw',
+    format: 'pdf',
+    type: 'upload'
   });
 
   return {

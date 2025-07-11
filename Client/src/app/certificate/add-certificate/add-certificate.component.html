@@ -1,101 +1,78 @@
 <div class="add-cert-wrapper">
-  <form #certificateForm="ngForm" class="add-cert-form" (ngSubmit)="onSubmit(certificateForm)">
+  <form #certificateForm="ngForm" class="certificate-form" (ngSubmit)="onSubmit(certificateForm)">
 
-  <div class="form-group">
-    <label for="issuedTo">Issued To*</label>
-    <input 
-      type="text" 
-      class="form-control" 
-      id="issuedTo" 
-      name="issuedTo" 
-      [(ngModel)]="certificate.issuedTo" 
-      required
-      #issuedTo="ngModel"
-    >
-    @if (issuedTo.invalid && (issuedTo.dirty || issuedTo.touched)) {
-      <div class="alert alert-danger">
-        Issued To is required
-      </div>
-    }
-  </div>
-
-  <div class="form-group">
-    <label for="downloadLink">Download Link*</label>
-    <input 
-      type="url" 
-      class="form-control" 
-      id="downloadLink" 
-      name="downloadLink" 
-      [(ngModel)]="certificate.downloadLink" 
-      required
-      #downloadLink="ngModel"
-    >
-    @if (downloadLink.invalid && (downloadLink.dirty || downloadLink.touched)) {
-      <div class="alert alert-danger">
-        Download Link is required
-      </div>
-    }
-  </div>
-
-  <div class="form-group">
-    <label for="position">Position*</label>
-    <input 
-      type="text" 
-      class="form-control" 
-      id="position" 
-      name="position" 
-      [(ngModel)]="certificate.position" 
-      required
-      #position="ngModel"
-    >
-    @if (position.invalid && (position.dirty || position.touched)) {
-      <div class="alert alert-danger">
-        Position is required
-      </div>
-    }
-  </div>
-
-  <div class="form-group">
-    <label for="user">User ID</label>
-    <input 
-      type="text" 
-      class="form-control" 
-      id="user" 
-      name="user" 
-      [(ngModel)]="certificate.userId"
-    >
-  </div>
-
-  <div class="form-check">
-    <input 
-      type="checkbox" 
-      class="form-check-input" 
-      id="isRedeemed" 
-      name="isRedeemed" 
-      [(ngModel)]="certificate.isRedeemed"
-    >
-    <label class="form-check-label" for="isRedeemed">Is Redeemed?</label>
-  </div>
-
-  @if (certificate.isRedeemed) {
     <div class="form-group">
-      <label for="redeemed_at">Redeemed Date</label>
-      <input 
-        type="date" 
-        class="form-control" 
-        id="redeemed_at" 
-        name="redeemed_at" 
-        [(ngModel)]="certificate.redeemed_at"
+      <label for="userId">Select User</label>
+      <select 
+        id="userId"
+        name="userId"
+        class="form-control"
+        required
+        [(ngModel)]="certificate.userId"
+        (ngModelChange)="onUserSelect($event)"
+        #userId="ngModel"
       >
+        <option [value]="null" disabled selected>Select a user</option>
+        
+        @for (user of users; track $index) {
+          <option [value]="user._id">
+            {{ user.fullName }} ({{ user.email }})
+          </option>
+        }
+      </select>
+      @if (userId.invalid && (userId.dirty || userId.touched)) {
+        <div class="form-error">User is required</div>
+      }
     </div>
-  }
 
-  <button 
-    type="submit" 
-    class="btn btn-primary" 
-    [disabled]="!certificateForm.form.valid"
-  >
-    Submit
-  </button>
-</form>
+    <div class="form-group">
+      <label for="position">Position</label>
+      <input 
+        type="text"
+        id="position"
+        name="position"
+        class="form-control"
+        [(ngModel)]="certificate.position"
+        required
+        #position="ngModel"
+      >
+      @if (position.invalid && (position.dirty || position.touched)) {
+        <div class="form-error">Position is required</div>
+      }
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="form-check-label">
+        <input 
+          type="checkbox"
+          class="form-check-input"
+          id="isRedeemed"
+          name="isRedeemed"
+          [(ngModel)]="certificate.isRedeemed"
+        >
+        Is Redeemed?
+      </label>
+    </div>
+
+    @if (certificate.isRedeemed) {
+      <div class="form-group">
+        <label for="redeemed_at">Redeemed Date</label>
+        <input 
+          type="date"
+          id="redeemed_at"
+          name="redeemed_at"
+          class="form-control"
+          [(ngModel)]="certificate.redeemed_at"
+        >
+      </div>
+    }
+
+    <button 
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!certificateForm.form.valid"
+    >
+      Submit
+    </button>
+  </form>
 </div>

@@ -125,6 +125,7 @@
             {{ vehicle?.details?.pricePerDay ?? 0 | currencyConverter }}
             <sub>day</sub>
           </h2>
+
           <app-slider (pricePerDayChanged)="pricePerDayChange($event)" />
         </div>
 
@@ -249,11 +250,6 @@
           <p>{{ basePrice ?? 0 | currencyConverter }}</p>
         </div>
 
-        <div class="price-breakdown">
-          <p>GST (18%)</p>
-          <p>{{ gstAmount ?? 0 | currencyConverter }}</p>
-        </div>
-
         @if (useCredits) {
         <div class="price-breakdown">
           <p>Credit Discount</p>
@@ -264,7 +260,23 @@
           <p>Referral Discount</p>
           <p>-{{ referralDiscount | currencyConverter }}</p>
         </div>
+
+        } @if (pickupTotal) {
+        <div class="price-breakdown">
+          <p>Pickup Distance Fee ({{ (distanceToPickupKm ?? 0) - 5 }}km x {{ (vehicle?.details?.pricePerKm ?? 0) | currencyConverter}})</p>
+          <p>{{ pickupTotal | currencyConverter }}</p>
+        </div>
+        } @if (dropoffTotal) {
+          <div class="price-breakdown">
+            <p>Dropoff Distance Fee ({{ (distanceToDropoffKm ?? 0) - 5 }}km x {{ (vehicle?.details?.pricePerKm ?? 0) | currencyConverter}})</p>
+            <p>{{ dropoffTotal | currencyConverter }}</p>
+          </div>
         }
+
+        <div class="price-breakdown">
+          <p>GST (18%)</p>
+          <p>{{ gstAmount ?? 0 | currencyConverter }}</p>
+        </div>
 
         <hr class="dotted-hr" />
 

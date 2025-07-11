@@ -13,7 +13,7 @@ const CertificateSchema = new Schema<CertificateInterface>(
 
     issuedTo: { type: String, required: true },
 
-    downloadLink: { type: String, required: true },
+    downloadLink: { type: String },
 
     position: { type: String, required: true },
   },

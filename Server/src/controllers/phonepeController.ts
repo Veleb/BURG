@@ -33,6 +33,8 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
       appliedDiscounts,
       pickupLocation,
       dropoffLocation,
+      pickupTotal,
+      dropoffTotal
     } = req.body;
 
     if (!vehicleId || !userId || !start || !end || !isPricePerDay || calculatedPrice === undefined) {
@@ -48,25 +50,54 @@ phonepeController.post('/create-payment', async (req: Request, res: Response) =>
       return; 
     }
 
-    const rentalHours = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
-    let basePrice = 0;
+    // const rentalHours = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
+    // let basePrice = 0;
 
-    if (isPricePerDay) {
-      const rentalDays = Math.ceil(rentalHours / 24);
-      basePrice = rentalDays * vehicle.details.pricePerDay;
-    } else {
-      basePrice = vehicle.details.pricePerKm * (kilometers || 0);
-    }
+    // if (isPricePerDay) {
+    //   const rentalDays = Math.ceil(rentalHours / 24);
+    //   basePrice = rentalDays * vehicle.details.pricePerDay;
+    // } else {
+    //   basePrice = vehicle.details.pricePerKm * (kilometers || 0);
+    // }
 
-    const referralDiscountSafe = appliedDiscounts?.referral || 0;
-    const creditsUsed = useCredits ? appliedDiscounts?.creditsUsed || 0 : 0;
-    const priceAfterDiscounts = Math.max(basePrice - (referralDiscountSafe + creditsUsed * 100), 0);
-    const expectedTotal = Math.round(priceAfterDiscounts * 1.18);
+    // const referralDiscountSafe = appliedDiscounts?.referral || 0;
+    // const creditsUsed = useCredits ? appliedDiscounts?.creditsUsed || 0 : 0;
+    // const priceAfterDiscounts = Math.max(basePrice - (referralDiscountSafe + creditsUsed * 100), 0);
+    // const expectedTotal = Math.round(priceAfterDiscounts * 1.18);
 
-    if (calculatedPrice !== expectedTotal) {
-      res.status(400).json({ message: 'Price mismatch', expectedTotal });
-      return; 
-    }
+    // if (calculatedPrice !== expectedTotal) {
+    //   res.status(400).json({ message: 'Price mismatch', expectedTotal });
+    //   return; 
+    // }
+
+  const rentalHours = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
+  let basePrice = 0;
+
+  if (isPricePerDay) {
+    const rentalDays = Math.ceil(rentalHours / 24);
+    basePrice = rentalDays * vehicle.details.pricePerDay;
+  } else {
+    basePrice = vehicle.details.pricePerKm * (kilometers || 0);
+  }
+
+  const pickupTotalSafe: number = Number(pickupTotal || 0);
+  const dropoffTotalSafe: number = Number(dropoffTotal || 0);
+
+  const totalBeforeDiscounts = basePrice + pickupTotalSafe + dropoffTotalSafe;
+
+  const referralDiscountSafe = appliedDiscounts?.referral || 0;
+  const creditsUsed = useCredits ? appliedDiscounts?.creditsUsed || 0 : 0;
+
+  const totalDiscount = referralDiscountSafe + creditsUsed * 100;
+
+  const priceAfterDiscounts = Math.max(totalBeforeDiscounts - totalDiscount, 0);
+
+  const expectedTotal = Math.round(priceAfterDiscounts * 1.18);
+
+  if (calculatedPrice !== expectedTotal) {
+    res.status(400).json({ message: 'Price mismatch', expectedTotal });
+    return;
+  }
 
     const merchantOrderId = randomUUID();
     const redirectUrl = `${FRONT_END_URL}/payments/pending?orderId=${merchantOrderId}`;
